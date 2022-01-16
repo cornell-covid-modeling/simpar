@@ -1,4 +1,5 @@
 import numpy as np
+from isolation import compute_isolated
 from typing import Union
 
 class sim:
@@ -362,34 +363,11 @@ class sim:
             for i in range(arrival_duration):
                 discovered[i] += arrival_discovered / arrival_duration
 
+        return compute_isolated(discovered=discovered,
+                                generation_time=self.generation_time,
+                                iso_lengths=iso_lengths,
+                                iso_props=iso_props)
 
-        iso_len = int(np.ceil(iso_lengths[-1]/self.generation_time))
-        def cut01(s):
-            if s<0:
-                return 0
-            elif s>1:
-                return 1
-            else:
-                return s
-
-        isolation_frac = np.ones(iso_len)
-        for i in range(1,iso_len):
-            isolation_frac[i] = 0
-            for j in range(len(iso_lengths)):
-                isolation_frac[i] += iso_props[j]*cut01((iso_lengths[j]-self.generation_time*i)/self.generation_time)
-
-        # print('isolation_frac:{}'.format(str(isolation_frac)))
-        # print('isolation_lengths:{}'.format(str(iso_lengths)))
-        # print('isolation_props:{}'.format(str(iso_props)))
-
-        isolated = np.zeros(self.max_T)
-        for t in range(self.max_T):
-            for i in range(iso_len):
-                if t-i >= 0:
-                    # Add in the people who were discovered i generations ago
-                    isolated[t] = isolated[t] + isolation_frac[i] * discovered[t-i]
-
-        return isolated
 
     def get_generation_time(self):
         return self.generation_time
