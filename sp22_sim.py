@@ -61,7 +61,7 @@ def main(yaml_file='nominal.yaml', simple_plot=False, out_file='sp22_sim.png', *
 
     if simple_plot:
         plotting.plot_small_summary(out_file, trajectories)
-        plotting.plot_total_discovered('sp22_sim_arrival.png', trajectories)
+        plotting.plot_total_infected_discovered('sp22_sim_arrival.png', trajectories)
     else:
         plotting.plot_comprehensive_summary(out_file, trajectories, SIMPLE_PARAM_SUMMARY)
         plotting.plot_hospitalization('sp22_sim_hosp.png', trajectories)

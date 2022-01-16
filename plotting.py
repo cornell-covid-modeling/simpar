@@ -238,6 +238,48 @@ def plot_metric_over_time(outfile: str, trajectories: List[Trajectory],
     plt.savefig(outfile, facecolor='w')
     plt.close()
 
+def plot_metrics_over_time(outfile: str, trajectories: List[Trajectory],
+    metric_names: List[str], metrics: List[Callable], title: str = None, legend = True) -> None:
+    """Plot a comparison the [trajectories] for given [metrics] over time (max 4).
+
+    The x-axis of the plot is time while the y-axis is the value of the metric.
+    Each trajectory is shown as a different line on the plot.
+
+    Args:
+        outfile (str): String file path.
+        trajectories (List[Trajectory]): List of trajectories to compare.
+        metric_name (str): Name of the metric to be plotted.
+        metric (Callable): Function to compute the metric.
+        title (str, optional): Title of the plot.
+        legend (bool, optional): Show legend if True. Defaults to True.
+    """
+    assert(len(metric_names)<5)
+
+    linestyles = ['solid', 'dashed', 'dotted', 'dashdot']
+
+    plt.rcParams["figure.figsize"] = (8,6)
+    plt.rcParams['font.size'] = 10
+    plt.rcParams['lines.linewidth'] = 6
+    plt.rcParams['legend.fontsize'] = 8
+
+    for trajectory in trajectories:
+        scenario = trajectory.scenario
+        label = trajectory.name
+        color = trajectory.color
+        x = np.arange(scenario["T"]) * scenario["generation_time"]
+        for i in range(len(metrics)):
+            y = metrics[i](trajectory)
+            plt.plot(x, y, label=label + ": " + metric_names[i], color=color, linestyle = linestyles[i])
+
+    if title is None:
+        title = "Spring Semester"
+    plt.title(title)
+    plt.ylabel('Number')
+    if legend:
+        plt.legend()
+    plt.savefig(outfile, facecolor='w')
+    plt.close()
+
 
 def plot_hospitalization(outfile, trajectories: List[Trajectory], legend = True):
     """Plot total hospitalizations for multiple trajectories."""
@@ -248,13 +290,13 @@ def plot_hospitalization(outfile, trajectories: List[Trajectory], legend = True)
                           title="Spring Semester Hospitalizations, Students+Employees",
                           legend=legend)
 
-def plot_total_discovered(outfile, trajectories: List[Trajectory], legend = True):
+def plot_total_infected_discovered(outfile, trajectories: List[Trajectory], legend = True):
     """Plot total discovered, including arrival."""
-    plot_metric_over_time(outfile=outfile,
+    plot_metrics_over_time(outfile=outfile,
                           trajectories=trajectories,
-                          metric_name="Cumulative Discovered, including arrival",
-                          metric=metrics.get_total_discovered,
-                          title="Spring Semester Discovered, Students+Employees",
+                          metric_names=["Discovered", "Infected"],
+                          metrics=[metrics.get_total_discovered, metrics.get_total_infected],
+                          title="Spring Semester Discovered + Infected, including Arrival, Students+Employees",
                           legend=legend)
 
 def param2txt(params):
