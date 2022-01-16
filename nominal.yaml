@@ -116,6 +116,9 @@ no_surveillance_test_rate: 0.01 # percent of the population tested in a generati
 # there is no effect on transmissibility (multiplier of 1.0) and assume
 # it halves the susceptibility (multiplier of 0.5) giving a combined 1.0 * 0.5
 booster_multiplier: 0.5
+# TODO (hwr26): We need to find this value.
+# Using the pessimistic 1.0 as a place holder.
+booster_hospitalization_multiplier: 1.0
 
 booster_rate:                   # rate of booster vaccination
   UG: 1.00

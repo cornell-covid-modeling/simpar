@@ -83,7 +83,8 @@ def _get_cumulative_hospitalizations(trajectory: Trajectory, metagroups: List[st
     for i in range(len(metagroups)):
         cumulative_hospitalizations += \
             s.get_total_infected_for_different_groups(group_idx[i], cumulative=True) * \
-            trajectory.scenario["hospitalization_rates"][metagroups[i]]
+            trajectory.scenario["hospitalization_rates"][metagroups[i]] * \
+            trajectory.scenario["booster_hospitalization_multiplier"]
     return cumulative_hospitalizations
 
 
