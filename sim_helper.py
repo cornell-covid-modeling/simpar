@@ -7,6 +7,15 @@ from groups import population
 from typing import Dict
 
 
+def apply_booster_effect(infections_rate, booster_rate, booster_multiplier):
+    """Return the infections rate with the effect of the booster applied."""
+    boostered_infections_rate = \
+        booster_multiplier * np.multiply(booster_rate, infections_rate)
+    non_boostered_infections_rate = \
+        1.0 * np.multiply(-booster_rate + 1, infections_rate)
+    return boostered_infections_rate + non_boostered_infections_rate
+
+
 # TODO (hwr26): popul is a redundant parameter. Try to reorganize to prevent.
 def sim_test_strategy(scenario: Dict, strategy: Strategy,
     color: str, name: str=None) -> Trajectory:
@@ -22,15 +31,14 @@ def sim_test_strategy(scenario: Dict, strategy: Strategy,
     """
     T = scenario['T']
     GENERATION_TIME = scenario['generation_time']
+    BOOSTER_MULTIPLIER = scenario['booster_multiplier']
     BOOSTER_RATE = np.array(list(scenario['booster_rate'].values()))
     INFECTIONS_PER_DAY_PER_CONTACT_UNIT = \
-        scenario['booster_multiplier'] * \
-            np.multiply(
-                BOOSTER_RATE,
-                np.array(list(scenario['infections_per_day_per_contact_unit'].values()))) + \
-            np.multiply(
-                (np.ones(len(BOOSTER_RATE)) - BOOSTER_RATE),
-                np.array(list(scenario['infections_per_day_per_contact_unit'].values())))
+        apply_booster_effect(
+            infections_rate=list(scenario['infections_per_day_per_contact_unit'].values()),
+            booster_rate=BOOSTER_RATE,
+            booster_multiplier=BOOSTER_MULTIPLIER
+        )
 
     popul = population.from_scenario(scenario)
 
@@ -48,7 +56,13 @@ def sim_test_strategy(scenario: Dict, strategy: Strategy,
         past_infections = strategy.get_past_infections(scenario)
         S0, I0, R0 = popul.get_init_SIR_vec(initial_infections, past_infections,
                                             weight="population x contacts")
-        outside_rates = list(scenario['outside_rates'].values())
+        outside_rates = \
+            apply_booster_effect(
+                infections_rate=list(scenario['outside_rates'].values()),
+                booster_rate=BOOSTER_RATE,
+                booster_multiplier=BOOSTER_MULTIPLIER
+            )
+
         outside_rate = popul.get_outside_rate(outside_rates)
 
         if i == 0: # instantiate simulation object
