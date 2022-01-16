@@ -104,7 +104,12 @@ symptomatic_rate: .525          # used to compute discovered without surveillanc
 
 no_surveillance_test_rate: 0.01 # percent of the population tested in a generation
                                 # (under no surveillance)
-booster_effectiveness: 0.5      # reduction in transmission from boosters
+
+# The booster will have an effect on both transmissibility and susceptibility.
+# This parameter captures the combined effect where we pessimistically assume
+# there is no effect on transmissibility (multiplier of 1.0) and assume
+# it halves the susceptibility (multiplier of 0.5) giving a combined 1.0 * 0.5
+booster_multiplier: 0.5
 
 booster_rate:                   # rate of booster vaccination
   UG: 1.00

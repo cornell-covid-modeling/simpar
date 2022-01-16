@@ -22,10 +22,9 @@ def sim_test_strategy(scenario: Dict, strategy: Strategy,
     """
     T = scenario['T']
     GENERATION_TIME = scenario['generation_time']
-    BOOSTER_EFFECTIVENESS = scenario['booster_effectiveness']
     BOOSTER_RATE = np.array(list(scenario['booster_rate'].values()))
     INFECTIONS_PER_DAY_PER_CONTACT_UNIT = \
-        BOOSTER_EFFECTIVENESS * \
+        scenario['booster_multiplier'] * \
             np.multiply(
                 BOOSTER_RATE,
                 np.array(list(scenario['infections_per_day_per_contact_unit'].values()))) + \
