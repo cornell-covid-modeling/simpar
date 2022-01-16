@@ -317,15 +317,12 @@ class sim:
         return self.get_metric_for_different_groups('D', group, normalize, cumulative).sum(axis=1)
 
 
-    def get_isolated(self, arrival_discovered: np.ndarray=None, arrival_duration=3, group = False, iso_lengths = [8], iso_props = [1]):
+    def get_isolated(self, group = False, iso_lengths = [8], iso_props = [1]):
         '''
         Returns the number of people in isolation during the generation.
         iso_lengths is the number days isolations lasts for each group (in ascending order)
         group is the group to look at.  If group is false, then aggregate across everyone.
         If group is specified as a list of group indices, then it aggregates across these group indices.
-
-        arrival_discovered is a 4-dim vector which stands for number of positives upon arrival for meta groups.
-        arrival_duration is durations for all arrivals measured in generations.
 
         iso_props is the proportion of people in each isolation length group, so
         len(iso_lengths) and len(iso_props) must be the same.
@@ -357,11 +354,6 @@ class sim:
         else:
             # Aggregates across all of the passed group indices, but not across time
             discovered = self.get_total_discovered_for_different_groups(group)
-
-        # Allocate the scalar arrival_discovered across generations.
-        if arrival_discovered is not None:
-            for i in range(arrival_duration):
-                discovered[i] += arrival_discovered / arrival_duration
 
         return compute_isolated(discovered=discovered,
                                 generation_time=self.generation_time,

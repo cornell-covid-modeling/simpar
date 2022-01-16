@@ -2,6 +2,7 @@ from functools import reduce
 from operator import iconcat
 import numpy as np
 from trajectory import Trajectory
+from isolation import compute_isolated
 from typing import List
 
 
@@ -17,26 +18,30 @@ def get_isolated(trajectory: Trajectory, metagroup_names: List[str] = None):
     """
     sim = trajectory.sim
     scenario = trajectory.scenario
-
     if metagroup_names is None:
-        active_discovered = \
-            sum(trajectory.strategy.get_active_discovered(scenario))
-        isolated = sim.get_isolated(arrival_discovered=active_discovered,
-                                    iso_lengths=scenario["isolation_durations"],
-                                    iso_props=scenario["isolation_fracs"])
-        return isolated
-    else:
-        group_idx = trajectory.pop.metagroup_indices(metagroup_names)
-        idx = reduce(iconcat, group_idx, [])
-        all_metagroup_names = trajectory.pop.metagroup_names()
-        metagroup_idx = [all_metagroup_names.index(i) for i in metagroup_names]
-        active_discovered = \
-            sum(trajectory.strategy.get_active_discovered(scenario)[metagroup_idx])
-        isolated = sim.get_isolated(group=idx, arrival_discovered=active_discovered,
+        metagroup_names = trajectory.pop.metagroup_names()
+
+    group_idx = trajectory.pop.metagroup_indices(metagroup_names)
+    idx = reduce(iconcat, group_idx, [])
+    all_metagroup_names = trajectory.pop.metagroup_names()
+    metagroup_idx = [all_metagroup_names.index(i) for i in metagroup_names]
+    isolated = sim.get_isolated(group=idx,
                                 iso_lengths=scenario["isolation_durations"],
                                 iso_props=scenario["isolation_fracs"])
 
-    return isolated
+    # uniformly spread arrival discovered across three generations
+    active_discovered_sum = \
+        sum(trajectory.strategy.get_active_discovered(scenario)[metagroup_idx])
+    ARRIVAL_DURATION = 3  # TODO (hwr26): define in nominal.yaml?
+    active_discovered = np.zeros(sim.max_T)
+    for i in range(ARRIVAL_DURATION):
+        active_discovered[i] += active_discovered_sum / ARRIVAL_DURATION
+    additional_isolated = compute_isolated(discovered=active_discovered,
+                                           generation_time=sim.generation_time,
+                                           iso_lengths=scenario["isolation_durations"],
+                                           iso_props=scenario["isolation_fracs"])
+
+    return isolated + additional_isolated
 
 
 def get_peak_hotel_rooms(trajectory: Trajectory):
