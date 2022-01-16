@@ -43,6 +43,37 @@ def get_isolated(trajectory: Trajectory, metagroup_names: List[str] = None):
 
     return isolated + additional_isolated
 
+def get_total_discovered(trajectory: Trajectory, metagroup_names: List[str] = None):
+    """Return the number of discovered positives at each generation, 
+        including arrivals.
+
+    Args:
+        trajectory (Trajectory): Trajectory object.
+        metagroup_names (List[str]): Limit to isolated in these metagroups.
+
+    Returns:
+        np.ndarray: Number of isolated individuals at each generation.
+    """
+    sim = trajectory.sim
+    scenario = trajectory.scenario
+    if metagroup_names is None:
+        metagroup_names = trajectory.pop.metagroup_names()
+
+    group_idx = trajectory.pop.metagroup_indices(metagroup_names)
+    idx = reduce(iconcat, group_idx, [])
+    all_metagroup_names = trajectory.pop.metagroup_names()
+    metagroup_idx = [all_metagroup_names.index(i) for i in metagroup_names]
+    discovered = sim.get_discovered(cumulative = True)
+
+    active_discovered_sum = \
+        sum(trajectory.strategy.get_active_discovered(scenario)[metagroup_idx])
+    ARRIVAL_DURATION = 3  
+    active_discovered = np.zeros(sim.max_T)
+    for i in range(ARRIVAL_DURATION):
+        active_discovered[i] += active_discovered_sum / ARRIVAL_DURATION
+
+    return np.cumsum(active_discovered) + discovered
+
 
 def get_peak_hotel_rooms(trajectory: Trajectory):
     """Return the peak number of hotel room used over the semester."""

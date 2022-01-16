@@ -243,11 +243,19 @@ def plot_hospitalization(outfile, trajectories: List[Trajectory], legend = True)
     """Plot total hospitalizations for multiple trajectories."""
     plot_metric_over_time(outfile=outfile,
                           trajectories=trajectories,
-                          metric_name="Cumulative Hospitalizatins",
+                          metric_name="Cumulative Hospitalizations",
                           metric=metrics.get_cumulative_all_hospitalizations,
                           title="Spring Semester Hospitalizations, Students+Employees",
                           legend=legend)
 
+def plot_total_discovered(outfile, trajectories: List[Trajectory], legend = True):
+    """Plot total discovered, including arrival."""
+    plot_metric_over_time(outfile=outfile,
+                          trajectories=trajectories,
+                          metric_name="Cumulative Discovered, including arrival",
+                          metric=metrics.get_total_discovered,
+                          title="Spring Semester Discovered, Students+Employees",
+                          legend=legend)
 
 def param2txt(params):
     param_txt = ''
