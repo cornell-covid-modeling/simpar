@@ -49,6 +49,8 @@ active_infections:
   FS: 45    # [15 * 3]
 
 # @Yujia's analyis
+# NOTE: This parameter is calibrated to a non-boosted population hence this
+# is interpreted as non-boosted hospitalization rates.
 hospitalization_rates:
   UG: 0.00025  # [1/4000]
   GR: 0.00025  # [1/4000]
@@ -64,6 +66,8 @@ hospitalization_rates:
 # - a UG number of 5*(16K/10K)/10 = 0.8
 # - a GR number of 5*(8K/10K)/10 = 0.4
 # - a PR number of 5*(3K/10K)/10 = 0.15
+# NOTE: This parameter is calibrated to a non-boosted population hence this
+# is interpreted as non-boosted outside rates.
 outside_rates: #number of infections for each meta-group per day across the whole meta-group
   UG: 0.8
   GR: 0.4
@@ -85,6 +89,8 @@ classwork_transmission_multiplier:
 # This is based on the following analysis:
 #   @hwr26: calibration-student.py
 #   @sst76: calibration-employee.py
+# NOTE: This parameter is calibrated to a non-boosted population hence this
+# is interpreted as non-boosted infections rates.
 infections_per_day_per_contact_unit:
   UG: 0.28
   GR: 0.10
