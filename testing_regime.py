@@ -20,6 +20,7 @@ class TestingRegime:
 
     def __init__(self,
                  scenario: Dict,
+                 test_type: Union[float, dict],
                  tests_per_week: Union[float, dict],
                  test_delay: Union[float, dict]):
 
@@ -65,6 +66,10 @@ class TestingRegime:
                 _test_delay = test_delay[mg_names[i]]
             else:
                 _test_delay = test_delay
+            if isinstance(test_type, dict):
+                _test_type = test_type[mg_names[i]]
+            else:
+                _test_type = test_type
 
             # Figure out days between tests, infection_discovery_frac, and recovered_discovery frac
             # for this meta-group
@@ -77,6 +82,9 @@ class TestingRegime:
                 self.infection_discovery_frac[i] = 1
                 self.recovered_discovery_frac[i] = 1
 
+            sensitivity = scenario["tests"][_test_type]["sensitivity"] * \
+                          scenario["tests"][_test_type]["compliance"]
+
             self.days_infectious[i] = days_infectious(_days_between_tests, _test_delay, \
-                                                 sensitivity=scenario["pcr_sensitivity"], \
+                                                 sensitivity=sensitivity, \
                                                  max_infectious_days=scenario["max_infectious_days"])

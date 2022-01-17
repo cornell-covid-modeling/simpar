@@ -142,9 +142,18 @@ isolation_fracs:                # fraction of pop falling into various isolation
 # infectious period that the infection is modeled as being detectable in PCR.
 max_infectious_days: 6
 
-# Sensitivity of a PCR test during the infectious period. The PCR test is modeled as having 0
-# sensitivity in the period between exposure and the start of the infectious period.
-pcr_sensitivity: 0.9
+# For each type of test, we include a parameter for the sensitivity during the
+# infectious period (all tests are modelled as having zero sensitivity in the
+# period between exposure and the start of the infectious period) and a
+# parameter to indicate compliance with the test. In the case of antigen tests,
+# students self-report and could be deceitful.
+tests:
+  pcr:
+    sensitivity: 0.9
+    compliance: 1.0
+  antigen:
+    sensitivity: 0.9  # TODO (hwr): Think about what this should actually be
+    compliance: 0.5   # TODO (hwr): Think about what this should actually be
 
 # This matrix encodes the amount of contact between metagroups
 meta_matrix:

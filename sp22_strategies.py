@@ -7,10 +7,11 @@ from typing import Dict
 # ========================================================
 
 def no_testing_testing_regime(scenario: Dict):
-    return TestingRegime(scenario=scenario, tests_per_week=0, test_delay=1)
+    return TestingRegime(scenario=scenario, test_type="pcr", tests_per_week=0, test_delay=1)
 
 def ug_prof_2x_week_testing_regime(scenario: Dict):
     return TestingRegime(scenario=scenario,
+                         test_type="pcr",
                          tests_per_week={ 'UG':2, 'GR':0, 'PR':2, 'FS':0},
                          test_delay=1.5)
 
