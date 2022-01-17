@@ -52,7 +52,7 @@ class ScenarioFamily:
     def get_nominal_scenario(self):
         """Return the nominal scenario."""
         flattened_scenario = self.flattened_nominal
-        for name, dist in self.prior:
+        for name, dist in self.prior.items():
             # TODO (hwr26): be careful here if extending to using other dists
             flattened_scenario[name] = dist["mu"]
         return unflatten_dict(flattened_scenario)
@@ -61,7 +61,7 @@ class ScenarioFamily:
     def get_sampled_scenario(self):
         """Return a scenario sampled from the prior."""
         flattened_scenario = self.flattened_nominal
-        for name, dist in self.prior:
+        for name, dist in self.prior.items():
             mu = dist["mu"]
             std = dist["std"]
             a, b = (dist["a"] - mu) / std, (dist["b"] - mu) / std

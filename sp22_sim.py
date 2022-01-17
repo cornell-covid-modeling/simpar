@@ -2,7 +2,7 @@ import sys
 import numpy as np
 import json
 import yaml
-from groups import population
+from scenario import ScenarioFamily
 from sim_helper import sim_test_regime, sim_test_strategy
 from sp22_strategies import (no_testing_strategy, arrival_testing_strategy,
                              sp22_testing_strategy)
@@ -21,6 +21,10 @@ def main(yaml_file='nominal.yaml', simple_plot=False, out_file='sp22_sim.png', *
     # convert to numpy matrix
     params["meta_matrix"] = \
         np.array([list(row.values()) for row in params["meta_matrix"].values()])
+
+    # get nominal scenario
+    scenario_family = ScenarioFamily(params, yaml.safe_load(open("prior.yaml", "r")))
+    params = scenario_family.get_nominal_scenario()
 
     # If set, this replaces the detailed description of parameters in the plot
     # with a simple summary
