@@ -1,8 +1,14 @@
+# Fraction of positive people that would be discovered as positive in the absence of regular required testing, shortly after their infection.
+# As discussed in the spring 2022 modeling report in the "Probability of Detection without Regular Required Testing",
+# we use a range of 22% to 56%, treating this as a 95% confidence interval for this parameter.
+# This gives a mean of 0.39 and a standard deviation of .09.
+# In the early-Jan nominal scenario, this parameter was estimated to be .525. This was based on
+# an estimate of 35% as reporting symptoms, and then multiplying by 1.5 to account for contact tracing.
 symptomatic_rate:
-  a: 0      # TODO [Peter]
-  b: 1      # TODO [Peter]
-  mu: 0.53  # TODO [Peter]
-  std: 0.2  # TODO [Peter]
+  a: 0
+  b: 1
+  mu: 0.39
+  std: 0.09
 
 winter_break_infections_global:
   a: 0      # TODO [Peter]
