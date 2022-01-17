@@ -24,7 +24,7 @@ infections_per_day_per_contact_unit_FS:
   std: 0.0025
 
 #Based on literature survey done by Sam + Bonnie.
-#@Henry, the overall infections_per_day_per_contact_unit['FS'] = 
+#@Henry, the overall infections_per_day_per_contact_unit['FS'] =
 #                 infections_per_day_per_contact_unit_FS * omicron_transmission_multiplier
 omicron_transmission_multiplier:
   a: 0

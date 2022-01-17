@@ -131,13 +131,6 @@ infections_per_day_per_contact_unit:
 
 T: 28                           # num generations (16 weeks with 4-day generations)
 
-symptomatic_rate: .525          # used to compute discovered without surveillance
-                                # We model 35% as reporting symptoms, and then
-                                # multiply this by 1.5 to represent contact tracing.
-                                # In past semesters, contact tracing seemed to find one
-                                # extra positive for every positive found via surveillance,
-                                # so even if it's done poorly it should still find a lot af cases
-
 no_surveillance_test_rate: 0.01 # percent of the population tested in a generation
                                 # (under no surveillance)
 
