@@ -49,7 +49,7 @@ def get_total_discovered(trajectory: Trajectory, metagroup_names: List[str] = No
 
     Args:
         trajectory (Trajectory): Trajectory object.
-        metagroup_names (List[str]): Limit to isolated in these metagroups.
+        metagroup_names (List[str]): Limit to discovered in these metagroups.
 
     Returns:
         np.ndarray: Number of discovered individuals at each generation.
@@ -63,7 +63,7 @@ def get_total_discovered(trajectory: Trajectory, metagroup_names: List[str] = No
     idx = reduce(iconcat, group_idx, [])
     all_metagroup_names = trajectory.pop.metagroup_names()
     metagroup_idx = [all_metagroup_names.index(i) for i in metagroup_names]
-    discovered = sim.get_discovered(cumulative = True)
+    discovered = sim.get_total_discovered_for_different_groups(idx, cumulative=True)
 
     active_discovered_sum = \
         sum(trajectory.strategy.get_active_discovered(scenario)[metagroup_idx])
@@ -80,7 +80,7 @@ def get_total_infected(trajectory: Trajectory, metagroup_names: List[str] = None
 
     Args:
         trajectory (Trajectory): Trajectory object.
-        metagroup_names (List[str]): Limit to isolated in these metagroups.
+        metagroup_names (List[str]): Limit to infected in these metagroups.
 
     Returns:
         np.ndarray: Number of infected individuals at each generation.
@@ -94,7 +94,7 @@ def get_total_infected(trajectory: Trajectory, metagroup_names: List[str] = None
     idx = reduce(iconcat, group_idx, [])
     all_metagroup_names = trajectory.pop.metagroup_names()
     metagroup_idx = [all_metagroup_names.index(i) for i in metagroup_names]
-    infected = sim.get_infected(cumulative = True)
+    infected = sim.get_total_infected_for_different_groups(idx, cumulative=True)
 
     active_discovered_sum = \
         sum(trajectory.strategy.get_active_discovered(scenario)[metagroup_idx])

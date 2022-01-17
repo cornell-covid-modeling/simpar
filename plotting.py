@@ -20,59 +20,59 @@ def plot_small_summary(outfile : str,
     plt.rcParams['legend.fontsize'] = 22
     plt.subplots_adjust(hspace = 0.8)
     plt.subplot(211)
-    plot_infected_discovered(trajectories)
+    plot_total_infected_discovered(trajectories)
     plt.subplot(212)
-    plot_isolated(trajectories, oncampus=True)
+    plot_isolated(trajectories)
     plt.savefig(outfile, facecolor='w')
     plt.close()
 
+# OBSOLETE, SEE plot_total_infected_discovered
+# def plot_infected_discovered(trajectories: List[Trajectory],
+#                              popul = None,
+#                              metagroup_names : List[str] = None,
+#                              legend = True):
+#     """Plot infected and discovered for several trajectories.
 
-def plot_infected_discovered(trajectories: List[Trajectory],
-                             popul = None,
-                             metagroup_names : List[str] = None,
-                             legend = True):
-    """Plot infected and discovered for several trajectories.
+#     Args:
+#         metagroup_names: list of names of meta-group(s) to plot, \
+#             None to plot the sum across groups.
+#     """
+#     # plot each trajectory
+#     for trajectory in trajectories:
+#         scenario = trajectory.scenario
+#         label = trajectory.name
+#         s = trajectory.sim
+#         color = trajectory.color
 
-    Args:
-        metagroup_names: list of names of meta-group(s) to plot, \
-            None to plot the sum across groups.
-    """
-    # plot each trajectory
-    for trajectory in trajectories:
-        scenario = trajectory.scenario
-        label = trajectory.name
-        s = trajectory.sim
-        color = trajectory.color
+#         X = np.arange(s.max_T) * s.generation_time  # days in the semester
+#         if metagroup_names == None:
+#             discovered = s.get_discovered(aggregate=True, cumulative=True)
+#             infected = s.get_infected(aggregate=True, cumulative=True)
+#         else:
+#             group_idx = popul.metagroup_indices(metagroup_names)
+#             group_idx = reduce(iconcat, group_idx, [])  # flatten
+#             discovered = s.get_total_discovered_for_different_groups(group_idx, cumulative=True)
+#             infected = s.get_total_infected_for_different_groups(group_idx, cumulative=True)
+#         if np.isclose(discovered, infected).all():
+#             # Discovered and infected are the same, or almost the same.
+#             # This occurs when we do surveillance.
+#             # Only plot one line.
+#             plt.plot(X, discovered, label=label, color=color, linestyle = 'solid')
+#         else:
+#             plt.plot(X, discovered, label=label + '(Discovered)', color=color, linestyle = 'solid')
+#             plt.plot(X, infected, label=label + '(Infected)', color=color, linestyle = 'dashed')
 
-        X = np.arange(s.max_T) * s.generation_time  # days in the semester
-        if metagroup_names == None:
-            discovered = s.get_discovered(aggregate=True, cumulative=True)
-            infected = s.get_infected(aggregate=True, cumulative=True)
-        else:
-            group_idx = popul.metagroup_indices(metagroup_names)
-            group_idx = reduce(iconcat, group_idx, [])  # flatten
-            discovered = s.get_total_discovered_for_different_groups(group_idx, cumulative=True)
-            infected = s.get_total_infected_for_different_groups(group_idx, cumulative=True)
-        if np.isclose(discovered, infected).all():
-            # Discovered and infected are the same, or almost the same.
-            # This occurs when we do surveillance.
-            # Only plot one line.
-            plt.plot(X, discovered, label=label, color=color, linestyle = 'solid')
-        else:
-            plt.plot(X, discovered, label=label + '(Discovered)', color=color, linestyle = 'solid')
-            plt.plot(X, infected, label=label + '(Infected)', color=color, linestyle = 'dashed')
+#     if metagroup_names == None:
+#         plt.title("Spring Semester Infections, Students+Employees")
+#     else:
+#         plt.title("Infections " + reduce(add, [scenario["metagroup_names"][x] for x in metagroup_names]))
 
-    if metagroup_names == None:
-        plt.title("Spring Semester Infections, Students+Employees")
-    else:
-        plt.title("Infections " + reduce(add, [scenario["metagroup_names"][x] for x in metagroup_names]))
-
-    if legend:
-        ax = plt.gca()
-        # Put legend below the current axis because it's too big
-        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.20),
-                  fancybox=True, shadow=True, ncol=2)
-    plt.ylabel('Cumulative Infected')
+#     if legend:
+#         ax = plt.gca()
+#         # Put legend below the current axis because it's too big
+#         ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.20),
+#                   fancybox=True, shadow=True, ncol=2)
+#     plt.ylabel('Cumulative Infected')
 
 
 def plot_isolated(trajectories: List[Trajectory],
@@ -115,7 +115,7 @@ def plot_comprehensive_summary(outfile: str,
     plt.rcParams.update({'font.size': 8})
 
     plt.subplot(411) # Take up the whole top row
-    plot_infected_discovered(trajectories, legend = True)
+    plot_total_infected_discovered(trajectories, legend = True)
     window = 423 # Start in the second row
 
     plt.subplot(window)
@@ -138,7 +138,7 @@ def plot_comprehensive_summary(outfile: str,
     for group in groups:
         plt.subplot(window)
         window += 1
-        plot_infected_discovered(trajectories, popul, group, legend = False)
+        plot_total_infected_discovered(trajectories, metagroup_names = group, legend = False)
 
     # def print_params():
     #     if simple_param_summary is None:
@@ -229,8 +229,8 @@ def plot_metric_over_time(outfile: str, trajectories: List[Trajectory],
     plt.savefig(outfile, facecolor='w')
     plt.close()
 
-def plot_metrics_over_time(outfile: str, trajectories: List[Trajectory],
-    metric_names: List[str], metrics: List[Callable], title: str = None, legend = True) -> None:
+def plot_metrics_over_time(trajectories: List[Trajectory],
+    metric_names: List[str], metrics: List[Callable], title: str = None, legend = True, metagroup_names = None) -> None:
     """Plot a comparison the [trajectories] for given [metrics] over time (max 4).
 
     The x-axis of the plot is time while the y-axis is the value of the metric.
@@ -248,10 +248,10 @@ def plot_metrics_over_time(outfile: str, trajectories: List[Trajectory],
 
     linestyles = ['solid', 'dashed', 'dotted', 'dashdot']
 
-    plt.rcParams["figure.figsize"] = (8,6)
-    plt.rcParams['font.size'] = 10
-    plt.rcParams['lines.linewidth'] = 6
-    plt.rcParams['legend.fontsize'] = 8
+    # plt.rcParams["figure.figsize"] = (8,6)
+    # plt.rcParams['font.size'] = 10
+    # plt.rcParams['lines.linewidth'] = 6
+    # plt.rcParams['legend.fontsize'] = 8
 
     for trajectory in trajectories:
         scenario = trajectory.scenario
@@ -259,17 +259,24 @@ def plot_metrics_over_time(outfile: str, trajectories: List[Trajectory],
         color = trajectory.color
         x = np.arange(scenario["T"]) * scenario["generation_time"]
         for i in range(len(metrics)):
-            y = metrics[i](trajectory)
+            y = metrics[i](trajectory, metagroup_names)
             plt.plot(x, y, label=label + ": " + metric_names[i], color=color, linestyle = linestyles[i])
 
     if title is None:
-        title = "Spring Semester"
-    plt.title(title)
-    plt.ylabel('Number')
+        if metagroup_names == None:
+            plt.title("Spring Semester Infections, Students+Employees")
+        else:
+            plt.title("Infections " + reduce(add, [scenario["metagroup_names"][x] for x in metagroup_names]))
+    else:
+        plt.title("Spring Semester")
+    plt.ylabel('Cumulative Number')
     if legend:
-        plt.legend()
-    plt.savefig(outfile, facecolor='w')
-    plt.close()
+        ax = plt.gca()
+        # Put legend below the current axis because it's too big
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.20),
+                  fancybox=True, shadow=True, ncol=2)
+    # plt.savefig(outfile, facecolor='w')
+    # plt.close()
 
 
 def plot_hospitalization(outfile, trajectories: List[Trajectory], legend = True):
@@ -281,13 +288,13 @@ def plot_hospitalization(outfile, trajectories: List[Trajectory], legend = True)
                           title="Spring Semester Hospitalizations, Students+Employees",
                           legend=legend)
 
-def plot_total_infected_discovered(outfile, trajectories: List[Trajectory], legend = True):
+def plot_total_infected_discovered(trajectories: List[Trajectory], title = None, metagroup_names = None, legend = True):
     """Plot total discovered, including arrival."""
-    plot_metrics_over_time(outfile=outfile,
-                          trajectories=trajectories,
+    plot_metrics_over_time(trajectories=trajectories,
                           metric_names=["Discovered", "Infected"],
                           metrics=[metrics.get_total_discovered, metrics.get_total_infected],
-                          title="Spring Semester Discovered + Infected, including Arrival, Students+Employees",
+                          title=title,
+                          metagroup_names = metagroup_names,
                           legend=legend)
 
 def param2txt(params):
