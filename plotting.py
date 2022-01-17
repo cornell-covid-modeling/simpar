@@ -77,8 +77,7 @@ def plot_infected_discovered(trajectories: List[Trajectory],
 
 def plot_isolated(trajectories: List[Trajectory],
                   legend = True,
-                  metagroup_names = None,
-                  oncampus = False):
+                  metagroup_names = None):
     """Plot the number of rooms of isolation required to isolate on-campus
     students under the passed set of test regimes.
     popul, metagroups_names and metagroup_idx are only needed if we getting specific metagroups.
@@ -86,7 +85,6 @@ def plot_isolated(trajectories: List[Trajectory],
     Turn on the oncampus flag to apply the oncampus_frac
     """
     for trajectory in trajectories:
-        scenario = trajectory.scenario
         label = trajectory.name
         s = trajectory.sim
         color = trajectory.color
@@ -96,19 +94,11 @@ def plot_isolated(trajectories: List[Trajectory],
         isolated = metrics.get_isolated(trajectory=trajectory,
                                         metagroup_names=metagroup_names)
 
-        if oncampus:
-            on_campus_isolated = scenario["on_campus_frac"] * isolated
-            plt.plot(X, on_campus_isolated, label=label, color=color)
-            if metagroup_names is None:
-                plt.title("On-campus Isolation (Students+Employees)")
-            else:
-                plt.title("On-campus Isolation (" + str(metagroup_names) + ")")
+        plt.plot(X, isolated, label=label, color=color)
+        if metagroup_names is None:
+            plt.title("Isolation (Students+Employees)")
         else:
-            plt.plot(X, isolated, label=label, color=color)
-            if metagroup_names is None:
-                plt.title("Isolation (Students+Employees)")
-            else:
-                plt.title("Isolation (" + str(metagroup_names) + ")")
+            plt.title("Isolation (" + str(metagroup_names) + ")")
 
     if legend:
         plt.legend()
@@ -129,13 +119,14 @@ def plot_comprehensive_summary(outfile: str,
     window = 423 # Start in the second row
 
     plt.subplot(window)
-    plot_isolated(trajectories, metagroup_names = ['UG'],
-                  legend = False, oncampus = True)
+    plot_isolated(trajectories, metagroup_names = ['UG_on'],
+                  legend = False)
     window += 1
 
     plt.subplot(window)
-    plot_isolated(trajectories, metagroup_names = ['UG', 'PR'],
-                  legend = False, oncampus = False)
+    plot_isolated(trajectories, metagroup_names = ['UG_on', 'UG_off',
+                                                   'PR_on', 'PR_off'],
+                  legend = False)
     window += 1
 
     # Assumes that every trajectory in [trajectories] has the same population
@@ -143,11 +134,11 @@ def plot_comprehensive_summary(outfile: str,
     metagroups = popul.metagroup_names()
 
     # Plot infected and discovered for each meta-group
-    if len(metagroups) > 1:
-        for i in range(len(metagroups)):
-            plt.subplot(window)
-            window += 1
-            plot_infected_discovered(trajectories, popul, [metagroups[i]], legend = False)
+    groups = [["UG_on", "UG_off"], ["GR_on", "GR_off"], ["PR_on", "PR_off"], ["FS"]]
+    for group in groups:
+        plt.subplot(window)
+        window += 1
+        plot_infected_discovered(trajectories, popul, group, legend = False)
 
     # def print_params():
     #     if simple_param_summary is None:

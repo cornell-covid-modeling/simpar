@@ -44,7 +44,7 @@ def get_isolated(trajectory: Trajectory, metagroup_names: List[str] = None):
     return isolated + additional_isolated
 
 def get_total_discovered(trajectory: Trajectory, metagroup_names: List[str] = None):
-    """Return the number of discovered positives at each generation, 
+    """Return the number of discovered positives at each generation,
         including those discovered upon arrival.
 
     Args:
@@ -67,7 +67,7 @@ def get_total_discovered(trajectory: Trajectory, metagroup_names: List[str] = No
 
     active_discovered_sum = \
         sum(trajectory.strategy.get_active_discovered(scenario)[metagroup_idx])
-    ARRIVAL_DURATION = 3  
+    ARRIVAL_DURATION = 3
     active_discovered = np.zeros(sim.max_T)
     for i in range(ARRIVAL_DURATION):
         active_discovered[i] += active_discovered_sum / ARRIVAL_DURATION
@@ -75,7 +75,7 @@ def get_total_discovered(trajectory: Trajectory, metagroup_names: List[str] = No
     return np.cumsum(active_discovered) + discovered
 
 def get_total_infected(trajectory: Trajectory, metagroup_names: List[str] = None):
-    """Return the number of infected positives at each generation, 
+    """Return the number of infected positives at each generation,
         including those discovered to be infected upon arrival.
 
     Args:
@@ -98,7 +98,7 @@ def get_total_infected(trajectory: Trajectory, metagroup_names: List[str] = None
 
     active_discovered_sum = \
         sum(trajectory.strategy.get_active_discovered(scenario)[metagroup_idx])
-    ARRIVAL_DURATION = 3  
+    ARRIVAL_DURATION = 3
     active_discovered = np.zeros(sim.max_T)
     for i in range(ARRIVAL_DURATION):
         active_discovered[i] += active_discovered_sum / ARRIVAL_DURATION
@@ -108,25 +108,24 @@ def get_total_infected(trajectory: Trajectory, metagroup_names: List[str] = None
 def get_peak_hotel_rooms(trajectory: Trajectory):
     """Return the peak number of hotel room used over the semester."""
     isolated = get_isolated(trajectory=trajectory,
-                            metagroup_names = ['UG'])
-    on_campus_isolated = trajectory.scenario["on_campus_frac"] * isolated
-    return int(np.ceil(np.max(on_campus_isolated)))
+                            metagroup_names = ['UG_on'])
+    return int(np.ceil(np.max(isolated)))
 
 
 def get_total_hotel_rooms(trajectory: Trajectory):
     """Return the total number of hotel rooms used over the semester."""
     isolated = get_isolated(trajectory=trajectory,
-                            metagroup_names = ['UG'])
+                            metagroup_names = ['UG_on'])
     scenario = trajectory.scenario
-    on_campus_isolated = scenario["on_campus_frac"] * isolated
-    return int(np.ceil(np.sum(on_campus_isolated) * scenario["generation_time"]))
+    return int(np.ceil(np.sum(isolated) * scenario["generation_time"]))
 
 
 def get_ug_prof_days_in_isolation_in_person(trajectory: Trajectory):
     """Return the number of undergrad and professional days in isolation
     during the portion of the semester that is in-person."""
     isolated = get_isolated(trajectory=trajectory,
-                            metagroup_names = ['UG', 'PR'])
+                            metagroup_names = ['UG_on', 'UG_off',
+                                               'PR_on', 'PR_off'])
     # TODO (hwr26): Is there some way to compute this from trajectory.strategy?
     START_OF_IN_PERSON = 5 # generation when we start in-person instruction
     scenario = trajectory.scenario
@@ -136,7 +135,8 @@ def get_ug_prof_days_in_isolation_in_person(trajectory: Trajectory):
 def get_ug_prof_days_in_isolation(trajectory: Trajectory):
     """Return the number of undergrad and professional days in isolation."""
     isolated = get_isolated(trajectory=trajectory,
-                            metagroup_names = ['UG', 'PR'])
+                            metagroup_names = ['UG_on', 'UG_off',
+                                               'PR_on', 'PR_off'])
     return int(np.sum(isolated) * trajectory.scenario["generation_time"])
 
 

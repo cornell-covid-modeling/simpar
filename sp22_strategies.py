@@ -17,7 +17,9 @@ def no_testing_testing_regime(scenario: Dict):
 def ug_prof_2x_week_testing_regime(scenario: Dict):
     return TestingRegime(scenario=scenario,
                          test_type="pcr",
-                         tests_per_week={ 'UG':2, 'GR':0, 'PR':2, 'FS':0})
+                         tests_per_week={ 'UG_on':2, 'UG_off':2,
+                                          'GR_on':0, 'GR_off':0,
+                                          'PR_on':2, 'PR_off':2, 'FS':0})
 
 # =========================
 # Potential sp22 strategies

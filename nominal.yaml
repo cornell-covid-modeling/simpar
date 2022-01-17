@@ -1,19 +1,28 @@
 metagroups:                     # list of the metagroups
-  - "UG"
-  - "GR"
-  - "PR"
+  - "UG_on"
+  - "UG_off"
+  - "GR_on"
+  - "GR_off"
+  - "PR_on"
+  - "PR_off"
   - "FS"
 
 metagroup_names:                # names of metagroups
-  UG: "UG"
-  GR: "Grad-Research"
-  PR: "Professional"
+  UG_on: "On-Campus UG"
+  UG_off: "Off-Campus UG"
+  GR_on: "On-Campus Grad-Research"
+  GR_off: "Off-Campus Grad-Research"
+  PR_on: "On-Campus Professional"
+  PR_off: "Off-Campus Professional"
   FS: "Employees"
 
 population_count:               # population count (by meta group)
-  UG: 16000
-  GR: 8000
-  PR: 3000
+  UG_on: 7475     # [16250 * 0.46]
+  UG_off: 8775    # [16250 * 0.54]
+  GR_on: 87       # [7250 * 0.012]
+  GR_off: 7163    # [7250 * 0.988]
+  PR_on: 12       # [3000 * 0.004]
+  PR_off: 2988    # [3000 * 0.996]
   FS: 10000
 
 # The google sheet below works out these numbers, and also the number of people
@@ -23,9 +32,12 @@ population_count:               # population count (by meta group)
 # https://docs.google.com/spreadsheets/d/1bWOtKMsK4dBm47GPHWb3LhiPNuYlXFHvDr-f0BIv7IY/edit?usp=sharing
 
 dec_surge_infections:
-  UG: 1900
-  GR: 0
-  PR: 0
+  UG_on: 874      # [1900 * 0.46]
+  UG_off: 102     # [1900 * 0.54]
+  GR_on: 0
+  GR_off: 0
+  PR_on: 0
+  PR_off: 0
   FS: 0
 
 # @Brian Liu's analysis:
@@ -33,29 +45,38 @@ dec_surge_infections:
 # Divide by 2 and scale by population size to get GR and VM/GM/LA.
 # Take 15 per day for 40 days to get fac/staff
 winter_break_infections:
-  UG: 2506
-  GR: 627   # [(2506/2) * (8000/16000)]
-  PR: 235   # [(2506/2) * (3000/16000)]
-  FS: 600   # [15 * 40]
+  UG_on: 1153       # [2506 * 0.46]
+  UG_off: 1353      # [2506 * 0.54]
+  GR_on: 7          # [(2506/2) * (87/16250)]
+  GR_off: 552       # [(2506/2) * (7163/16250)]
+  PR_on: 1          # [(2506/2) * (12/16250)]
+  PR_off: 230       # [(2506/2) * (2988/16250)]
+  FS: 600           # [15 * 40]
 
 # @Brian Liu's analysis:
 # 965 UG positives in the period 1/26/2022 - 2/7/2022
 # Divide by 2 and scale by population size to get GR and VM/GM/LA.
 # Take 15 per day for 3 days to get fac/staff
 active_infections:
-  UG: 965
-  GR: 241   # [(965/2) * (8000/16000)]
-  PR: 90    # [(965/2) * (3000/16000)]
-  FS: 45    # [15 * 3]
+  UG_on: 444        # [965 * 0.46]
+  UG_off: 521       # [965 * 0.54]
+  GR_on: 3          # [(965/2) * (87/16250)]
+  GR_off: 213       # [(965/2) * (7163/16250)]
+  PR_on: 0          # [(965/2) * (12/16250)]
+  PR_off: 89        # [(965/2) * (2988/16250)]
+  FS: 45            # [15 * 3]
 
 # @Yujia's analyis
 # NOTE: This parameter is calibrated to a non-boosted population hence this
 # is interpreted as non-boosted hospitalization rates.
 hospitalization_rates:
-  UG: 0.00025  # [1/4000]
-  GR: 0.00025  # [1/4000]
-  PR: 0.00025  # [1/4000]
-  FS: 0.005    # [1/200]
+  UG_on: 0.00025    # [1/4000]
+  UG_off: 0.00025   # [1/4000]
+  GR_on: 0.00025    # [1/4000]
+  GR_off: 0.00025   # [1/4000]
+  PR_on: 0.00025    # [1/4000]
+  PR_off: 0.00025   # [1/4000]
+  FS: 0.005         # [1/200]
 
 # In the modeling team's spring 2021 projections, based on fall 2020 data, we estimated per-person
 # outside infection rates of 1.42E-5 for the greek/athlete population, 7.11E-6 for other UG, and
@@ -69,9 +90,12 @@ hospitalization_rates:
 # NOTE: This parameter is calibrated to a non-boosted population hence this
 # is interpreted as non-boosted outside rates.
 outside_rates: #number of infections for each meta-group per day across the whole meta-group
-  UG: 0.8
-  GR: 0.4
-  PR: 0.15
+  UG_on: 0.8
+  UG_off: 0.8
+  GR_on: 0.4
+  GR_off: 0.4
+  PR_on: 0.15
+  PR_off: 0.15
   FS: 5         # @sst76 from observed 175 over 77 days in employees from 9/15 to 12/01, to give 2.27
                 # pf98 more recently we've see roughly 15 per day across the entire employee population
                 # Cutting this to 5 because by the time the semester starts new cases should be less frequent
@@ -80,10 +104,13 @@ outside_rates: #number of infections for each meta-group per day across the whol
 # (after 3 generations / 12 days pass from the start of the simulation --- this is 7 pre-semester days and 5 days
 # during virtual instruction )
 classwork_transmission_multiplier:
-  UG: 0.85
-  GR: 1     # we model them as not being affected by classwork
-  PR: 0.85
-  FS: 1     # we model them as not being affected by classwork
+  UG_on: 0.85
+  UG_off: 0.85
+  GR_on: 1      # we model them as not being affected by classwork
+  GR_off: 1     # we model them as not being affected by classwork
+  PR_on: 0.85
+  PR_off: 0.85
+  FS: 1         # we model them as not being affected by classwork
 
 # Number of infections per day per (meta-group-specific contact unit).
 # This is based on the following analysis:
@@ -92,9 +119,12 @@ classwork_transmission_multiplier:
 # NOTE: This parameter is calibrated to a non-boosted population hence this
 # is interpreted as non-boosted infections rates.
 infections_per_day_per_contact_unit:
-  UG: 0.28
-  GR: 0.10
-  PR: 0.10
+  UG_on: 0.28
+  UG_off: 0.28
+  GR_on: 0.10
+  GR_off: 0.10
+  PR_on: 0.10
+  PR_off: 0.10
   FS: 0.015 # @sst calibration during the Dec 31 meeting gives 0.005.  Increasing this 3x for Omicron.
 
 
@@ -121,15 +151,17 @@ booster_multiplier: 0.5
 booster_hospitalization_multiplier: 1.0
 
 booster_rate:                   # rate of booster vaccination
-  UG: 1.00
-  GR: 1.00
-  PR: 1.00
-  FS: 1.00
+  UG_on: 1.0
+  UG_off: 1.0
+  GR_on: 1.0
+  GR_off: 1.0
+  PR_on: 1.0
+  PR_off: 1.0
+  FS: 1.0
 
 generation_time: 4              # generation time (days)
 
 # Define the isolation policy in use.
-on_campus_frac: 0.41875         # fraction of students on campus, 6700/16000
 isolation_durations:            # durations of isolation (days)
   - 5
   - 10
@@ -159,25 +191,61 @@ tests:
 
 # This matrix encodes the amount of contact between metagroups
 meta_matrix:
-  UG:
-    UG: 0.8351648352
-    GR: 0.03296703297
-    PR: 0.05054945055
+  UG_on:
+    UG_on: 0.38417582
+    UG_off: 0.45098901
+    GR_on: 0.0003956
+    GR_off: 0.03257143
+    PR_on: 0.0002022
+    PR_off: 0.05034725
     FS: 0.08131868132
-  GR:
-    UG: 0.02033898305
-    GR: 0.9593220339
-    PR: 0.02033898305
+  UG_off:
+    UG_on: 0.38417582
+    UG_off: 0.45098901
+    GR_on: 0.0003956
+    GR_off: 0.03257143
+    PR_on: 0.0002022
+    PR_off: 0.05034725
+    FS: 0.08131868132
+  GR_on:
+    UG_on: 0.00935593
+    UG_off: 0.01098305
+    GR_on: 0.01151186
+    GR_off: 0.94781017
+    PR_on: 0.00008136
+    PR_off: 0.02025763
     FS: 0.0
-  PR:
-    UG: 0.1634615385
-    GR: 0.1057692308
-    PR: 0.6923076923
+  GR_off:
+    UG_on: 0.00935593
+    UG_off: 0.01098305
+    GR_on: 0.01151186
+    GR_off: 0.94781017
+    PR_on: 0.00008136
+    PR_off: 0.02025763
+    FS: 0.0
+  PR_on:
+    UG_on: 0.07519231
+    UG_off: 0.08826923
+    GR_on: 0.00126923
+    GR_off: 0.1045
+    PR_on: 0.00276923
+    PR_off: 0.68953846
+    FS: 0.03846153846
+  PR_off:
+    UG_on: 0.07519231
+    UG_off: 0.08826923
+    GR_on: 0.00126923
+    GR_off: 0.1045
+    PR_on: 0.00276923
+    PR_off: 0.68953846
     FS: 0.03846153846
   FS:
-    UG: 0.06875
-    GR: 0.0125
-    PR: 0.05
+    UG_on: 0.031625
+    UG_off: 0.037125
+    GR_on: 0.00015
+    GR_off: 0.01235
+    PR_on: 0.0002
+    PR_off: 0.0498
     FS: 0.86875
 
 # The distribution of social contacts are pulled from a Pareto distribution
@@ -185,13 +253,19 @@ meta_matrix:
 # fit distributions are based on Xiangyu's adjusted moment match code.
 # Assumes that group i has i+1 contacts per day.
 pop_fracs_pareto:
-  UG: 0.089
-  GR: 0.765
-  PR: 0.401
+  UG_on: 0.089
+  UG_off: 0.089
+  GR_on: 0.765
+  GR_off: 0.765
+  PR_on: 0.401
+  PR_off: 0.401
   FS: 0.693
 
 pop_fracs_max:
-  UG: 9
-  GR: 10
-  PR: 10
+  UG_on: 9
+  UG_off: 9
+  GR_on: 10
+  GR_off: 10
+  PR_on: 10
+  PR_off: 10
   FS: 11
