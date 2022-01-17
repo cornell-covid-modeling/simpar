@@ -2,17 +2,34 @@ winter_break_infections_global:
   op: "multiply"
   scale: "linear"
   affected:
-    winter_break_infections/UG: 1
-    winter_break_infections/GR: 1
-    winter_break_infections/PR: 1
+    winter_break_infections/UG_on: 1
+    winter_break_infections/UG_off: 1
+    winter_break_infections/GR_on: 1
+    winter_break_infections/GR_off: 1
+    winter_break_infections/PR_on: 1
+    winter_break_infections/PR_off: 1
     winter_break_infections/FS: 1
 
 classwork_transmission_multiplier_UG_PR:
   op: "multiply"
   scale: "linear"
   affected:
-    classwork_transmission_multiplier/UG: 1
-    classwork_transmission_multiplier/PR: 1
+    classwork_transmission_multiplier/UG_on: 1
+    classwork_transmission_multiplier/UG_off: 1
+    classwork_transmission_multiplier/PR_on: 1
+    classwork_transmission_multiplier/PR_off: 1
+
+outside_rate_multiplier:
+  op: "multiply"
+  scale: "linear"
+  affected:
+    outside_rates/UG_on: 1
+    outside_rates/UG_off: 1
+    outside_rates/GR_on: 1
+    outside_rates/GR_off: 1
+    outside_rates/PR_on: 1
+    outside_rates/PR_off: 1
+    outside_rates/FS: 1
 
 template:
   op:  # "scale" or "add"
