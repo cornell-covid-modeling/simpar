@@ -54,7 +54,12 @@ class ScenarioFamily:
         flattened_scenario = self.flattened_nominal
         for name, dist in self.prior.items():
             # TODO (hwr26): be careful here if extending to using other dists
-            flattened_scenario[name] = dist["mu"]
+            val = dist["mu"]
+            if "sets" in dist:
+                for param in dist["sets"]:
+                    flattened_scenario[param] = val
+            else:
+                flattened_scenario[name] = val
         return unflatten_dict(flattened_scenario)
 
 
@@ -65,5 +70,10 @@ class ScenarioFamily:
             mu = dist["mu"]
             std = dist["std"]
             a, b = (dist["a"] - mu) / std, (dist["b"] - mu) / std
-            flattened_scenario[name] = stats.truncnorm.rvs(a,b,mu,std)
+            val = stats.truncnorm.rvs(a,b,mu,std)
+            if "sets" in dist:
+                for param in dist["sets"]:
+                    flattened_scenario[param] = val
+            else:
+                flattened_scenario[name] = val
         return unflatten_dict(flattened_scenario)

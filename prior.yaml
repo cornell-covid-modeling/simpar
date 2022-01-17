@@ -55,10 +55,14 @@ outside_rate_postpeak_multiplier:
 
 #TODO [Sam], add parameter for uncertainty around student/FS proportions for outside_rate
 
-template:
+# TODO (hwr26): this is one approach but should be discussed
+classwork_transmission_multiplier:
   a: 0
   b: 1
-  mu: 0.5
-  std: 0.1
-
-# TODO: [Peter] to add more ..
+  mu: 0.85
+  std: 0.075
+  sets:
+    - classwork_transmission_multiplier/UG_on
+    - classwork_transmission_multiplier/UG_off
+    - classwork_transmission_multiplier/PR_on
+    - classwork_transmission_multiplier/PR_off
