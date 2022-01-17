@@ -4,6 +4,58 @@ from micro import days_infectious
 from typing import List, Dict, Union
 np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
 
+
+class ArrivalTestingRegime:
+
+    def __init__(self, scenario: Dict, pre_departure_test_type: Union[float, dict],
+        arrival_test_type: Union[float, dict]):
+        """Initialize an arrival testing regime.
+
+        Args:
+            scenario (Dict): The scenario under which the testing regime is used.
+            pre_departure_test_type (Union[float, dict]): The type of test to \
+                be used for pre-departure testing.
+            arrival_test_type (Union[float, dict]): The type of test to \
+                be used for arrival testing.
+        """
+        popul = population.from_scenario(scenario)
+        K = len(popul.metagroup_names())
+
+        mg_names = popul.metagroup_names()
+        for i in range(len(mg_names)):
+
+            if isinstance(pre_departure_test_type, dict):
+                _pre_departure_test_type = pre_departure_test_type[mg_names[i]]
+            else:
+                _pre_departure_test_type = pre_departure_test_type
+            if isinstance(arrival_test_type, dict):
+                _arrival_test_type = arrival_test_type[mg_names[i]]
+            else:
+                _arrival_test_type = arrival_test_type
+
+            pre_departure_sensitivity = \
+                scenario["tests"][_pre_departure_test_type]["sensitivity"] * \
+                scenario["tests"][_pre_departure_test_type]["compliance"]
+
+            arrival_sensitivity = \
+                scenario["tests"][_arrival_test_type]["sensitivity"] * \
+                scenario["tests"][_arrival_test_type]["compliance"]
+
+            self.pct_discovered_in_pre_departure = \
+                np.multiply(np.ones(K), pre_departure_sensitivity)
+
+            self.pct_discovered_in_arrival_test = \
+                np.multiply(
+                    1 - self.pct_discovered_in_pre_departure,
+                    arrival_sensitivity)
+
+    def get_pct_discovered_in_pre_departure(self):
+        return self.pct_discovered_in_pre_departure
+
+    def get_pct_discovered_in_arrival_test(self):
+        return self.pct_discovered_in_arrival_test
+
+
 class TestingRegime:
 
     def __init__(self, scenario: Dict, test_type: Union[float, dict],
@@ -100,8 +152,7 @@ class Strategy:
 
     def __init__(self,
         name: str,
-        pct_discovered_in_pre_departure: float,
-        pct_discovered_in_arrival_test: float,
+        arrival_testing_regime: ArrivalTestingRegime,
         testing_regimes: List[TestingRegime],
         transmission_multipliers: List[float],
         period_lengths: List[int]):
@@ -109,10 +160,7 @@ class Strategy:
 
         Args:
             name (str): Name for this strategy.
-            pct_discovered_in_pre_departure (float): Percentage of active \
-                positives who are discovered as a result of pre-departure testing.
-            pct_discovered_in_arrival_test (float): Percentage of active \
-                positives who are discovered as a result of arrival testing.
+            arrival_testing_regime: Arrival testing regime to be used.
             testing_regimes (List[TestingRegime]): Testing regime to be used in \
                 each period of the simulation.
             transmission_multipliers (List[float]): Transmission multiplier to \
@@ -121,8 +169,15 @@ class Strategy:
                 of the simulation.
         """
         self.name = name
-        self.pct_discovered_in_pre_departure = pct_discovered_in_pre_departure
-        self.pct_discovered_in_arrival_test = pct_discovered_in_arrival_test
+
+        if arrival_testing_regime is None:
+            self.pct_discovered_in_pre_departure = 0
+            self.pct_discovered_in_arrival_test = 0
+        else:
+            self.pct_discovered_in_pre_departure = \
+                arrival_testing_regime.get_pct_discovered_in_pre_departure()
+            self.pct_discovered_in_arrival_test = \
+                arrival_testing_regime.get_pct_discovered_in_arrival_test()
 
         n = len(period_lengths)
         assert len(testing_regimes) == n
