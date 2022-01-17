@@ -150,9 +150,11 @@ max_infectious_days: 6
 tests:
   pcr:
     sensitivity: 0.9
+    test_delay: 1.5
     compliance: 1.0
   antigen:
     sensitivity: 0.9  # TODO (hwr): Think about what this should actually be
+    test_delay: 0
     compliance: 0.5   # TODO (hwr): Think about what this should actually be
 
 # This matrix encodes the amount of contact between metagroups
