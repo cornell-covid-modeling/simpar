@@ -1,7 +1,6 @@
 import numpy as np
-from testing_regime import TestingRegime
 from plotting import Trajectory
-from strategy import Strategy
+from strategy import TestingRegime, Strategy
 from sim import sim
 from groups import population
 from typing import Dict

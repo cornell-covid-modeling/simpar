@@ -1,5 +1,4 @@
-from strategy import Strategy
-from testing_regime import TestingRegime
+from strategy import TestingRegime, Strategy
 from typing import Dict
 
 # ========================================================
