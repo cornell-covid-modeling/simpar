@@ -125,7 +125,7 @@ class TestingRegime:
 
             sensitivity = scenario["tests"][_test_type]["sensitivity"] * \
                           scenario["tests"][_test_type]["compliance"]
-            delay = scenario["tests"][test_type]["test_delay"]
+            delay = scenario["tests"][_test_type]["test_delay"]
 
             self.days_infectious[i] = days_infectious(_days_between_tests, delay, \
                                                  sensitivity=sensitivity, \

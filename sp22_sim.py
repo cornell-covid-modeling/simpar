@@ -5,7 +5,7 @@ import yaml
 from groups import population
 from sim_helper import sim_test_regime, sim_test_strategy
 from sp22_strategies import (no_testing_strategy, arrival_testing_strategy,
-                             surge_testing_strategy)
+                             sp22_testing_strategy)
 import plotting
 
 
@@ -37,7 +37,7 @@ def main(yaml_file='nominal.yaml', simple_plot=False, out_file='sp22_sim.png', *
 
     if plot == 1:
         trajectories = [
-            sim_test_strategy(params, surge_testing_strategy(params), 'purple'),
+            sim_test_strategy(params, sp22_testing_strategy(params), 'purple'),
             sim_test_strategy(params, arrival_testing_strategy(params), 'black'),
         ]
     if plot == 2:
@@ -52,7 +52,7 @@ def main(yaml_file='nominal.yaml', simple_plot=False, out_file='sp22_sim.png', *
         trajectories = [
             sim_test_strategy(params, no_testing_strategy(params), 'royalblue'),
             sim_test_strategy(params, arrival_testing_strategy(params), 'black'),
-            sim_test_strategy(params, surge_testing_strategy(params), 'purple')
+            sim_test_strategy(params, sp22_testing_strategy(params), 'purple')
         ]
 
     # =================
