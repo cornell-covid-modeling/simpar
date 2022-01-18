@@ -104,8 +104,12 @@ outside_rates: #number of infections for each meta-group per day across the whol
 # (after 3 generations / 12 days pass from the start of the simulation --- this is 7 pre-semester days and 5 days
 # during virtual instruction )
 classwork_transmission_multiplier:
+  UG_on: "classwork_transmission_multiplier"
+  UG_off: "classwork_transmission_multiplier"
   GR_on: 1      # we model them as not being affected by classwork
   GR_off: 1     # we model them as not being affected by classwork
+  PR_on: "classwork_transmission_multiplier"
+  PR_off: "classwork_transmission_multiplier"
   FS: 1         # we model them as not being affected by classwork
 
 # Number of infections per day per (meta-group-specific contact unit).
@@ -126,6 +130,8 @@ infections_per_day_per_contact_unit:
 
 
 T: 28                           # num generations (16 weeks with 4-day generations)
+
+symptomatic_rate: "symptomatic_rate"
 
 no_surveillance_test_rate: 0.01 # percent of the population tested in a generation
                                 # (under no surveillance)
