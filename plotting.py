@@ -193,11 +193,13 @@ def plot_parameter_sensitivity(outfile: str, trajectories: List[Trajectory],
 
 
 def plot_metric_over_time(outfile: str, trajectories: List[Trajectory],
-    metric_name: str, metric: Callable, title: str = None, legend = True) -> None:
-    """Plot a comparison the [trajectories] for a given [metric] over time.
+    metric_name: str, metric: Callable, title: str = None, legend = True,
+    confidence_interval = False) -> None:
+    """Plot the [trajectories] for a given [metric] over time.
 
     The x-axis of the plot is time while the y-axis is the value of the metric.
-    Each trajectory is shown as a different line on the plot.
+    If confidence_interval is False, each trajectory is shown as a different
+    line on the plot. Otherwise, the nominal trajectory with 95% CI is shown.
 
     Args:
         outfile (str): String file path.
@@ -206,19 +208,32 @@ def plot_metric_over_time(outfile: str, trajectories: List[Trajectory],
         metric (Callable): Function to compute the metric.
         title (str, optional): Title of the plot.
         legend (bool, optional): Show legend if True. Defaults to True.
+        confidence_interval (bool, optional): Show a 95% CI using the given \
+            list of trajectories. Sort based on final value of the trajectory.
     """
     plt.rcParams["figure.figsize"] = (8,6)
     plt.rcParams['font.size'] = 15
-    plt.rcParams['lines.linewidth'] = 6
+    plt.rcParams['lines.linewidth'] = 4
     plt.rcParams['legend.fontsize'] = 12
 
-    for trajectory in trajectories:
-        scenario = trajectory.scenario
-        label = trajectory.name
-        color = trajectory.color
+    if confidence_interval == False:
+        for trajectory in trajectories:
+            scenario = trajectory.scenario
+            label = trajectory.name
+            color = trajectory.color
+            x = np.arange(scenario["T"]) * scenario["generation_time"]
+            y = metric(trajectory)
+            plt.plot(x, y, label=label, color=color, linestyle = 'solid')
+    else:
+        scenario = trajectories[0].scenario
         x = np.arange(scenario["T"]) * scenario["generation_time"]
-        y = metric(trajectory)
-        plt.plot(x, y, label=label, color=color, linestyle = 'solid')
+        ys = [metric(trajectory) for trajectory in trajectories]
+        ys = sorted(ys, key = lambda x: x[-1])
+        p025 = ys[int(len(ys) * (2.5 / 100))]
+        p50 = ys[int(len(ys) * (50 / 100))]
+        p975 = ys[int(len(ys) * (97.5 / 100))]
+        plt.plot(x, p50, label="Nominal (50%)", color="#9ecae1", linestyle="solid")
+        plt.fill_between(x, p025, p975, label="95% CI", alpha=0.5, color="#9ecae1")
 
     if title is None:
         title = f"{metric_name} over the Spring Semester"

@@ -5,7 +5,7 @@ from groups import population
 import metrics
 from transform import transform
 from sim_helper import sim_test_strategy
-from sp22_strategies import surge_testing_strategy
+from sp22_strategies import sp22_testing_strategy
 import plotting
 
 COLORS = ['#084594', '#2171b5', '#4292c6', '#6baed6',
@@ -24,12 +24,12 @@ nominal_scenario["meta_matrix"] = \
 # ==========================
 
 trajectories = []
-scalers = np.linspace(0.0,1.0,20)
+scalers = np.linspace(0.0,1.0,50)
 for i in range(len(scalers)):
     scenario = transform(nominal_scenario,
                          {"booster_rate/FS_multiply_linear_scale": scalers[i]})
     traj = sim_test_strategy(scenario=scenario,
-                             strategy=surge_testing_strategy(scenario),
+                             strategy=sp22_testing_strategy(scenario),
                              color="white",
                              name=str(scenario["booster_rate"]["FS"]))
     trajectories.append(traj)
@@ -39,8 +39,8 @@ for i in range(len(scalers)):
 # ======
 
 popul = population.from_scenario(nominal_scenario)
-plotting.plot_parameter_sensitivity(outfile="sensitivity_analysis.png",
+plotting.plot_metric_over_time(outfile="sensitivity_analysis.png",
                                 trajectories=trajectories,
-                                param_name="Employee Booster Rate",
-                                metric_name="Total Employee Hospitalizations",
-                                metric=metrics.get_total_employee_hospitalizations)
+                                metric_name="Cumulative Hospitalizations",
+                                metric=metrics.get_cumulative_all_hospitalizations,
+                                confidence_interval=True)
