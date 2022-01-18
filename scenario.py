@@ -51,29 +51,24 @@ class ScenarioFamily:
 
     def get_nominal_scenario(self):
         """Return the nominal scenario."""
-        flattened_scenario = self.flattened_nominal
-        for name, dist in self.prior.items():
-            # TODO (hwr26): be careful here if extending to using other dists
-            val = dist["mu"]
-            if "sets" in dist:
-                for param in dist["sets"]:
-                    flattened_scenario[param] = val
-            else:
-                flattened_scenario[name] = val
+        flattened_scenario = self.flattened_nominal.copy()
+        for k,v in flattened_scenario.items():
+            if type(v) == str and k.split("/")[0] != "metagroup_names":
+                # TODO (hwr26): be careful here if extending to using other dists
+                flattened_scenario[k] = self.prior[v]["mu"]
         return unflatten_dict(flattened_scenario)
 
 
     def get_sampled_scenario(self):
         """Return a scenario sampled from the prior."""
-        flattened_scenario = self.flattened_nominal
+        flattened_scenario = self.flattened_nominal.copy()
+        samples = {}
         for name, dist in self.prior.items():
             mu = dist["mu"]
             std = dist["std"]
             a, b = (dist["a"] - mu) / std, (dist["b"] - mu) / std
-            val = stats.truncnorm.rvs(a,b,mu,std)
-            if "sets" in dist:
-                for param in dist["sets"]:
-                    flattened_scenario[param] = val
-            else:
-                flattened_scenario[name] = val
+            samples[name] = stats.truncnorm.rvs(a,b,mu,std)
+        for k,v in flattened_scenario.items():
+            if type(v) == str and k.split("/")[0] != "metagroup_names":
+                flattened_scenario[k] = samples[v]
         return unflatten_dict(flattened_scenario)
