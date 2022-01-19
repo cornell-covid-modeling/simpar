@@ -90,15 +90,14 @@ hospitalization_rates:
 # NOTE: This parameter is calibrated to a non-boosted population hence this
 # is interpreted as non-boosted outside rates.
 outside_rates: #number of infections for each meta-group per day across the whole meta-group
-  UG_on: 0.8
-  UG_off: 0.8
-  GR_on: 0.4
-  GR_off: 0.4
-  PR_on: 0.15
-  PR_off: 0.15
-  FS: 5         # @sst76 from observed 175 over 77 days in employees from 9/15 to 12/01, to give 2.27
-                # pf98 more recently we've see roughly 15 per day across the entire employee population
-                # Cutting this to 5 because by the time the semester starts new cases should be less frequent
+  UG_on: "outside_rate_FS * outside_rate_post_peak_multiplier * 0.075"  # [(7475/10000)/10]
+  UG_off: "outside_rate_FS * outside_rate_post_peak_multiplier * 0.088" # [(8775/10000)/10]
+  GR_on: "outside_rate_FS * outside_rate_post_peak_multiplier * 0.0009" # [(87/10000)/10]
+  GR_off: "outside_rate_FS * outside_rate_post_peak_multiplier * 0.07"  # [(7163/10000)/10]
+  PR_on: "outside_rate_FS * outside_rate_post_peak_multiplier * 0.0001" # [(12/10000)/10]
+  PR_off: "outside_rate_FS * outside_rate_post_peak_multiplier * 0.03"  # [(2988/10000)/10]
+  FS: "outside_rate_FS * outside_rate_post_peak_multiplier"
+
 
 # multiplier to apply to transmission once virtual instruction classwork makes students busy
 # (after 3 generations / 12 days pass from the start of the simulation --- this is 7 pre-semester days and 5 days
@@ -125,9 +124,7 @@ infections_per_day_per_contact_unit:
   GR_off: 0.10
   PR_on: 0.10
   PR_off: 0.10
-  FS: 0.015 # @sst calibration during the Dec 31 meeting gives 0.005.  Increasing this 3x for Omicron.
-
-
+  FS: "infections_per_day_per_contact_unit_FS * omicron_transmission_multiplier"
 
 T: 28                           # num generations (16 weeks with 4-day generations)
 
