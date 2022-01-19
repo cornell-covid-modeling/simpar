@@ -43,6 +43,6 @@ for _ in range(100):
 plotting.plot_metric_confidence_interval_over_time(
     outfile="sensitivity_analysis.png",
     trajectories=trajectories,
-    metric_name="Cumulative Hospitalizations",
-    metric=metrics.get_cumulative_all_hospitalizations
+    metric_name="Isolations",
+    metric=metrics.get_ug_on_isolated
 )

@@ -43,6 +43,18 @@ def get_isolated(trajectory: Trajectory, metagroup_names: List[str] = None):
 
     return isolated + additional_isolated
 
+
+def get_ug_on_isolated(trajectory: Trajectory):
+    """Return the isolations among on-campus UGs."""
+    return get_isolated(trajectory, metagroup_names=["UG_on"])
+
+
+def get_ug_pr_isolated(trajectory: Trajectory):
+    """Return the isolations among UGs and PRs"""
+    metagroup_names = ["UG_on", "UG_off", "PR_on", "PR_off"]
+    return get_isolated(trajectory, metagroup_names=metagroup_names)
+
+
 def get_total_discovered(trajectory: Trajectory, metagroup_names: List[str] = None):
     """Return the number of discovered positives at each generation,
         including those discovered upon arrival.
@@ -107,15 +119,13 @@ def get_total_infected(trajectory: Trajectory, metagroup_names: List[str] = None
 
 def get_peak_hotel_rooms(trajectory: Trajectory):
     """Return the peak number of hotel room used over the semester."""
-    isolated = get_isolated(trajectory=trajectory,
-                            metagroup_names = ['UG_on'])
+    isolated = get_ug_on_isolated(trajectory=trajectory)
     return int(np.ceil(np.max(isolated)))
 
 
 def get_total_hotel_rooms(trajectory: Trajectory):
     """Return the total number of hotel rooms used over the semester."""
-    isolated = get_isolated(trajectory=trajectory,
-                            metagroup_names = ['UG_on'])
+    isolated = get_ug_on_isolated(trajectory=trajectory)
     scenario = trajectory.scenario
     return int(np.ceil(np.sum(isolated) * scenario["generation_time"]))
 
@@ -123,9 +133,7 @@ def get_total_hotel_rooms(trajectory: Trajectory):
 def get_ug_prof_days_in_isolation_in_person(trajectory: Trajectory):
     """Return the number of undergrad and professional days in isolation
     during the portion of the semester that is in-person."""
-    isolated = get_isolated(trajectory=trajectory,
-                            metagroup_names = ['UG_on', 'UG_off',
-                                               'PR_on', 'PR_off'])
+    isolated = get_ug_pr_isolated(trajectory=trajectory)
     # TODO (hwr26): Is there some way to compute this from trajectory.strategy?
     START_OF_IN_PERSON = 5 # generation when we start in-person instruction
     scenario = trajectory.scenario
@@ -134,9 +142,7 @@ def get_ug_prof_days_in_isolation_in_person(trajectory: Trajectory):
 
 def get_ug_prof_days_in_isolation(trajectory: Trajectory):
     """Return the number of undergrad and professional days in isolation."""
-    isolated = get_isolated(trajectory=trajectory,
-                            metagroup_names = ['UG_on', 'UG_off',
-                                               'PR_on', 'PR_off'])
+    isolated = get_ug_pr_isolated(trajectory=trajectory)
     return int(np.sum(isolated) * trajectory.scenario["generation_time"])
 
 
