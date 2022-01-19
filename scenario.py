@@ -3,7 +3,13 @@ import numpy as np
 import pandas as pd
 import scipy.stats as stats
 from sympy.parsing.sympy_parser import parse_expr
-from typing import Dict, Union
+from enum import Enum
+from typing import Dict
+
+
+class Scale(Enum):
+    LINEAR = "linear"
+    LOG = "log"
 
 
 # https://stackoverflow.com/a/54829922
@@ -50,26 +56,46 @@ class ScenarioFamily:
         self.flattened_nominal = flatten_dict(nominal)
         self.prior = prior
 
+    @staticmethod
+    def _get_nominal(dist):
+        """Return the nominal value of a distribution."""
+        # TODO (hwr26): be careful here if extending to using other dists
+        if dist["scale"] == Scale.LINEAR.value:
+            return dist["mu"]
+        elif dist["scale"] == Scale.LOG.value:
+            return np.exp(dist["mu"])
+        else:
+            raise ValueError(f"Unsupported scale: {dist['scale']}")
+
+    @staticmethod
+    def _get_sample(dist):
+        """Return a sample from the distribution."""
+        mu = dist["mu"]
+        std = dist["std"]
+        a, b = (dist["a"] - mu) / std, (dist["b"] - mu) / std
+        val = stats.truncnorm.rvs(a,b,mu,std)
+        if dist["scale"] == Scale.LINEAR.value:
+            return val
+        elif dist["scale"] == Scale.LOG.value:
+            return np.exp(val)
+        else:
+            raise ValueError(f"Unsupported scale: {dist['scale']}")
+
     def get_nominal_scenario(self):
         """Return the nominal scenario."""
         flattened_scenario = self.flattened_nominal.copy()
-        # TODO (hwr26): be careful here if extending to using other dists
-        nominal = {k:v["mu"] for k,v in self.prior.items()}
+        nominal = {k:self._get_nominal(v) for k,v in self.prior.items()}
         for k,v in flattened_scenario.items():
             if type(v) == str and k.split("/")[0] != "metagroup_names":
                 flattened_scenario[k] = parse_expr(v, nominal)
         return unflatten_dict(flattened_scenario)
-
 
     def get_sampled_scenario(self):
         """Return a scenario sampled from the prior."""
         flattened_scenario = self.flattened_nominal.copy()
         samples = {}
         for name, dist in self.prior.items():
-            mu = dist["mu"]
-            std = dist["std"]
-            a, b = (dist["a"] - mu) / std, (dist["b"] - mu) / std
-            samples[name] = stats.truncnorm.rvs(a,b,mu,std)
+            samples[name] = self._get_sample(dist)
         for k,v in flattened_scenario.items():
             if type(v) == str and k.split("/")[0] != "metagroup_names":
                 flattened_scenario[k] = parse_expr(v, samples)

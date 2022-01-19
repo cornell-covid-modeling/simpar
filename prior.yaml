@@ -5,6 +5,7 @@
 # In the early-Jan nominal scenario, this parameter was estimated to be .525. This was based on
 # an estimate of 35% as reporting symptoms, and then multiplying by 1.5 to account for contact tracing.
 symptomatic_rate:
+  scale: "linear"
   a: 0
   b: 1
   mu: 0.39
@@ -16,6 +17,7 @@ symptomatic_rate:
 # NOTE: This is calibrated to a pre-Omicron period so this should be multiplied
 # by the [omicron_transmission_multiplier].
 infections_per_day_per_contact_unit_FS:
+  scale: "linear"
   a: 0        # TODO: reasonable lower bound? using max(0, mu - 3*std)
   b: 0.0125   # TODO: reasonable upper bound? using mu + 3*std
   mu: 0.005
@@ -24,6 +26,7 @@ infections_per_day_per_contact_unit_FS:
 # Owners: Sam (@sst76) and Bonnie (@bca44)
 # TODO: Add explanation
 omicron_transmission_multiplier:
+  scale: "linear"
   a: 1.25   # TODO: reasonable lower bound? using mu - 3*std
   b: 5.75   # TODO: reasonable upper bound? using mu + 3*std
   mu: 3.5
@@ -43,6 +46,7 @@ omicron_transmission_multiplier:
 # pf98 more recently we've see roughly 15 per day across the entire employee population
 # Cutting this to 5 because by the time the semester starts new cases should be less frequent
 outside_rate_FS:
+  scale: "linear"
   a: 9      # TODO: reasonable lower bound? using mu - 3*std
   b: 16.5   # TODO: reasonable upper bound? using mu + 3*std
   mu: 12.75
@@ -53,6 +57,7 @@ outside_rate_FS:
 # pre-omicron outside rate, and upper bound as no decrease in outside_rate
 # e.g. 0.15 \approx 2.27/15.25 (where 15.25 is upper bound on outside_rate_FS)
 outside_rate_post_peak_multiplier:
+  scale: "linear"
   a: 0        # TODO: reasonable lower bound? using max(0,mu - 3*std)
   b: 1.2125   # TODO: reasonable upper bound? using mu + 3*std
   mu: 0.575
@@ -63,7 +68,17 @@ outside_rate_post_peak_multiplier:
 # Owner: Peter (@pf98)
 # TODO: Add explanation
 classwork_transmission_multiplier:
+  scale: "linear"
   a: 0
   b: 1
   mu: 0.85
   std: 0.075
+
+# Owner: Bonnie (@bca44)
+# Based on: https://www.nejm.org/doi/full/10.1056/NEJMoa2114255
+booster_hospitalization_multiplier:
+  scale: "log"
+  a: -3.9     # [mu] - 2[std]
+  b: -0.7     # [mu] + 2[std]
+  mu: -2.30   # ln(1/10)
+  std: 0.8    # exp(ln(1/10) + 2[std]) = 0.5
