@@ -18,8 +18,8 @@ symptomatic_rate:
 # by the [omicron_transmission_multiplier].
 infections_per_day_per_contact_unit_FS:
   scale: "linear"
-  a: 0        # TODO: reasonable lower bound? using max(0, mu - 3*std)
-  b: 0.0125   # TODO: reasonable upper bound? using mu + 3*std
+  a: 0        # must be positive
+  b: .inf  
   mu: 0.005
   std: 0.0025
 
@@ -27,8 +27,8 @@ infections_per_day_per_contact_unit_FS:
 # TODO: Add explanation
 omicron_transmission_multiplier:
   scale: "linear"
-  a: 1.25   # TODO: reasonable lower bound? using mu - 3*std
-  b: 5.75   # TODO: reasonable upper bound? using mu + 3*std
+  a: 0   #must be positive
+  b: .inf 
   mu: 3.5
   std: 0.75
 
@@ -47,8 +47,8 @@ omicron_transmission_multiplier:
 # Cutting this to 5 because by the time the semester starts new cases should be less frequent
 outside_rate_FS:
   scale: "linear"
-  a: 9      # TODO: reasonable lower bound? using mu - 3*std
-  b: 16.5   # TODO: reasonable upper bound? using mu + 3*std
+  a: 0      #must be positive
+  b: .inf
   mu: 12.75
   std: 1.25
 
@@ -58,8 +58,8 @@ outside_rate_FS:
 # e.g. 0.15 \approx 2.27/15.25 (where 15.25 is upper bound on outside_rate_FS)
 outside_rate_post_peak_multiplier:
   scale: "linear"
-  a: 0        # TODO: reasonable lower bound? using max(0,mu - 3*std)
-  b: 1.2125   # TODO: reasonable upper bound? using mu + 3*std
+  a: 0        #must be positive
+  b: 1   # at most the same as peak omicron 
   mu: 0.575
   std: 0.2125
 
