@@ -2,6 +2,7 @@ from re import S
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
+from sympy.parsing.sympy_parser import parse_expr
 from typing import Dict, Union
 
 
@@ -52,10 +53,11 @@ class ScenarioFamily:
     def get_nominal_scenario(self):
         """Return the nominal scenario."""
         flattened_scenario = self.flattened_nominal.copy()
+        # TODO (hwr26): be careful here if extending to using other dists
+        nominal = {k:v["mu"] for k,v in self.prior.items()}
         for k,v in flattened_scenario.items():
             if type(v) == str and k.split("/")[0] != "metagroup_names":
-                # TODO (hwr26): be careful here if extending to using other dists
-                flattened_scenario[k] = self.prior[v]["mu"]
+                flattened_scenario[k] = parse_expr(v, nominal)
         return unflatten_dict(flattened_scenario)
 
 
@@ -70,5 +72,5 @@ class ScenarioFamily:
             samples[name] = stats.truncnorm.rvs(a,b,mu,std)
         for k,v in flattened_scenario.items():
             if type(v) == str and k.split("/")[0] != "metagroup_names":
-                flattened_scenario[k] = samples[v]
+                flattened_scenario[k] = parse_expr(v, samples)
         return unflatten_dict(flattened_scenario)
