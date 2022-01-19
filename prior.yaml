@@ -16,6 +16,45 @@ winter_break_infections_global:
   mu: 1     # TODO [Peter]
   std: 0.2  # TODO [Peter]
 
+#Calibrated using pareto-fitted pop_fracs, see calibration-employee.py in jan16_calib branch
+infections_per_day_per_contact_unit_FS:
+  a: 0
+  b: 1
+  mu: 0.005
+  std: 0.0025
+
+#Based on literature survey done by Sam + Bonnie.
+#@Henry, the overall infections_per_day_per_contact_unit['FS'] = 
+#                 infections_per_day_per_contact_unit_FS * omicron_transmission_multiplier
+omicron_transmission_multiplier:
+  a: 0
+  b: 1
+  mu: 3.5
+  std: 0.75
+
+#TODO [Sam], recalibrate the student infections_per_day_per_contact_unit ones
+
+#TODO [Sam], potentially incorporate calibrating outside_rate and infections_per... together
+# derived from 82 outside infections from 1/7 to 1/14 inclusive with at least 2 daily checks
+# since 1/4, vs 122 outside infections total from 1/7 to 1/14
+outside_rate_FS:
+  a: 0
+  b: 1
+  mu: 12.75
+  std: 1.25
+
+#@Henry, outside_rates['FS'] = outside_rate_FS * outside_rate_postpeak_multiplier
+# derived by using 2.27 as a lower bound for overall outside rate, which is the
+# pre-omicron outside rate, and upper bound as no decrease in outside_rate
+# e.g. 0.15 \approx 2.27/15.25 (where 15.25 is upper bound on outside_rate_FS)
+outside_rate_postpeak_multiplier:
+  a: 0
+  b: 1
+  mu: 0.575
+  std: 0.2125
+
+#TODO [Sam], add parameter for uncertainty around student/FS proportions for outside_rate
+
 template:
   a: 0
   b: 1
