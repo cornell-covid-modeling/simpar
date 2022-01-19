@@ -118,12 +118,12 @@ classwork_transmission_multiplier:
 # NOTE: This parameter is calibrated to a non-boosted population hence this
 # is interpreted as non-boosted infections rates.
 infections_per_day_per_contact_unit:
-  UG_on: 0.28
-  UG_off: 0.28
-  GR_on: 0.10
-  GR_off: 0.10
-  PR_on: 0.10
-  PR_off: 0.10
+  UG_on: "infections_per_day_per_contact_unit_UG"
+  UG_off: "infections_per_day_per_contact_unit_UG"
+  GR_on: "infections_per_day_per_contact_unit_GR"
+  GR_off: "infections_per_day_per_contact_unit_GR"
+  PR_on: "infections_per_day_per_contact_unit_PR"
+  PR_off: "infections_per_day_per_contact_unit_PR"
   FS: "infections_per_day_per_contact_unit_FS * omicron_transmission_multiplier"
 
 T: 28                           # num generations (16 weeks with 4-day generations)

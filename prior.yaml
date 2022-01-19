@@ -32,7 +32,29 @@ omicron_transmission_multiplier:
   mu: 3.5
   std: 0.75
 
-#TODO [Sam], recalibrate the student infections_per_day_per_contact_unit ones
+#Calibrated the student infections_per_day_per_contact_unit to the December Omicron outbreak
+#slightly different than before since we are now using the pareto-fit pop_fras
+#TODO: GR =/= PR whereas previously we manually set them equal. Still want to?
+infections_per_day_per_contact_unit_UG:
+  scale: "linear"
+  a: 0        # must be positive
+  b: .inf  
+  mu: 0.25
+  std: 0.005
+
+infections_per_day_per_contact_unit_GR:
+  scale: "linear"
+  a: 0        # must be positive
+  b: .inf  
+  mu: 0.14
+  std: 0.01
+
+infections_per_day_per_contact_unit_PR:
+  scale: "linear"
+  a: 0        # must be positive
+  b: .inf  
+  mu: 0.06
+  std: 0.01
 
 # Owner: Sam (@sst76)
 # TODO [Sam], potentially incorporate calibrating outside_rate and infections_per... together
