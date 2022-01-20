@@ -120,10 +120,10 @@ classwork_transmission_multiplier:
 infections_per_day_per_contact_unit:
   UG_on: "infections_per_day_per_contact_unit_UG"
   UG_off: "infections_per_day_per_contact_unit_UG"
-  GR_on: "infections_per_day_per_contact_unit_GR"
-  GR_off: "infections_per_day_per_contact_unit_GR"
-  PR_on: "infections_per_day_per_contact_unit_PR"
-  PR_off: "infections_per_day_per_contact_unit_PR"
+  GR_on: "infections_per_day_per_contact_unit_allGrad"
+  GR_off: "infections_per_day_per_contact_unit_allGrad"
+  PR_on: "infections_per_day_per_contact_unit_allGrad"
+  PR_off: "infections_per_day_per_contact_unit_allGrad"
   FS: "infections_per_day_per_contact_unit_FS * omicron_transmission_multiplier"
 
 T: 28                           # num generations (16 weeks with 4-day generations)
