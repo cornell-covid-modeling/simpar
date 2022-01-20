@@ -290,56 +290,57 @@ def plot_small_summary(outfile : str,
     plt.close()
 
 
-def plot_comprehensive_summary(outfile: str,
-                               trajectories: List[Trajectory],
-                               simple_param_summary = None):
+def plot_comprehensive_summary(outfile: str, trajectories: List[Trajectory]):
     """Plot a comprehensive summary of the simulation run."""
-    fig = matplotlib.pyplot.gcf()
+    fig, axs = plt.subplots(4,2)
+    axs = list(axs.flat)
+    fig.tight_layout(pad=1)
+    fig.subplots_adjust(left=0.1)
     fig.set_size_inches(8.5, 11)
-    plt.rcParams.update({'font.size': 8})
 
-    plt.subplot(411) # Take up the whole top row
-    plot_total_infected_discovered(trajectories, legend = True)
-    window = 423 # Start in the second row
+    _metric_over_time_axes(
+        ax=axs[0],
+        trajectories=trajectories,
+        metric_name="Infections",
+        metric=metrics.get_total_infected
+    )
 
-    plt.subplot(window)
-    plot_isolated(trajectories, metagroup_names = ['UG_on'],
-                  legend = False)
-    window += 1
+    _metric_over_time_axes(
+        ax=axs[1],
+        trajectories=trajectories,
+        metric_name="Discovered",
+        metric=metrics.get_total_discovered
+    )
 
-    plt.subplot(window)
-    plot_isolated(trajectories, metagroup_names = ['UG_on', 'UG_off',
-                                                   'PR_on', 'PR_off'],
-                  legend = False)
-    window += 1
+    _metric_over_time_axes(
+        ax=axs[2],
+        trajectories=trajectories,
+        metric_name="On-Campus UG Isolated",
+        metric=metrics.get_ug_on_isolated,
+        legend=False
+    )
 
-    # Assumes that every trajectory in [trajectories] has the same population
-    popul = trajectories[0].pop
-    metagroups = popul.metagroup_names()
+    _metric_over_time_axes(
+        ax=axs[3],
+        trajectories=trajectories,
+        metric_name="UG + PR Isolated",
+        metric=metrics.get_ug_pr_isolated,
+        legend=False
+    )
 
-    # Plot infected and discovered for each meta-group
+    group_names = ["UG", "GR", "PR", "FS"]
     groups = [["UG_on", "UG_off"], ["GR_on", "GR_off"], ["PR_on", "PR_off"], ["FS"]]
-    for group in groups:
-        plt.subplot(window)
-        window += 1
-        plot_total_infected_discovered(trajectories, metagroup_names = group, legend = False)
+    for i in range(4):
+        metric = lambda x: metrics.get_total_discovered(x, metagroup_names=groups[i])
+        _metric_over_time_axes(
+            ax=axs[4+i],
+            trajectories=trajectories,
+            metric_name=f"{group_names[i]} Discovered",
+            metric=metric,
+            legend=False
+        )
 
-    # def print_params():
-    #     if simple_param_summary is None:
-    #         plt.text(0,-0.5,param2txt(params))
-    #     else:
-    #         now = datetime.now()
-    #         plt.text(0,0.5,'{}\nSimulation run {}'.format(fill(simple_param_summary, 60),now.strftime('%Y/%m/%d %H:%M')))
-
-    # plt.subplot(window)
-    # plt.axis('off')
-    # window += 1
-    # print_params()
-
-    plt.tight_layout(pad=1)
-
-    plt.savefig(outfile, facecolor='w')
-    plt.close()
+    fig.savefig(outfile, facecolor='w')
 
 
 def plot_comprehensive_confidence_interval_summary(outfile: str,
