@@ -164,6 +164,8 @@ def plot_comprehensive_confidence_interval_summary(outfile: str,
     """Plot comprehensive summary of multiple trajectories sampled from prior."""
     fig, axs = plt.subplots(4,2)
     axs = list(axs.flat)
+    fig.tight_layout(pad=1)
+    fig.subplots_adjust(left=0.1)
     fig.set_size_inches(8.5, 11)
 
     _metric_confidence_interval_over_time_axes(
@@ -196,18 +198,17 @@ def plot_comprehensive_confidence_interval_summary(outfile: str,
         metric=metrics.get_ug_pr_isolated
     )
 
-    i = 4
+    group_names = ["UG", "GR", "PR", "FS"]
     groups = [["UG_on", "UG_off"], ["GR_on", "GR_off"], ["PR_on", "PR_off"], ["FS"]]
-    for group in groups:
-        metric = lambda x: metrics.get_total_discovered(x, metagroup_names=group)
+    for i in range(4):
+        metric = lambda x: metrics.get_total_discovered(x, metagroup_names=groups[i])
         _metric_confidence_interval_over_time_axes(
-            ax=axs[i],
+            ax=axs[i+4],
             trajectories=trajectories,
-            metric_name=f"{group} Cumulative Discovered",
+            metric_name=f"{group_names[i]} Discovered",
             metric=metric,
             comparator=lambda x: x[-1]
         )
-        i += 1
 
     fig.savefig(outfile, facecolor='w')
 
@@ -287,9 +288,10 @@ def _metric_confidence_interval_over_time_axes(ax,
                                     confidence_interval=0.95,
                                     comparator=comparator)
     if title is None:
-        title = f"95% CI of {metric_name} over the Spring Semester"
+        title = f"{metric_name} over Spring Semester"
     ax.set_title(title)
     ax.set_ylabel(metric_name)
+    ax.set_xlabel("Time (Days)")
     if legend:
         ax.legend()
 
@@ -344,6 +346,7 @@ def _metric_over_time_axes(ax, trajectories: List[Trajectory],
         title = f"{metric_name} over the Spring Semester"
     ax.set_title(title)
     ax.set_ylabel(metric_name)
+    ax.set_xlabel("Time (Days)")
     if legend:
         ax.legend()
 

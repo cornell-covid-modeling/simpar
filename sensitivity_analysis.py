@@ -28,7 +28,7 @@ scenario_family = ScenarioFamily(nominal, yaml.safe_load(open("prior.yaml", "r")
 
 trajectories = []
 # scalers = np.linspace(0.0,1.0,50)
-for _ in range(10):
+for _ in range(100):
     scenario = scenario_family.get_sampled_scenario()
     traj = sim_test_strategy(scenario=scenario,
                              strategy=sp22_testing_strategy(scenario),
