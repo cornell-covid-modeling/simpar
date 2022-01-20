@@ -323,8 +323,8 @@ def plot_comprehensive_summary(outfile: str, trajectories: List[Trajectory]):
     _metric_over_time_axes(
         ax=axs[3],
         trajectories=trajectories,
-        metric_name="UG + PR Isolated",
-        metric=metrics.get_ug_pr_isolated,
+        metric_name="Hospitalizations",
+        metric=metrics.get_cumulative_all_hospitalizations,
         legend=False
     )
 
@@ -378,8 +378,8 @@ def plot_comprehensive_confidence_interval_summary(outfile: str,
     _metric_confidence_interval_over_time_axes(
         ax=axs[3],
         trajectories=trajectories,
-        metric_name="UG+PR Isolation",
-        metric=metrics.get_ug_pr_isolated
+        metric_name="Hospitalizations",
+        metric=metrics.get_cumulative_all_hospitalizations
     )
 
     group_names = ["UG", "GR", "PR", "FS"]
