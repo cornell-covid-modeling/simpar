@@ -42,18 +42,12 @@ infections_per_day_per_contact_unit_UG:
   mu: 0.25
   std: 0.005
 
-infections_per_day_per_contact_unit_GR:
+#Currently set GR and PR to have same transmissibility due to fall data
+infections_per_day_per_contact_unit_allGrad:
   scale: "linear"
   a: 0        # must be positive
   b: .inf
-  mu: 0.14
-  std: 0.01
-
-infections_per_day_per_contact_unit_PR:
-  scale: "linear"
-  a: 0        # must be positive
-  b: .inf
-  mu: 0.06
+  mu: 0.08
   std: 0.01
 
 # Owner: Sam (@sst76)
