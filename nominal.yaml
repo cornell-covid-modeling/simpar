@@ -33,7 +33,7 @@ population_count:               # population count (by meta group)
 
 dec_surge_infections:
   UG_on: 874      # [1900 * 0.46]
-  UG_off: 102     # [1900 * 0.54]
+  UG_off: 1026     # [1900 * 0.54]
   GR_on: 0
   GR_off: 0
   PR_on: 0
