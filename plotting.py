@@ -1,3 +1,4 @@
+from optparse import TitledHelpFormatter
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -158,6 +159,59 @@ def plot_comprehensive_summary(outfile: str,
     plt.close()
 
 
+def plot_comprehensive_confidence_interval_summary(outfile: str,
+    trajectories: List[Trajectory]) -> None:
+    """Plot comprehensive summary of multiple trajectories sampled from prior."""
+    fig, axs = plt.subplots(4,2)
+    axs = list(axs.flat)
+    fig.set_size_inches(8.5, 11)
+
+    _metric_confidence_interval_over_time_axes(
+        ax=axs[0],
+        trajectories=trajectories,
+        metric_name="Total Infected",
+        metric=metrics.get_total_infected,
+        comparator=lambda x: x[-1]
+    )
+
+    _metric_confidence_interval_over_time_axes(
+        ax=axs[1],
+        trajectories=trajectories,
+        metric_name="Total Discovered",
+        metric=metrics.get_total_discovered,
+        comparator=lambda x: x[-1]
+    )
+
+    _metric_confidence_interval_over_time_axes(
+        ax=axs[2],
+        trajectories=trajectories,
+        metric_name="On-Campus UG Isolation",
+        metric=metrics.get_ug_on_isolated
+    )
+
+    _metric_confidence_interval_over_time_axes(
+        ax=axs[3],
+        trajectories=trajectories,
+        metric_name="UG+PR Isolation",
+        metric=metrics.get_ug_pr_isolated
+    )
+
+    i = 4
+    groups = [["UG_on", "UG_off"], ["GR_on", "GR_off"], ["PR_on", "PR_off"], ["FS"]]
+    for group in groups:
+        metric = lambda x: metrics.get_total_discovered(x, metagroup_names=group)
+        _metric_confidence_interval_over_time_axes(
+            ax=axs[i],
+            trajectories=trajectories,
+            metric_name=f"{group} Cumulative Discovered",
+            metric=metric,
+            comparator=lambda x: x[-1]
+        )
+        i += 1
+
+    fig.savefig(outfile, facecolor='w')
+
+
 def plot_parameter_sensitivity(outfile: str, trajectories: List[Trajectory],
     param_name: str, metric_name: str, metric: Callable, title: str = None):
     """Plot a comparison of some [metric] over different values of a parameter.
@@ -223,6 +277,23 @@ def _add_metric_confidence_interval(ax, trajectories: List[Trajectory],
     ax.fill_between(x, ub, lb, label=ci_label, alpha=0.5, color="#9ecae1")
 
 
+def _metric_confidence_interval_over_time_axes(ax,
+    trajectories: List[Trajectory], metric_name: str, metric: Callable,
+    title: str = None, legend = True, comparator : Callable = np.sum) -> None:
+    """Set [ax] to plot 95% confidence interval of [metric] over time."""
+    _add_metric_confidence_interval(ax=ax,
+                                    trajectories=trajectories,
+                                    metric=metric,
+                                    confidence_interval=0.95,
+                                    comparator=comparator)
+    if title is None:
+        title = f"95% CI of {metric_name} over the Spring Semester"
+    ax.set_title(title)
+    ax.set_ylabel(metric_name)
+    if legend:
+        ax.legend()
+
+
 def plot_metric_confidence_interval_over_time(outfile: str,
     trajectories: List[Trajectory], metric_name: str, metric: Callable,
     title: str = None, legend = True, comparator : Callable = np.sum) -> None:
@@ -241,26 +312,17 @@ def plot_metric_confidence_interval_over_time(outfile: str,
         comparator (Callable): How trajectories are sorted. Defaults to area \
             under the curve (np.sum).
     """
-    plt.rcParams["figure.figsize"] = (8,6)
-    plt.rcParams['font.size'] = 15
-    plt.rcParams['lines.linewidth'] = 4
-    plt.rcParams['legend.fontsize'] = 12
-
-    ax = plt.gca()
-    _add_metric_confidence_interval(ax=ax,
-                                    trajectories=trajectories,
-                                    metric=metric,
-                                    confidence_interval=0.95,
-                                    comparator=comparator)
-
-    if title is None:
-        title = f"95% CI of {metric_name} over the Spring Semester"
-    plt.title(title)
-    plt.ylabel(metric_name)
-    if legend:
-        plt.legend()
-    plt.savefig(outfile, facecolor='w')
-    plt.close()
+    fig, ax = plt.subplots()
+    _metric_confidence_interval_over_time_axes(
+        ax=ax,
+        trajectories=trajectories,
+        metric_name=metric_name,
+        metric=metric,
+        title=title,
+        legend=legend,
+        comparator=comparator
+    )
+    fig.savefig(outfile, facecolor='w')
 
 
 def _add_trajectory_metric(ax, trajectory: Trajectory, metric: Callable):
@@ -271,6 +333,19 @@ def _add_trajectory_metric(ax, trajectory: Trajectory, metric: Callable):
     x = np.arange(scenario["T"]) * scenario["generation_time"]
     y = metric(trajectory)
     ax.plot(x, y, label=label, color=color, linestyle = 'solid')
+
+
+def _metric_over_time_axes(ax, trajectories: List[Trajectory],
+    metric_name: str, metric: Callable, title: str = None, legend = True):
+    """Set [ax] to plot [trajectories] for a given [metric] over time."""
+    for trajectory in trajectories:
+        _add_trajectory_metric(ax, trajectory, metric)
+    if title is None:
+        title = f"{metric_name} over the Spring Semester"
+    ax.set_title(title)
+    ax.set_ylabel(metric_name)
+    if legend:
+        ax.legend()
 
 
 def plot_metric_over_time(outfile: str, trajectories: List[Trajectory],
@@ -287,23 +362,16 @@ def plot_metric_over_time(outfile: str, trajectories: List[Trajectory],
         title (str, optional): Title of the plot.
         legend (bool, optional): Show legend if True. Defaults to True.
     """
-    plt.rcParams["figure.figsize"] = (8,6)
-    plt.rcParams['font.size'] = 15
-    plt.rcParams['lines.linewidth'] = 4
-    plt.rcParams['legend.fontsize'] = 12
-
-    ax = plt.gca()
-    for trajectory in trajectories:
-        _add_trajectory_metric(ax, trajectory, metric)
-
-    if title is None:
-        title = f"{metric_name} over the Spring Semester"
-    plt.title(title)
-    plt.ylabel(metric_name)
-    if legend:
-        plt.legend()
-    plt.savefig(outfile, facecolor='w')
-    plt.close()
+    fig, ax = plt.subplots()
+    _metric_over_time_axes(
+        ax=ax,
+        trajectories=trajectories,
+        metric_name=metric_name,
+        metric=metric,
+        title=title,
+        legend=legend
+    )
+    fig.savefig(outfile, facecolor='w')
 
 
 def plot_metrics_over_time(trajectories: List[Trajectory],
