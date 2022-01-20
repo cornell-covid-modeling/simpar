@@ -192,6 +192,37 @@ def plot_parameter_sensitivity(outfile: str, trajectories: List[Trajectory],
     plt.close()
 
 
+def _add_metric_confidence_interval(ax, trajectories: List[Trajectory],
+    metric: Callable, confidence_interval=0.95, comparator : Callable = np.sum):
+    """Add confidence interval of [metric] the axes [ax].
+
+    Args:
+        ax ([type]): Axes on which to add the confidence interval.
+        trajectories (List[Trajectory]): Trajectories from which to compute \
+            the confidence interval.
+        metric (Callable): Metric whose confidence interval is plotted.
+        confidence_interval (float, optional): CI to use. Defaults to 0.95.
+        comparator (Callable): How trajectories are sorted. Defaults to area \
+            under the curve (np.sum).
+    """
+    # sort the trajectories
+    scenario = trajectories[0].scenario
+    x = np.arange(scenario["T"]) * scenario["generation_time"]
+    ys = [metric(trajectory) for trajectory in trajectories]
+    ys = sorted(ys, key=comparator)
+
+    # compute the confidence interval
+    limit = ((1 - confidence_interval) / 2)
+    lb = ys[int(len(ys) * limit)]
+    nominal = ys[int(len(ys) * 0.5)]
+    ub = ys[int(len(ys) * (1 - limit))]
+
+    # add confidence interval to plot
+    ax.plot(x, nominal, label="Nominal (50%)", color="#9ecae1", linestyle="solid")
+    ci_label = "%.0f%% CI" % (confidence_interval * 100)
+    ax.fill_between(x, ub, lb, label=ci_label, alpha=0.5, color="#9ecae1")
+
+
 def plot_metric_confidence_interval_over_time(outfile: str,
     trajectories: List[Trajectory], metric_name: str, metric: Callable,
     title: str = None, legend = True, comparator : Callable = np.sum) -> None:
@@ -215,15 +246,12 @@ def plot_metric_confidence_interval_over_time(outfile: str,
     plt.rcParams['lines.linewidth'] = 4
     plt.rcParams['legend.fontsize'] = 12
 
-    scenario = trajectories[0].scenario
-    x = np.arange(scenario["T"]) * scenario["generation_time"]
-    ys = [metric(trajectory) for trajectory in trajectories]
-    ys = sorted(ys, key=comparator)
-    p025 = ys[int(len(ys) * (2.5 / 100))]
-    p50 = ys[int(len(ys) * (50 / 100))]
-    p975 = ys[int(len(ys) * (97.5 / 100))]
-    plt.plot(x, p50, label="Nominal (50%)", color="#9ecae1", linestyle="solid")
-    plt.fill_between(x, p025, p975, label="95% CI", alpha=0.5, color="#9ecae1")
+    ax = plt.gca()
+    _add_metric_confidence_interval(ax=ax,
+                                    trajectories=trajectories,
+                                    metric=metric,
+                                    confidence_interval=0.95,
+                                    comparator=comparator)
 
     if title is None:
         title = f"95% CI of {metric_name} over the Spring Semester"
@@ -233,6 +261,16 @@ def plot_metric_confidence_interval_over_time(outfile: str,
         plt.legend()
     plt.savefig(outfile, facecolor='w')
     plt.close()
+
+
+def _add_trajectory_metric(ax, trajectory: Trajectory, metric: Callable):
+    """Add the [metric] for the [trajectory] to the axes [ax]."""
+    scenario = trajectory.scenario
+    label = trajectory.name
+    color = trajectory.color
+    x = np.arange(scenario["T"]) * scenario["generation_time"]
+    y = metric(trajectory)
+    ax.plot(x, y, label=label, color=color, linestyle = 'solid')
 
 
 def plot_metric_over_time(outfile: str, trajectories: List[Trajectory],
@@ -254,13 +292,9 @@ def plot_metric_over_time(outfile: str, trajectories: List[Trajectory],
     plt.rcParams['lines.linewidth'] = 4
     plt.rcParams['legend.fontsize'] = 12
 
+    ax = plt.gca()
     for trajectory in trajectories:
-        scenario = trajectory.scenario
-        label = trajectory.name
-        color = trajectory.color
-        x = np.arange(scenario["T"]) * scenario["generation_time"]
-        y = metric(trajectory)
-        plt.plot(x, y, label=label, color=color, linestyle = 'solid')
+        _add_trajectory_metric(ax, trajectory, metric)
 
     if title is None:
         title = f"{metric_name} over the Spring Semester"
