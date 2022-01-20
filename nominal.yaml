@@ -171,13 +171,13 @@ max_infectious_days: 6
 # students self-report and could be deceitful.
 tests:
   pcr:
-    sensitivity: 0.9
+    sensitivity: "pcr_sensitivity"
     test_delay: 1.5
-    compliance: 1.0
+    compliance: "pcr_compliance"
   antigen:
-    sensitivity: 0.9  # TODO (hwr): Think about what this should actually be
+    sensitivity: "antigen_sensitivity"
     test_delay: 0
-    compliance: 0.5   # TODO (hwr): Think about what this should actually be
+    compliance: "antigen_compliance"
 
 # This matrix encodes the amount of contact between metagroups
 meta_matrix:

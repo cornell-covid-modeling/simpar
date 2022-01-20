@@ -19,7 +19,7 @@ symptomatic_rate:
 infections_per_day_per_contact_unit_FS:
   scale: "linear"
   a: 0        # must be positive
-  b: .inf  
+  b: .inf
   mu: 0.005
   std: 0.0025
 
@@ -28,7 +28,7 @@ infections_per_day_per_contact_unit_FS:
 omicron_transmission_multiplier:
   scale: "linear"
   a: 0   #must be positive
-  b: .inf 
+  b: .inf
   mu: 3.5
   std: 0.75
 
@@ -38,21 +38,21 @@ omicron_transmission_multiplier:
 infections_per_day_per_contact_unit_UG:
   scale: "linear"
   a: 0        # must be positive
-  b: .inf  
+  b: .inf
   mu: 0.25
   std: 0.005
 
 infections_per_day_per_contact_unit_GR:
   scale: "linear"
   a: 0        # must be positive
-  b: .inf  
+  b: .inf
   mu: 0.14
   std: 0.01
 
 infections_per_day_per_contact_unit_PR:
   scale: "linear"
   a: 0        # must be positive
-  b: .inf  
+  b: .inf
   mu: 0.06
   std: 0.01
 
@@ -81,7 +81,7 @@ outside_rate_FS:
 outside_rate_post_peak_multiplier:
   scale: "linear"
   a: 0        #must be positive
-  b: 1   # at most the same as peak omicron 
+  b: 1   # at most the same as peak omicron
   mu: 0.575
   std: 0.2125
 
@@ -98,9 +98,48 @@ classwork_transmission_multiplier:
 
 # Owner: Bonnie (@bca44)
 # Based on: https://www.nejm.org/doi/full/10.1056/NEJMoa2114255
+# TODO (bca44): Correct this based on new research
+# From meeting:
+# - One option: lb: 1/4, ub: 1, mean: 1/2 on a logarithmic scale
 booster_hospitalization_multiplier:
   scale: "log"
   a: -3.9     # [mu] - 2[std]
   b: -0.7     # [mu] + 2[std]
   mu: -2.30   # ln(1/10)
   std: 0.8    # exp(ln(1/10) + 2[std]) = 0.5
+
+# Owner: Bonnie (@bca44)
+# TODO (bca44): Explanation
+pcr_sensitivity:
+  scale: "linear"
+  a: 0
+  b: 1
+  mu: 0.6
+  std: 0.05
+
+# Owner: Bonnie (@bca44)
+# TODO (bca44): Explanation
+pcr_compliance:
+  scale: "linear"
+  a: 0
+  b: 1
+  mu: 0.95
+  std: 0.025
+
+# Owner: Bonnie (@bca44)
+# TODO (bca44): Explanation
+antigen_sensitivity:
+  scale: "linear"
+  a: 0
+  b: 1
+  mu: 0.4
+  std: 0.05
+
+# Owner: Bonnie (@bca44)
+# TODO (bca44): Explanation
+antigen_compliance:
+  scale: "linear"
+  a: 0
+  b: 1
+  mu: 0.7
+  std: 0.05
