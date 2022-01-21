@@ -37,8 +37,8 @@ The max_infectious_days parameter has an important influence on how much testing
 then it is hard for a test to intercept a significant part of this period. We are currently setting this to 6 days as
 a default. The logic here is that the pre-infectious-period + max_infectious_period / 2 should be equal to the
 generation time. This assumes that the infectivity is uniform and symmetric.  So this would imply
-max_infectious_period = 2 * (generation_time - pre_infectious_period). If the generation time is 5 days and the
-pre-infectious period is 2 days, then this is 2 * (5-2) = 6 days.
+max_infectious_period = 2 * (generation_time - pre_infectious_period). If the generation time is 4 days and the
+pre-infectious period is 1 days, then this is 2 * (4-1) = 6 days.
 
 Our simulator is pessimistic in that it assumes PCR cannot detect an infection before it becomes infectious and that
 once a person becomes infectious they immediately have the maximum amount of infectivity. In reality, infectivity
