@@ -1,4 +1,3 @@
-from optparse import TitledHelpFormatter
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -6,8 +5,7 @@ import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings("ignore",category=matplotlib.cbook.mplDeprecation)
 from typing import List, Callable
-from functools import reduce
-from operator import iconcat, add
+from copy import deepcopy
 from trajectory import Trajectory
 import metrics
 
@@ -37,14 +35,15 @@ def _add_metric_confidence_interval(ax, trajectories: List[Trajectory],
     ax.fill_between(x, ub, lb, label=ci_label, alpha=0.5, color="#9ecae1")
 
 
-def _add_trajectory_metric(ax, trajectory: Trajectory, metric: Callable):
+def _add_trajectory_metric(ax, trajectory: Trajectory, metric: Callable,
+    linestyle: str = "solid") -> None:
     """Add the [metric] for the [trajectory] to the axes [ax]."""
     scenario = trajectory.scenario
     label = trajectory.name
     color = trajectory.color
     x = np.arange(scenario["T"]) * scenario["generation_time"]
     y = metric(trajectory)
-    ax.plot(x, y, label=label, color=color, linestyle = 'solid')
+    ax.plot(x, y, label=label, color=color, linestyle=linestyle)
 
 # =======================
 # Initialize helpful Axes
@@ -59,6 +58,28 @@ def _metric_over_time_axes(ax, trajectories: List[Trajectory],
         title = f"{metric_name} over the Spring Semester"
     ax.set_title(title)
     ax.set_ylabel(metric_name)
+    ax.set_xlabel("Time (Days)")
+    if legend:
+        ax.legend()
+
+
+def _metrics_over_time_axes(ax, trajectories: List[Trajectory],
+    metric_names: List[str], metrics: List[Callable], title: str = None,
+    ylabel: str = None, legend = True) -> None:
+    """Set [ax] to plot [trajectories] for a given [metrics] over time."""
+    linestyles = ['solid', 'dashed', 'dotted', 'dashdot']
+    for i in range(len(metrics)):
+        for trajectory in trajectories:
+            trajectory = deepcopy(trajectory)
+            trajectory.name = f"{trajectory.name} ({metric_names[i]})"
+            _add_trajectory_metric(ax, trajectory, metrics[i], linestyles[i])
+    # TODO (hwr): Make this correct
+    if ylabel is None:
+        ylabel = metric_names[0]
+    if title is None:
+        title = f"{ylabel} over the Spring Semester"
+    ax.set_title(title)
+    ax.set_ylabel(ylabel)
     ax.set_xlabel("Time (Days)")
     if legend:
         ax.legend()
@@ -85,35 +106,118 @@ def _metric_confidence_interval_over_time_axes(ax,
 # Single Axes Plots
 # =================
 
-def plot_isolated(trajectories: List[Trajectory],
-                  legend = True,
-                  metagroup_names = None):
-    """Plot the number of rooms of isolation required to isolate on-campus
-    students under the passed set of test regimes.
-    popul, metagroups_names and metagroup_idx are only needed if we getting specific metagroups.
-    If so,  metagroups_names and metagroup_idx indicate the metagroups that we wish to include
-    Turn on the oncampus flag to apply the oncampus_frac
+def plot_metric_over_time(outfile: str, trajectories: List[Trajectory],
+    metric_name: str, metric: Callable, title: str = None):
+    """Plot the [trajectories] for a given [metric] over time.
+
+    The x-axis of the plot is time while the y-axis is the value of the metric.
+
+    Args:
+        outfile (str): String file path.
+        trajectories (List[Trajectory]): List of trajectories to compare.
+        metric_name (str): Name of the metric to be plotted.
+        metric (Callable): Function to compute the metric.
+        title (str, optional): Title of the plot.
     """
-    for trajectory in trajectories:
-        label = trajectory.name
-        s = trajectory.sim
-        color = trajectory.color
+    fig, ax = plt.subplots()
+    _metric_over_time_axes(
+        ax=ax,
+        trajectories=trajectories,
+        metric_name=metric_name,
+        metric=metric,
+        title=title,
+        legend=True
+    )
+    fig.savefig(outfile, facecolor='w')
 
-        X = np.arange(s.max_T) * s.generation_time  # days in the semester
 
-        isolated = metrics.get_isolated(trajectory=trajectory,
-                                        metagroup_names=metagroup_names)
+def plot_metrics_over_time(outfile: str, trajectories: List[Trajectory],
+    metric_names: List[str], metrics: List[Callable], title: str = None,
+    ylabel: str = None):
+    """Plot the [trajectories] for the given [metrics] over time.
 
-        plt.plot(X, isolated, label=label, color=color)
-        if metagroup_names is None:
-            plt.title("Isolation (Students+Employees)")
-        else:
-            plt.title("Isolation (" + str(metagroup_names) + ")")
+    The x-axis of the plot is time while the y-axis is the value of the metric.
 
-    if legend:
-        plt.legend()
-    plt.xlabel('Days')
-    plt.ylabel('Isolation (5 day)')
+    Args:
+        outfile (str): String file path.
+        trajectories (List[Trajectory]): List of trajectories to compare.
+        metric_names (List[str]): Name of the metrics to be plotted.
+        metrics (List[Callable]): Function to compute the metrics.
+        title (str, optional): Title of the plot.
+        ylabel (str, optional): y-label of the plot.
+    """
+    fig, ax = plt.subplots()
+    _metrics_over_time_axes(
+        ax=ax,
+        trajectories=trajectories,
+        metric_name=metric_names[0],
+        metric=metrics[0],
+        title=title,
+        ylabel=ylabel,
+        legend=True
+    )
+    fig.savefig(outfile, facecolor='w')
+
+
+def plot_metric_confidence_interval_over_time(outfile: str,
+    trajectories: List[Trajectory], metric_name: str, metric: Callable,
+    title: str = None, legend = True, comparator : Callable = np.sum) -> None:
+    """Plot the 95% confidence interval of [metric] over time.
+
+    The x-axis of the plot is time while the y-axis is the value of the metric.
+
+    Args:
+        outfile (str): String file path.
+        trajectories (List[Trajectory]): List of trajectories to compute \
+            the confidence interval from.
+        metric_name (str): Name of the metric to be plotted.
+        metric (Callable): Function to compute the metric.
+        title (str, optional): Title of the plot.
+        legend (bool, optional): Show legend if True. Defaults to True.
+        comparator (Callable): How trajectories are sorted. Defaults to area \
+            under the curve (np.sum).
+    """
+    fig, ax = plt.subplots()
+    _metric_confidence_interval_over_time_axes(
+        ax=ax,
+        trajectories=trajectories,
+        metric_name=metric_name,
+        metric=metric,
+        title=title,
+        legend=legend,
+        comparator=comparator
+    )
+    fig.savefig(outfile, facecolor='w')
+
+
+def plot_isolated(outfile: str, trajectories: List[Trajectory],
+    metagroup_names = None) -> None:
+    """Plot the isolated count by day for each trajectory."""
+    metric = lambda x: metrics.get_isolated(x, metagroup_names=metagroup_names)
+    plot_metric_over_time(outfile=outfile,
+                          trajectories=trajectories,
+                          metric_name=f"Isolations ({metagroup_names})",
+                          metric=metric,
+                          title=f"Isolations ({metagroup_names}) over Spring Semester")
+
+
+def plot_hospitalization(outfile: str, trajectories: List[Trajectory]):
+    """Plot total hospitalizations for multiple trajectories."""
+    plot_metric_over_time(outfile=outfile,
+                          trajectories=trajectories,
+                          metric_name="Cumulative Hospitalizations",
+                          metric=metrics.get_cumulative_all_hospitalizations,
+                          title="Spring Semester Hospitalizations, Students+Employees")
+
+
+def plot_total_infected_discovered(trajectories: List[Trajectory],
+    metagroup_names = None) -> None:
+    """Plot total discovered, including arrival."""
+    plot_metric_over_time(trajectories=trajectories,
+                          metric_names=["Infected", "Discvoered"],
+                          metrics=[metrics.get_total_infected, metrics.get_total_discovered],
+                          title=f"Infections ({metagroup_names}) over Spring Semester",
+                          metagroup_names = metagroup_names)
 
 
 def plot_parameter_sensitivity(outfile: str, trajectories: List[Trajectory],
@@ -150,126 +254,6 @@ def plot_parameter_sensitivity(outfile: str, trajectories: List[Trajectory],
     plt.close()
 
 
-def plot_metric_confidence_interval_over_time(outfile: str,
-    trajectories: List[Trajectory], metric_name: str, metric: Callable,
-    title: str = None, legend = True, comparator : Callable = np.sum) -> None:
-    """Plot the 95% confidence interval of [metric] over time.
-
-    The x-axis of the plot is time while the y-axis is the value of the metric.
-
-    Args:
-        outfile (str): String file path.
-        trajectories (List[Trajectory]): List of trajectories to compute \
-            the confidence interval from.
-        metric_name (str): Name of the metric to be plotted.
-        metric (Callable): Function to compute the metric.
-        title (str, optional): Title of the plot.
-        legend (bool, optional): Show legend if True. Defaults to True.
-        comparator (Callable): How trajectories are sorted. Defaults to area \
-            under the curve (np.sum).
-    """
-    fig, ax = plt.subplots()
-    _metric_confidence_interval_over_time_axes(
-        ax=ax,
-        trajectories=trajectories,
-        metric_name=metric_name,
-        metric=metric,
-        title=title,
-        legend=legend,
-        comparator=comparator
-    )
-    fig.savefig(outfile, facecolor='w')
-
-
-def plot_metric_over_time(outfile: str, trajectories: List[Trajectory],
-    metric_name: str, metric: Callable, title: str = None, legend = True):
-    """Plot the [trajectories] for a given [metric] over time.
-
-    The x-axis of the plot is time while the y-axis is the value of the metric.
-
-    Args:
-        outfile (str): String file path.
-        trajectories (List[Trajectory]): List of trajectories to compare.
-        metric_name (str): Name of the metric to be plotted.
-        metric (Callable): Function to compute the metric.
-        title (str, optional): Title of the plot.
-        legend (bool, optional): Show legend if True. Defaults to True.
-    """
-    fig, ax = plt.subplots()
-    _metric_over_time_axes(
-        ax=ax,
-        trajectories=trajectories,
-        metric_name=metric_name,
-        metric=metric,
-        title=title,
-        legend=legend
-    )
-    fig.savefig(outfile, facecolor='w')
-
-
-def plot_metrics_over_time(trajectories: List[Trajectory],
-    metric_names: List[str], metrics: List[Callable], title: str = None, legend = True, metagroup_names = None) -> None:
-    """Plot a comparison the [trajectories] for given [metrics] over time (max 4).
-
-    The x-axis of the plot is time while the y-axis is the value of the metric.
-    Each trajectory is shown as a different line on the plot.
-
-    Args:
-        outfile (str): String file path.
-        trajectories (List[Trajectory]): List of trajectories to compare.
-        metric_name (str): Name of the metric to be plotted.
-        metric (Callable): Function to compute the metric.
-        title (str, optional): Title of the plot.
-        legend (bool, optional): Show legend if True. Defaults to True.
-    """
-    assert(len(metric_names)<5)
-
-    linestyles = ['solid', 'dashed', 'dotted', 'dashdot']
-
-    for trajectory in trajectories:
-        scenario = trajectory.scenario
-        label = trajectory.name
-        color = trajectory.color
-        x = np.arange(scenario["T"]) * scenario["generation_time"]
-        for i in range(len(metrics)):
-            y = metrics[i](trajectory, metagroup_names)
-            plt.plot(x, y, label=label + ": " + metric_names[i], color=color, linestyle = linestyles[i])
-
-    if title is None:
-        if metagroup_names == None:
-            plt.title("Spring Semester Infections, Students+Employees")
-        else:
-            plt.title("Infections " + reduce(add, [scenario["metagroup_names"][x] for x in metagroup_names]))
-    else:
-        plt.title("Spring Semester")
-    plt.ylabel('Cumulative Number')
-    if legend:
-        ax = plt.gca()
-        # Put legend below the current axis because it's too big
-        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.20),
-                  fancybox=True, shadow=True, ncol=2)
-    # plt.savefig(outfile, facecolor='w')
-    # plt.close()
-
-
-def plot_hospitalization(outfile, trajectories: List[Trajectory], legend = True):
-    """Plot total hospitalizations for multiple trajectories."""
-    plot_metric_over_time(outfile=outfile,
-                          trajectories=trajectories,
-                          metric_name="Cumulative Hospitalizations",
-                          metric=metrics.get_cumulative_all_hospitalizations,
-                          title="Spring Semester Hospitalizations, Students+Employees",
-                          legend=legend)
-
-def plot_total_infected_discovered(trajectories: List[Trajectory], title = None, metagroup_names = None, legend = True):
-    """Plot total discovered, including arrival."""
-    plot_metrics_over_time(trajectories=trajectories,
-                          metric_names=["Discovered", "Infected"],
-                          metrics=[metrics.get_total_discovered, metrics.get_total_infected],
-                          title=title,
-                          metagroup_names = metagroup_names,
-                          legend=legend)
-
 # ===================
 # Multiple Axes Plots
 # ===================
@@ -298,18 +282,13 @@ def plot_comprehensive_summary(outfile: str, trajectories: List[Trajectory]):
     fig.subplots_adjust(left=0.1)
     fig.set_size_inches(8.5, 11)
 
-    _metric_over_time_axes(
-        ax=axs[0],
+    _metrics_over_time_axes(
+        ax=plt.subplot(411),
         trajectories=trajectories,
-        metric_name="Infections",
-        metric=metrics.get_total_infected
-    )
-
-    _metric_over_time_axes(
-        ax=axs[1],
-        trajectories=trajectories,
-        metric_name="Discovered",
-        metric=metrics.get_total_discovered
+        metric_names=["Infected", "Discvoered"],
+        metrics=[metrics.get_total_infected, metrics.get_total_discovered],
+        title=f"Infections over Spring Semester",
+        ylabel="Infections"
     )
 
     _metric_over_time_axes(
