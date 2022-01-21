@@ -294,7 +294,7 @@ def plot_comprehensive_summary(outfile: str, trajectories: List[Trajectory]):
     _metric_over_time_axes(
         ax=axs[2],
         trajectories=trajectories,
-        metric_name="On-Campus UG Isolated",
+        metric_name="On-Campus UGs Isolated",
         metric=metrics.get_ug_on_isolated,
         legend=False
     )
@@ -350,7 +350,7 @@ def plot_comprehensive_confidence_interval_summary(outfile: str,
     _metric_confidence_interval_over_time_axes(
         ax=axs[2],
         trajectories=trajectories,
-        metric_name="On-Campus UG Isolation",
+        metric_name="On-Campus UGs Isolated",
         metric=metrics.get_ug_on_isolated
     )
 
