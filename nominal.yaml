@@ -268,13 +268,13 @@ meta_matrix:
 # fit distributions are based on Xiangyu's adjusted moment match code.
 # Assumes that group i has i+1 contacts per day.
 pop_fracs_pareto:
-  UG_on: 0.089
-  UG_off: 0.089
-  GR_on: 0.765
-  GR_off: 0.765
-  PR_on: 0.401
-  PR_off: 0.401
-  FS: 0.693
+  UG_on: "pop_fracs_pareto_UG_on"
+  UG_off: "pop_fracs_pareto_UG_off"
+  GR_on: "pop_fracs_pareto_GR_on"
+  GR_off: "pop_fracs_pareto_GR_off"
+  PR_on: "pop_fracs_pareto_PR_on"
+  PR_off: "pop_fracs_pareto_PR_off"
+  FS: "pop_fracs_pareto_FS"
 
 pop_fracs_max:
   UG_on: 9
