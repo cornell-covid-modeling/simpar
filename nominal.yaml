@@ -53,6 +53,31 @@ winter_break_infections:
   PR_off: 230       # [(2506/2) * (2988/16250)]
   FS: 600           # [15 * 40]
 
+ # TODO: Possible changes based on new data? (bca44)
+
+ # UG (total): 2200-2400, divide based on the % on campus and % off 
+ # UG on campus: 1034-1128 (total * 0.47)
+ # UG off campus: 1166- 1272 (total * 0.53)
+ # 
+ # GR total: 380-400 
+ # GR on: 15 - 16 (*0.04)
+ # GR off: 365-384 (*0.96)
+ # 
+ # PR total: 275-300
+ # PR on: 3 - 3 (off by a fraction of a person) (*.01)
+ # PR off: 272-297 (*0.99)
+
+ # Reasoning: the lower bound numbers are the approx winter break 
+ # occurring NAPs (outside of Cornell testing). 
+ # In the Ug numbers, it seemed that there were more UG at risk that 
+ # needed to return rather than NAPs. Normalizing these numbers (~ 5% 
+ # after all the math), we expect about 2310. I added then an extra bound
+ # for some flexibility. Grad populations have much fewer people who need to 
+ # return, and it seems more NAPs need to return than at risk. I used the 
+ # UG 5% number to get an upper bound instead of an estimate of the center. 
+ # I could do this analysis a little more fine grained for UG off vs on campus
+ # but I don't think it affects things much.
+
 # @Brian Liu's analysis:
 # 965 UG positives in the period 1/26/2022 - 2/7/2022
 # Divide by 2 and scale by population size to get GR and VM/GM/LA.
