@@ -40,9 +40,7 @@ for _ in range(100):
 # [Plot]
 # ======
 
-plotting.plot_metric_confidence_interval_over_time(
+plotting.plot_comprehensive_confidence_interval_summary(
     outfile="sensitivity_analysis.png",
     trajectories=trajectories,
-    metric_name="Isolations",
-    metric=metrics.get_ug_on_isolated
 )
