@@ -212,3 +212,24 @@ pop_fracs_pareto_FS:
   b: .inf  # exp(mu + 2 std)
   mu: -0.48722482302384357
   std: 0.25351372516001164
+
+winter_break_infections_UG:
+  scale: "linear"
+  a: 0
+  b: .inf
+  mu: 2300
+  std: 50
+
+winter_break_infections_GR:
+  scale: "linear"
+  a: 0
+  b: .inf
+  mu: 390
+  std: 5
+
+winter_break_infections_PR:
+  scale: "linear"
+  a: 0
+  b: .inf
+  mu: 287.5
+  std: 6.25

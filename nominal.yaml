@@ -45,12 +45,12 @@ dec_surge_infections:
 # Divide by 2 and scale by population size to get GR and VM/GM/LA.
 # Take 15 per day for 40 days to get fac/staff
 winter_break_infections:
-  UG_on: 1153       # [2506 * 0.46]
-  UG_off: 1353      # [2506 * 0.54]
-  GR_on: 7          # [(2506/2) * (87/16250)]
-  GR_off: 552       # [(2506/2) * (7163/16250)]
-  PR_on: 1          # [(2506/2) * (12/16250)]
-  PR_off: 230       # [(2506/2) * (2988/16250)]
+  UG_on: "winter_break_infections_UG * 0.46" 
+  UG_off: "winter_break_infections_UG * 0.54"
+  GR_on: "winter_break_infections_GR * 0.04"
+  GR_off: "winter_break_infections_GR * 0.96"
+  PR_on: "winter_break_infections_PR * 0.01"
+  PR_off: "winter_break_infections_PR * 0.99"
   FS: 600           # [15 * 40]
 
  # TODO: Possible changes based on new data? (bca44)
