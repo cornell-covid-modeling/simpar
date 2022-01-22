@@ -103,7 +103,11 @@ booster_hospitalization_multiplier:
   std: 0.8    # exp(ln(1/10) + 2[std]) = 0.5
 
 # Owner: Bonnie (@bca44)
-# TODO (bca44): Explanation
+# TODO (bca44): We are using the same PCR values as mentioned in the
+# PNAS paper. These values are cited from here:
+# Our range will be approx. 50-70% sensitivity. Since Omicron has a 
+# slightly lower viral load, we could also reduct PCR effectiveness 
+# slightly if desired
 pcr_sensitivity:
   scale: "linear"
   a: 0
@@ -126,7 +130,7 @@ antigen_sensitivity:
   scale: "linear"
   a: 0
   b: 1
-  mu: 0.4
+  mu: 0.5
   std: 0.05
 
 # Owner: Bonnie (@bca44)
@@ -135,5 +139,5 @@ antigen_compliance:
   scale: "linear"
   a: 0
   b: 1
-  mu: 0.7
+  mu: 0.65
   std: 0.05
