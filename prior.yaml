@@ -103,10 +103,10 @@ booster_hospitalization_multiplier:
   std: 0.8    # exp(ln(1/10) + 2[std]) = 0.5
 
 # Owner: Bonnie (@bca44)
-# (bca44): We are using the same PCR sensitivity 
+# (bca44): We are using the same PCR sensitivity
 # range (50-70%, centered around 60%) as mentioned in the
-# PNAS paper. These values are cited from here: 
-# https://journals.asm.org/doi/pdf/10.1128/jcm.00995-20 
+# PNAS paper. These values are cited from here:
+# https://journals.asm.org/doi/pdf/10.1128/jcm.00995-20
 # Since Omicron has a slightly lower viral load than delta,
 # we could also reduct PCR effectiveness slightly if desired
 pcr_sensitivity:
@@ -117,12 +117,12 @@ pcr_sensitivity:
   std: 0.05
 
 # Owner: Bonnie (@bca44)
-# During FA 2020, there was a period of time during which there were 
-# no penalties for missed surveillance tests. Since there are 
-# penalties for missing surveillance tests currently, and since PCR 
-# tests are supervised, we can use our test compliance data from 
-# FA 2020 to determine the percent PCR compliance. For most of the semester, 
-# PCR compliance hovered slight above 95%. Thus, we will use a range of 
+# During FA 2020, there was a period of time during which there were
+# no penalties for missed surveillance tests. Since there are
+# penalties for missing surveillance tests currently, and since PCR
+# tests are supervised, we can use our test compliance data from
+# FA 2020 to determine the percent PCR compliance. For most of the semester,
+# PCR compliance hovered slight above 95%. Thus, we will use a range of
 # 90-100% PCR compliance for SP 2022, centered around 95%.
 pcr_compliance:
   scale: "linear"
@@ -132,16 +132,16 @@ pcr_compliance:
   std: 0.025
 
 # Owner: Bonnie (@bca44)
-# (bca44): Multiple recent publications discuss the sensitivity of 
-# antigen tests for Omicron in relation to PCR tests. One article 
+# (bca44): Multiple recent publications discuss the sensitivity of
+# antigen tests for Omicron in relation to PCR tests. One article
 # (https://www.idsociety.org/covid-19-real-time-learning-network/diagnostics/rapid-testing/)
-#cites that antigen tests are anywhere from 30-40% less sensitive than 
-# PCR tests. This range would correspond to approximately 
-# 30-50% sensitivity. Another study 
-# (https://www.medrxiv.org/content/10.1101/2022.01.08.22268954v1) 
+#cites that antigen tests are anywhere from 30-40% less sensitive than
+# PCR tests. This range would correspond to approximately
+# 30-50% sensitivity. Another study
+# (https://www.medrxiv.org/content/10.1101/2022.01.08.22268954v1)
 # reports tht anitgen tests in fully boostered
 # populations (which approximately describes Cornell) have around 51%
-# sensitivity (95% CI: 37-65% sensitivity). Thus, we use a range of 30-65% 
+# sensitivity (95% CI: 37-65% sensitivity). Thus, we use a range of 30-65%
 # antigen sensitivity, centered at 50%.
 
 antigen_sensitivity:
@@ -152,8 +152,8 @@ antigen_sensitivity:
   std: 0.05
 
 # Owner: Bonnie (@bca44)
-# (bca44): After polling various students from different 
-# social circles and discussing factors that could be 
+# (bca44): After polling various students from different
+# social circles and discussing factors that could be
 # detrimental to compliance, we determined that antigen compliance
 # is approx. 50-80%, centered at 60%
 antigen_compliance:
@@ -212,24 +212,3 @@ pop_fracs_pareto_FS:
   b: .inf  # exp(mu + 2 std)
   mu: -0.48722482302384357
   std: 0.25351372516001164
-
-winter_break_infections_UG:
-  scale: "linear"
-  a: 0
-  b: .inf
-  mu: 2300
-  std: 50
-
-winter_break_infections_GR:
-  scale: "linear"
-  a: 0
-  b: .inf
-  mu: 390
-  std: 5
-
-winter_break_infections_PR:
-  scale: "linear"
-  a: 0
-  b: .inf
-  mu: 287.5
-  std: 6.25
