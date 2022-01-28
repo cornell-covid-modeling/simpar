@@ -210,11 +210,15 @@ class Strategy:
     # TODO pf98 hwr26 Would be good to be able to initialize the simulator where people are discovered
     #  and recovered. This corresponds to someone who arrives as positive, is tested and found immediately.
 
-    def get_active_discovered(self, params):
-        """Return the active discovered when this strategy is used.
+    def get_arrival_discovered(self, params):
+        """Return the infections discovered in arrival when this strategy is used.
 
-        Currently, active discovered refers only to those active cases found
-        through arrival testing (NOT pre-departure testing).
+        Currently, this refers only to those active cases found through arrival
+        testing (NOT pre-departure testing).
         """
         active_infections = np.array(list(params["active_infections"].values()))
-        return active_infections * self.pct_discovered_in_arrival_test
+        active_arrival_discovered = active_infections * self.pct_discovered_in_arrival_test
+        inactive_arrival_discovered = \
+            np.multiply(np.array(list(params["winter_break_infections"].values())),
+                        np.array(list(params['pct_winter_break_infections_discovered_on_arrival'].values())))
+        return active_arrival_discovered + inactive_arrival_discovered

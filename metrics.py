@@ -30,13 +30,13 @@ def get_isolated(trajectory: Trajectory, metagroup_names: List[str] = None):
                                 iso_props=scenario["isolation_fracs"])
 
     # uniformly spread arrival discovered across three generations
-    active_discovered_sum = \
-        sum(trajectory.strategy.get_active_discovered(scenario)[metagroup_idx])
+    arrival_discovered_sum = \
+        sum(trajectory.strategy.get_arrival_discovered(scenario)[metagroup_idx])
     ARRIVAL_DURATION = 3  # TODO (hwr26): define in nominal.yaml?
-    active_discovered = np.zeros(sim.max_T)
+    arrival_discovered = np.zeros(sim.max_T)
     for i in range(ARRIVAL_DURATION):
-        active_discovered[i] += active_discovered_sum / ARRIVAL_DURATION
-    additional_isolated = compute_isolated(discovered=active_discovered,
+        arrival_discovered[i] += arrival_discovered_sum / ARRIVAL_DURATION
+    additional_isolated = compute_isolated(discovered=arrival_discovered,
                                            generation_time=sim.generation_time,
                                            iso_lengths=scenario["isolation_durations"],
                                            iso_props=scenario["isolation_fracs"])
@@ -77,14 +77,14 @@ def get_total_discovered(trajectory: Trajectory, metagroup_names: List[str] = No
     metagroup_idx = [all_metagroup_names.index(i) for i in metagroup_names]
     discovered = sim.get_total_discovered_for_different_groups(idx, cumulative=True)
 
-    active_discovered_sum = \
-        sum(trajectory.strategy.get_active_discovered(scenario)[metagroup_idx])
+    arrival_discovered_sum = \
+        sum(trajectory.strategy.get_arrival_discovered(scenario)[metagroup_idx])
     ARRIVAL_DURATION = 3
-    active_discovered = np.zeros(sim.max_T)
+    arrival_discovered = np.zeros(sim.max_T)
     for i in range(ARRIVAL_DURATION):
-        active_discovered[i] += active_discovered_sum / ARRIVAL_DURATION
+        arrival_discovered[i] += arrival_discovered_sum / ARRIVAL_DURATION
 
-    return np.cumsum(active_discovered) + discovered
+    return np.cumsum(arrival_discovered) + discovered
 
 def get_total_infected(trajectory: Trajectory, metagroup_names: List[str] = None):
     """Return the number of infected positives at each generation,
@@ -108,14 +108,14 @@ def get_total_infected(trajectory: Trajectory, metagroup_names: List[str] = None
     metagroup_idx = [all_metagroup_names.index(i) for i in metagroup_names]
     infected = sim.get_total_infected_for_different_groups(idx, cumulative=True)
 
-    active_discovered_sum = \
-        sum(trajectory.strategy.get_active_discovered(scenario)[metagroup_idx])
+    arrival_discovered_sum = \
+        sum(trajectory.strategy.get_arrival_discovered(scenario)[metagroup_idx])
     ARRIVAL_DURATION = 3
-    active_discovered = np.zeros(sim.max_T)
+    arrival_discovered = np.zeros(sim.max_T)
     for i in range(ARRIVAL_DURATION):
-        active_discovered[i] += active_discovered_sum / ARRIVAL_DURATION
+        arrival_discovered[i] += arrival_discovered_sum / ARRIVAL_DURATION
 
-    return np.cumsum(active_discovered) + infected
+    return np.cumsum(arrival_discovered) + infected
 
 def get_peak_hotel_rooms(trajectory: Trajectory):
     """Return the peak number of hotel room used over the semester."""
