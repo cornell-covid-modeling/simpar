@@ -32,10 +32,9 @@ def get_isolated(trajectory: Trajectory, metagroup_names: List[str] = None):
     # uniformly spread arrival discovered across three generations
     arrival_discovered_sum = \
         sum(trajectory.strategy.get_arrival_discovered(scenario)[metagroup_idx])
-    ARRIVAL_DURATION = 3  # TODO (hwr26): define in nominal.yaml?
     arrival_discovered = np.zeros(sim.max_T)
-    for i in range(ARRIVAL_DURATION):
-        arrival_discovered[i] += arrival_discovered_sum / ARRIVAL_DURATION
+    for i in range(scenario["arrival_period"]):
+        arrival_discovered[i] += arrival_discovered_sum / scenario["arrival_period"]
     additional_isolated = compute_isolated(discovered=arrival_discovered,
                                            generation_time=sim.generation_time,
                                            iso_lengths=scenario["isolation_durations"],
@@ -79,10 +78,9 @@ def get_total_discovered(trajectory: Trajectory, metagroup_names: List[str] = No
 
     arrival_discovered_sum = \
         sum(trajectory.strategy.get_arrival_discovered(scenario)[metagroup_idx])
-    ARRIVAL_DURATION = 3
     arrival_discovered = np.zeros(sim.max_T)
-    for i in range(ARRIVAL_DURATION):
-        arrival_discovered[i] += arrival_discovered_sum / ARRIVAL_DURATION
+    for i in range(scenario["arrival_period"]):
+        arrival_discovered[i] += arrival_discovered_sum / scenario["arrival_period"]
 
     return np.cumsum(arrival_discovered) + discovered
 
@@ -110,10 +108,9 @@ def get_total_infected(trajectory: Trajectory, metagroup_names: List[str] = None
 
     arrival_discovered_sum = \
         sum(trajectory.strategy.get_arrival_discovered(scenario)[metagroup_idx])
-    ARRIVAL_DURATION = 3
     arrival_discovered = np.zeros(sim.max_T)
-    for i in range(ARRIVAL_DURATION):
-        arrival_discovered[i] += arrival_discovered_sum / ARRIVAL_DURATION
+    for i in range(scenario["arrival_period"]):
+        arrival_discovered[i] += arrival_discovered_sum / scenario["arrival_period"]
 
     return np.cumsum(arrival_discovered) + infected
 

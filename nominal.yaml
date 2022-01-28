@@ -188,6 +188,7 @@ booster_rate:                   # rate of booster vaccination
   FS: 1.0
 
 generation_time: 4              # generation time (days)
+arrival_period: 5               # length of arrival period (in generations)
 
 # Define the isolation policy in use.
 isolation_durations:            # durations of isolation (days)

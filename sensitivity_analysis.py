@@ -6,7 +6,7 @@ import metrics
 from transform import transform
 from scenario import ScenarioFamily
 from sim_helper import sim_test_strategy
-from sp22_strategies import sp22_testing_strategy
+from sp22_strategies import sp22_no_testing_strategy
 import plotting
 
 COLORS = ['#084594', '#2171b5', '#4292c6', '#6baed6',
@@ -31,7 +31,7 @@ trajectories = []
 for _ in range(100):
     scenario = scenario_family.get_sampled_scenario()
     traj = sim_test_strategy(scenario=scenario,
-                             strategy=sp22_testing_strategy(scenario),
+                             strategy=sp22_no_testing_strategy(scenario),
                              color="white",
                              name=str(scenario["booster_rate"]["FS"]))
     trajectories.append(traj)
