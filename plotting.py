@@ -276,7 +276,7 @@ def plot_small_summary(outfile : str,
 
 def plot_comprehensive_summary(outfile: str, trajectories: List[Trajectory]):
     """Plot a comprehensive summary of the simulation run."""
-    fig, axs = plt.subplots(4,2)
+    fig, axs = plt.subplots(3,2)
     axs = list(axs.flat)
     fig.tight_layout(pad=1)
     fig.subplots_adjust(left=0.1)
@@ -307,9 +307,9 @@ def plot_comprehensive_summary(outfile: str, trajectories: List[Trajectory]):
         legend=False
     )
 
-    group_names = ["UG", "GR", "PR", "FS"]
-    groups = [["UG_on", "UG_off"], ["GR_on", "GR_off"], ["PR_on", "PR_off"], ["FS"]]
-    for i in range(4):
+    group_names = ["Students", "Employees"]
+    groups = [["UG_on", "UG_off", "GR_on", "GR_off", "PR_on", "PR_off"], ["FS"]]
+    for i in range(2):
         metric = lambda x: metrics.get_total_discovered(x, metagroup_names=groups[i])
         _metric_over_time_axes(
             ax=axs[4+i],
@@ -325,7 +325,7 @@ def plot_comprehensive_summary(outfile: str, trajectories: List[Trajectory]):
 def plot_comprehensive_confidence_interval_summary(outfile: str,
     trajectories: List[Trajectory]) -> None:
     """Plot comprehensive summary of multiple trajectories sampled from prior."""
-    fig, axs = plt.subplots(4,2)
+    fig, axs = plt.subplots(3,2)
     axs = list(axs.flat)
     fig.tight_layout(pad=1)
     fig.subplots_adjust(left=0.1)
@@ -361,9 +361,9 @@ def plot_comprehensive_confidence_interval_summary(outfile: str,
         metric=metrics.get_cumulative_all_hospitalizations
     )
 
-    group_names = ["UG", "GR", "PR", "FS"]
-    groups = [["UG_on", "UG_off"], ["GR_on", "GR_off"], ["PR_on", "PR_off"], ["FS"]]
-    for i in range(4):
+    group_names = ["Students", "Employees"]
+    groups = [["UG_on", "UG_off", "GR_on", "GR_off", "PR_on", "PR_off"], ["FS"]]
+    for i in range(2):
         metric = lambda x: metrics.get_total_discovered(x, metagroup_names=groups[i])
         _metric_confidence_interval_over_time_axes(
             ax=axs[i+4],
