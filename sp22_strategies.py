@@ -29,27 +29,21 @@ def sp22_2x_week_testing_regime(scenario: Dict):
                                          "GR_off": 0,
                                          "PR_on": 2,
                                          "PR_off": 2,
-                                         "FS": 0})
+                                         "FS": 0.25})   # @Peter
 
 # UG: On-Campus: antigen, Off-campus: pcr (1x/week)
 # GR/PR: On-Campus / PR: antigen (1x/week), Off-campus GR: (0x/week)
 # FS: (0x/week)
 def sp22_1x_week_testing_regime(scenario: Dict):
     return TestingRegime(scenario=scenario,
-                         test_type={"UG_on": "antigen",
-                                    "UG_off": "pcr",
-                                    "GR_on": "antigen",
-                                    "GR_off": "pcr",
-                                    "PR_on": "antigen",
-                                    "PR_off": "antigen",
-                                    "FS": "pcr"},
+                         test_type="pcr",
                          tests_per_week={"UG_on": 1,
                                          "UG_off": 1,
                                          "GR_on": 1,
                                          "GR_off": 0,
                                          "PR_on": 1,
                                          "PR_off": 1,
-                                         "FS": 0})
+                                         "FS": 0.25})   # @Peter
 
 def no_testing_testing_regime(scenario: Dict):
     return TestingRegime(scenario=scenario, test_type="pcr", tests_per_week=0)
