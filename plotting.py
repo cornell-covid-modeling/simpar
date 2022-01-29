@@ -15,7 +15,7 @@ import metrics
 # ===========================
 
 def _add_metric_confidence_interval(ax, trajectories: List[Trajectory],
-    metric: Callable, confidence_interval=0.95, comparator : Callable = np.sum):
+    metric: Callable, confidence_interval=0.95, comparator : Callable = np.sum, zorder=0):
     """Add confidence interval of [metric] to the axes [ax]."""
     # sort the trajectories
     scenario = trajectories[0].scenario
@@ -30,9 +30,13 @@ def _add_metric_confidence_interval(ax, trajectories: List[Trajectory],
     ub = ys[int(len(ys) * (1 - limit))]
 
     # add confidence interval to plot
-    ax.plot(x, nominal, label="Nominal (50%)", color="#9ecae1", linestyle="solid")
-    ci_label = "%.0f%% CI" % (confidence_interval * 100)
-    ax.fill_between(x, ub, lb, label=ci_label, alpha=0.5, color="#9ecae1")
+    name = trajectories[0].strategy.name
+    color = trajectories[0].color
+    ax.plot(x, nominal, label=f"Nominal (50%) [{name}]", color=color,
+            linestyle="solid", zorder=zorder)
+    ci_label = "%.0f%% CI %s" % (confidence_interval * 100, f"{name}")
+    ax.fill_between(x, ub, lb, label=ci_label, alpha=0.25,
+                    color=color, zorder=zorder)
 
 
 def _add_trajectory_metric(ax, trajectory: Trajectory, metric: Callable,
@@ -101,6 +105,23 @@ def _metric_confidence_interval_over_time_axes(ax,
     ax.set_xlabel("Time (Days)")
     if legend:
         ax.legend()
+
+
+def _metric_confidence_intervals_over_time_axes(ax,
+    trajectories: List[List[Trajectory]], metric_name: str, metric: Callable,
+    title: str = None, legend = True, comparator : Callable = np.sum) -> None:
+    """Set [ax] to plot [trajectories] CI for a given [metric] over time."""
+    for i in range(len(trajectories)):
+        trajs = deepcopy(trajectories[i])
+        _add_metric_confidence_interval(ax, trajs, metric, comparator=comparator, zorder=i)
+    if title is None:
+        title = f"{metric_name} over the Spring Semester"
+    ax.set_title(title)
+    ax.set_ylabel(metric_name)
+    ax.set_xlabel("Time (Days)")
+    if legend:
+        ax.legend()
+
 
 # =================
 # Single Axes Plots
@@ -323,7 +344,7 @@ def plot_comprehensive_summary(outfile: str, trajectories: List[Trajectory]):
 
 
 def plot_comprehensive_confidence_interval_summary(outfile: str,
-    trajectories: List[Trajectory]) -> None:
+    trajectories: List[List[Trajectory]]) -> None:
     """Plot comprehensive summary of multiple trajectories sampled from prior."""
     fig, axs = plt.subplots(3,2)
     axs = list(axs.flat)
@@ -331,15 +352,16 @@ def plot_comprehensive_confidence_interval_summary(outfile: str,
     fig.subplots_adjust(left=0.1)
     fig.set_size_inches(8.5, 11)
 
-    _metric_confidence_interval_over_time_axes(
+    _metric_confidence_intervals_over_time_axes(
         ax=axs[0],
         trajectories=trajectories,
         metric_name="Total Infected",
         metric=metrics.get_total_infected,
-        comparator=lambda x: x[-1]
+        comparator=lambda x: x[-1],
+        legend=False
     )
 
-    _metric_confidence_interval_over_time_axes(
+    _metric_confidence_intervals_over_time_axes(
         ax=axs[1],
         trajectories=trajectories,
         metric_name="Total Discovered",
@@ -347,30 +369,33 @@ def plot_comprehensive_confidence_interval_summary(outfile: str,
         comparator=lambda x: x[-1]
     )
 
-    _metric_confidence_interval_over_time_axes(
+    _metric_confidence_intervals_over_time_axes(
         ax=axs[2],
         trajectories=trajectories,
         metric_name="On-Campus UGs Isolated",
-        metric=metrics.get_ug_on_isolated
+        metric=metrics.get_ug_on_isolated,
+        legend=False
     )
 
-    _metric_confidence_interval_over_time_axes(
+    _metric_confidence_intervals_over_time_axes(
         ax=axs[3],
         trajectories=trajectories,
         metric_name="Hospitalizations",
-        metric=metrics.get_cumulative_all_hospitalizations
+        metric=metrics.get_cumulative_all_hospitalizations,
+        legend=False
     )
 
     group_names = ["Students", "Employees"]
     groups = [["UG_on", "UG_off", "GR_on", "GR_off", "PR_on", "PR_off"], ["FS"]]
     for i in range(2):
         metric = lambda x: metrics.get_total_discovered(x, metagroup_names=groups[i])
-        _metric_confidence_interval_over_time_axes(
+        _metric_confidence_intervals_over_time_axes(
             ax=axs[i+4],
             trajectories=trajectories,
             metric_name=f"{group_names[i]} Discovered",
             metric=metric,
-            comparator=lambda x: x[-1]
+            comparator=lambda x: x[-1],
+            legend=False
         )
 
     fig.savefig(outfile, facecolor='w')
