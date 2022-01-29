@@ -28,6 +28,7 @@ scenario_family = ScenarioFamily(nominal, yaml.safe_load(open("prior.yaml", "r")
 
 no_testing_trajectories = []
 once_week_trajectories = []
+np.random.seed(0)
 for _ in range(100):
     scenario = scenario_family.get_sampled_scenario()
     no_testing_traj = \
