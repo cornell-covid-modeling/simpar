@@ -117,7 +117,7 @@ class TestingRegime:
             if _tests_per_week == 0:
                 _days_between_tests = np.inf
                 self.infection_discovery_frac[i] = scenario["symptomatic_rate"]
-                self.recovered_discovery_frac[i] = scenario["no_surveillance_test_rate"]
+                self.recovered_discovery_frac[i] = scenario["no_surveillance_test_rate"][mg_names[i]]
             else:
                 _days_between_tests = 7 / _tests_per_week
                 self.infection_discovery_frac[i] = 1

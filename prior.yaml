@@ -40,7 +40,7 @@ infections_per_day_per_contact_unit_UG:
   a: 0        # must be positive
   b: .inf
   mu: 0.25
-  std: 0.005
+  std: 0.05   # 0.25 / 5
 
 #Currently set GR and PR to have same transmissibility due to fall data
 infections_per_day_per_contact_unit_allGrad:
@@ -48,7 +48,7 @@ infections_per_day_per_contact_unit_allGrad:
   a: 0        # must be positive
   b: .inf
   mu: 0.08
-  std: 0.01
+  std: 0.016  # 0.08 / 5
 
 # Owner: Sam (@sst76)
 # TODO [Sam], potentially incorporate calibrating outside_rate and infections_per... together
@@ -57,27 +57,16 @@ infections_per_day_per_contact_unit_allGrad:
 # NOTE: This is calibrated to a pre-Omicron period so this should be multiplied
 # by the [outside_rate_post_peak_multiplier].
 
-# Comment from nominal.yaml to be moved here (if needed):
-# @sst76 from observed 175 over 77 days in employees from 9/15 to 12/01, to give 2.27
-# pf98 more recently we've see roughly 15 per day across the entire employee population
-# Cutting this to 5 because by the time the semester starts new cases should be less frequent
+# [1/27/2022] This parameter was re-calibrated based on observed arrival
+# testing data. The calculations can be found in the Google Sheet below.
+# The faculty / staff parameters are computed in "Faculty / Staff" sheet
+# https://docs.google.com/spreadsheets/d/1IH33SYF9uYkZn01DSEL7vfVkL56Pta2gLnQKztAIaRQ/edit#gid=909204111
 outside_rate_FS:
   scale: "linear"
   a: 0      #must be positive
   b: .inf
-  mu: 12.75
+  mu: 16    # ~112/week
   std: 1.25
-
-# Owner: Sam (@sst76)
-# derived by using 2.27 as a lower bound for overall outside rate, which is the
-# pre-omicron outside rate, and upper bound as no decrease in outside_rate
-# e.g. 0.15 \approx 2.27/15.25 (where 15.25 is upper bound on outside_rate_FS)
-outside_rate_post_peak_multiplier:
-  scale: "linear"
-  a: 0        #must be positive
-  b: 1   # at most the same as peak omicron
-  mu: 0.575
-  std: 0.2125
 
 #TODO [Sam], add parameter for uncertainty around student/FS proportions for outside_rate
 
@@ -91,16 +80,14 @@ classwork_transmission_multiplier:
   std: 0.075
 
 # Owner: Bonnie (@bca44)
-# Based on: https://www.nejm.org/doi/full/10.1056/NEJMoa2114255
-# TODO (bca44): Correct this based on new research
-# From meeting:
-# - One option: lb: 1/4, ub: 1, mean: 1/2 on a logarithmic scale
+# Based on the "Prior on booster_hospitalization_multiplier" in
+# https://docs.google.com/spreadsheets/d/1IH33SYF9uYkZn01DSEL7vfVkL56Pta2gLnQKztAIaRQ/edit#gid=1416940777
 booster_hospitalization_multiplier:
   scale: "log"
-  a: -.inf     # [mu] - 2[std]
-  b: 0     # max 1 in normal scale
-  mu: -2.30   # ln(1/10)
-  std: 0.8    # exp(ln(1/10) + 2[std]) = 0.5
+  a: -.inf
+  b: 0
+  mu: -1.039720771
+  std: 0.5198603854
 
 # Owner: Bonnie (@bca44)
 # (bca44): We are using the same PCR sensitivity

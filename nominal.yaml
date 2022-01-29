@@ -41,9 +41,10 @@ dec_surge_infections:
   FS: 0
 
 # [1/27/2022] This parameter was re-calibrated based on observed arrival
-# testing data. The calculations can be found here:
+# testing data. The calculations can be found in the Google Sheet below.
+# The student group parameters are computed in "Back of the Envelope" sheet
+# The faculty / staff parameters are computed in "Faculty / Staff" sheet
 # https://docs.google.com/spreadsheets/d/1IH33SYF9uYkZn01DSEL7vfVkL56Pta2gLnQKztAIaRQ/edit#gid=909204111
-# For the fac/staff parameter, we take 15 per day for 40 days.
 winter_break_infections:
   UG_on: 1025
   UG_off: 1477
@@ -51,11 +52,12 @@ winter_break_infections:
   GR_off: 760
   PR_on: 16
   PR_off: 515
-  FS: 600           # [15 * 40]
+  FS: 1435
 
-# [1/27/2022] This parameter was introduced to capture winter_break_infections
-# that were discovered upon arrival testing. It was calibrated based on
-# observed arrival testing data. The calculations can be found here:
+# [1/27/2022] This parameter was re-calibrated based on observed arrival
+# testing data. The calculations can be found in the Google Sheet below.
+# The student group parameters are computed in "Back of the Envelope" sheet
+# The faculty / staff parameters are computed in "Faculty / Staff" sheet
 # https://docs.google.com/spreadsheets/d/1IH33SYF9uYkZn01DSEL7vfVkL56Pta2gLnQKztAIaRQ/edit#gid=909204111
 pct_winter_break_infections_discovered_on_arrival:
   UG_on: 0.04786736425
@@ -64,7 +66,7 @@ pct_winter_break_infections_discovered_on_arrival:
   GR_off: 0.02006247988
   PR_on: 0
   PR_off: 0.03303064518
-  FS: 0 # TODO (hwr26): What should this be?
+  FS: 0
 
  # TODO: Possible changes based on new data? (bca44)
 
@@ -92,9 +94,10 @@ pct_winter_break_infections_discovered_on_arrival:
  # but I don't think it affects things much.
 
 # [1/27/2022] This parameter was re-calibrated based on observed arrival
-# testing data. The calculations can be found here:
+# testing data. The calculations can be found in the Google Sheet below.
+# The student group parameters are computed in "Back of the Envelope" sheet
+# The faculty / staff parameters are computed in "Faculty / Staff" sheet
 # https://docs.google.com/spreadsheets/d/1IH33SYF9uYkZn01DSEL7vfVkL56Pta2gLnQKztAIaRQ/edit#gid=909204111
-# For the fac/staff parameter, we take 15 per day for 3 days
 active_infections:
   UG_on: 121
   UG_off: 60
@@ -102,19 +105,19 @@ active_infections:
   GR_off: 38
   PR_on: 0
   PR_off: 42
-  FS: 45            # [15 * 3]
+  FS: 53
 
 # @Yujia's analyis
 # NOTE: This parameter is calibrated to a non-boosted population hence this
 # is interpreted as non-boosted hospitalization rates.
 hospitalization_rates:
-  UG_on: 0.00025    # [1/4000]
-  UG_off: 0.00025   # [1/4000]
-  GR_on: 0.00025    # [1/4000]
-  GR_off: 0.00025   # [1/4000]
-  PR_on: 0.00025    # [1/4000]
-  PR_off: 0.00025   # [1/4000]
-  FS: 0.005         # [1/200]
+  UG_on: 0.0005    # [1/2000]
+  UG_off: 0.0005   # [1/2000]
+  GR_on: 0.0005    # [1/2000]
+  GR_off: 0.0005   # [1/2000]
+  PR_on: 0.0005    # [1/2000]
+  PR_off: 0.0005   # [1/2000]
+  FS: 0.005        # [1/200]
 
 # In the modeling team's spring 2021 projections, based on fall 2020 data, we estimated per-person
 # outside infection rates of 1.42E-5 for the greek/athlete population, 7.11E-6 for other UG, and
@@ -128,13 +131,13 @@ hospitalization_rates:
 # NOTE: This parameter is calibrated to a non-boosted population hence this
 # is interpreted as non-boosted outside rates.
 outside_rates: #number of infections for each meta-group per day across the whole meta-group
-  UG_on: "outside_rate_FS * outside_rate_post_peak_multiplier * 0.075"  # [(7475/10000)/10]
-  UG_off: "outside_rate_FS * outside_rate_post_peak_multiplier * 0.088" # [(8775/10000)/10]
-  GR_on: "outside_rate_FS * outside_rate_post_peak_multiplier * 0.0009" # [(87/10000)/10]
-  GR_off: "outside_rate_FS * outside_rate_post_peak_multiplier * 0.07"  # [(7163/10000)/10]
-  PR_on: "outside_rate_FS * outside_rate_post_peak_multiplier * 0.0001" # [(12/10000)/10]
-  PR_off: "outside_rate_FS * outside_rate_post_peak_multiplier * 0.03"  # [(2988/10000)/10]
-  FS: "outside_rate_FS * outside_rate_post_peak_multiplier"
+  UG_on: "outside_rate_FS * 0.075"  # [(7475/10000)/10]
+  UG_off: "outside_rate_FS * 0.088" # [(8775/10000)/10]
+  GR_on: "outside_rate_FS * 0.0009" # [(87/10000)/10]
+  GR_off: "outside_rate_FS * 0.07"  # [(7163/10000)/10]
+  PR_on: "outside_rate_FS * 0.0001" # [(12/10000)/10]
+  PR_off: "outside_rate_FS * 0.03"  # [(2988/10000)/10]
+  FS: "outside_rate_FS"
 
 
 # multiplier to apply to transmission once virtual instruction classwork makes students busy
@@ -168,8 +171,14 @@ T: 28                           # num generations (16 weeks with 4-day generatio
 
 symptomatic_rate: "symptomatic_rate"
 
-no_surveillance_test_rate: 0.01 # percent of the population tested in a generation
-                                # (under no surveillance)
+no_surveillance_test_rate:      # percent of the population tested per generation
+  UG_on: 0.01                   # (assuming no surveillance)
+  UG_off: 0.01
+  GR_on: 0.01
+  GR_off: 0.01
+  PR_on: 0.01
+  PR_off: 0.01
+  FS: 0  # based on observed behavior @Sam + @Bonnie
 
 # The booster will have an effect on both transmissibility and susceptibility.
 # This parameter captures the combined effect where we pessimistically assume
