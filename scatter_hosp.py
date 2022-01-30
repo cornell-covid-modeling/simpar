@@ -56,9 +56,10 @@ for i in range(100):
 
 plt.scatter(xs,ys)
 plt.plot(xs, xs, color = 'red', label = 'x=y')
-plt.title('Hospitalizations: No testing vs 1x/week')
-plt.xlabel('No testing hospitalizations')
-plt.ylabel('Once a week testing hospitalizations')
+plt.title('Hospitalizations: No student testing vs 1x/week')
+plt.xlabel('Hospitalizations with no student testing')
+plt.xlabel('Hospitalizations with UG/professional 1x/wk testing')
+plt.legend(['One scenario','Dividing line w/ equal hospitalizations'])
 
-plt.show()
-    
+plt.savefig('scatter_hosp.png')
+
