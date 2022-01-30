@@ -79,6 +79,18 @@ classwork_transmission_multiplier:
   mu: 0.85
   std: 0.075
 
+# Owner: Jiayue
+# The booster will have an effect on both transmissibility and susceptibility.
+# This parameter captures the combined effect where we pessimistically assume
+# there is no effect on transmissibility (multiplier of 1.0) and assume
+# it halves the susceptibility (multiplier of 0.5) giving a combined 1.0 * 0.5
+booster_multiplier:
+  scale: "linear"
+  a: 0
+  b: 1
+  mu: 0.465
+  std: 0.0425
+
 # Owner: Bonnie (@bca44)
 # Based on the "Prior on booster_hospitalization_multiplier" in
 # https://docs.google.com/spreadsheets/d/1IH33SYF9uYkZn01DSEL7vfVkL56Pta2gLnQKztAIaRQ/edit#gid=1416940777
@@ -88,6 +100,7 @@ booster_hospitalization_multiplier:
   b: 0
   mu: -1.039720771
   std: 0.5198603854
+  # mean 0.5, [1/8, 1] 2 std interval
 
 # Owner: Bonnie (@bca44)
 # (bca44): We are using the same PCR sensitivity
@@ -199,3 +212,19 @@ pop_fracs_pareto_FS:
   b: .inf  # exp(mu + 2 std)
   mu: -0.48722482302384357
   std: 0.25351372516001164
+
+# Aligns with the faculty/staff no surveillance rate.
+no_surveillance_test_rate_student:
+  scale: "linear"
+  a: 0.01
+  b: .inf
+  mu: 0.03
+  std: 0.01
+
+# Roughly 6 but want to capture variability.
+max_infectious_days:
+  scale: "linear"
+  a: 5
+  b: 7
+  mu: 6
+  std: 0.5

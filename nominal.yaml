@@ -131,12 +131,12 @@ hospitalization_rates:
 # NOTE: This parameter is calibrated to a non-boosted population hence this
 # is interpreted as non-boosted outside rates.
 outside_rates: #number of infections for each meta-group per day across the whole meta-group
-  UG_on: "outside_rate_FS * 0.075"  # [(7475/10000)/10]
-  UG_off: "outside_rate_FS * 0.088" # [(8775/10000)/10]
-  GR_on: "outside_rate_FS * 0.0009" # [(87/10000)/10]
-  GR_off: "outside_rate_FS * 0.07"  # [(7163/10000)/10]
-  PR_on: "outside_rate_FS * 0.0001" # [(12/10000)/10]
-  PR_off: "outside_rate_FS * 0.03"  # [(2988/10000)/10]
+  UG_on: "outside_rate_FS * 0.093"   # [(7475/10000)/8]
+  UG_off: "outside_rate_FS * 0.11"   # [(8775/10000)/8]
+  GR_on: "outside_rate_FS * 0.0011"  # [(87/10000)/8]
+  GR_off: "outside_rate_FS * 0.090"  # [(7163/10000)/8]
+  PR_on: "outside_rate_FS * 0.00015" # [(12/10000)/8]
+  PR_off: "outside_rate_FS * 0.037"  # [(2988/10000)/8]
   FS: "outside_rate_FS"
 
 
@@ -173,30 +173,28 @@ symptomatic_rate: "symptomatic_rate"
 
 # @Peter: The faculty staff number is based on the faculty/staff sheet in
 # https://docs.google.com/spreadsheets/d/1IH33SYF9uYkZn01DSEL7vfVkL56Pta2gLnQKztAIaRQ/edit#gid=366817656
-no_surveillance_test_rate:      # percent of the population tested per generation
-  UG_on: 0.01                   # (assuming no surveillance)
-  UG_off: 0.01
-  GR_on: 0.01
-  GR_off: 0.01
-  PR_on: 0.01
-  PR_off: 0.01
+no_surveillance_test_rate:                    # percent of the population tested per generation
+  UG_on: "no_surveillance_test_rate_student"  # (assuming no surveillance)
+  UG_off: "no_surveillance_test_rate_student"
+  GR_on: "no_surveillance_test_rate_student"
+  GR_off: "no_surveillance_test_rate_student"
+  PR_on: "no_surveillance_test_rate_student"
+  PR_off: "no_surveillance_test_rate_student"
   FS: 0.2334
 
-# The booster will have an effect on both transmissibility and susceptibility.
-# This parameter captures the combined effect where we pessimistically assume
-# there is no effect on transmissibility (multiplier of 1.0) and assume
-# it halves the susceptibility (multiplier of 0.5) giving a combined 1.0 * 0.5
-booster_multiplier: 0.5
+booster_multiplier: "booster_multiplier"
 booster_hospitalization_multiplier: "booster_hospitalization_multiplier"
 
+# Current policy is booster mandate for students
+# (though some will have exemptions).
 booster_rate:                   # rate of booster vaccination
-  UG_on: 1.0
-  UG_off: 1.0
-  GR_on: 1.0
-  GR_off: 1.0
-  PR_on: 1.0
-  PR_off: 1.0
-  FS: 1.0
+  UG_on: 0.95
+  UG_off: 0.95
+  GR_on: 0.95
+  GR_off: 0.95
+  PR_on: 0.95
+  PR_off: 0.95
+  FS: 0.95
 
 generation_time: 4              # generation time (days)
 arrival_period: 5               # length of arrival period (in generations)
@@ -212,7 +210,7 @@ isolation_fracs:                # fraction of pop falling into various isolation
 # A person is modeled as having constant infectiousness beginning some time
 # after exposure and lasting an additional max_infectious_days. It is only during this
 # infectious period that the infection is modeled as being detectable in PCR.
-max_infectious_days: 6
+max_infectious_days: "max_infectious_days"
 
 # For each type of test, we include a parameter for the sensitivity during the
 # infectious period (all tests are modelled as having zero sensitivity in the
