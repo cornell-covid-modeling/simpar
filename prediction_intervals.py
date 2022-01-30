@@ -49,6 +49,6 @@ for _ in range(100):
 # ======
 
 plotting.plot_comprehensive_confidence_interval_summary(
-    outfile="sensitivity_analysis.png",
+    outfile="prediction_intervals.png",
     trajectories=[no_testing_trajectories, once_week_trajectories]
 )
