@@ -171,6 +171,8 @@ T: 28                           # num generations (16 weeks with 4-day generatio
 
 symptomatic_rate: "symptomatic_rate"
 
+# @Peter: The faculty staff number is based on the faculty/staff sheet in
+# https://docs.google.com/spreadsheets/d/1IH33SYF9uYkZn01DSEL7vfVkL56Pta2gLnQKztAIaRQ/edit#gid=366817656
 no_surveillance_test_rate:      # percent of the population tested per generation
   UG_on: 0.01                   # (assuming no surveillance)
   UG_off: 0.01
@@ -178,7 +180,7 @@ no_surveillance_test_rate:      # percent of the population tested per generatio
   GR_off: 0.01
   PR_on: 0.01
   PR_off: 0.01
-  FS: 0  # based on observed behavior @Sam + @Bonnie
+  FS: 0.2334
 
 # The booster will have an effect on both transmissibility and susceptibility.
 # This parameter captures the combined effect where we pessimistically assume

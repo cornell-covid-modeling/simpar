@@ -13,7 +13,8 @@ def sp22_arrival_testing(scenario: Dict):
 
 # UG: On-Campus: antigen, Off-campus: pcr (2x/week)
 # GR/PR: On-Campus / PR: antigen (2x/week), Off-campus GR: (0x/week)
-# FS: (0x/week)
+# FS: (0.25x/week)
+# @Peter: The FS number is a rough estimate of the fraction of employees who are in once weekly testing
 def sp22_2x_week_testing_regime(scenario: Dict):
     return TestingRegime(scenario=scenario,
                          test_type={"UG_on": "antigen",
@@ -29,11 +30,12 @@ def sp22_2x_week_testing_regime(scenario: Dict):
                                          "GR_off": 0,
                                          "PR_on": 2,
                                          "PR_off": 2,
-                                         "FS": 0.25})   # @Peter
+                                         "FS": 0.25})
 
 # UG: On-Campus: antigen, Off-campus: pcr (1x/week)
 # GR/PR: On-Campus / PR: antigen (1x/week), Off-campus GR: (0x/week)
-# FS: (0x/week)
+# FS: (0.25x/week)
+# @Peter: The FS number is a rough estimate of the fraction of employees who are in once weekly testing
 def sp22_1x_week_testing_regime(scenario: Dict):
     return TestingRegime(scenario=scenario,
                          test_type="pcr",
@@ -43,10 +45,20 @@ def sp22_1x_week_testing_regime(scenario: Dict):
                                          "GR_off": 0,
                                          "PR_on": 1,
                                          "PR_off": 1,
-                                         "FS": 0.25})   # @Peter
+                                         "FS": 0.25})
 
+# No testing, except for FS (0.25x/week)
+# @Peter: The FS number is a rough estimate of the fraction of employees who are in once weekly testing
 def no_testing_testing_regime(scenario: Dict):
-    return TestingRegime(scenario=scenario, test_type="pcr", tests_per_week=0)
+    return TestingRegime(scenario=scenario,
+                         test_type="pcr",
+                         tests_per_week = {"UG_on": 0,
+                                           "UG_off": 0,
+                                           "GR_on": 0,
+                                           "GR_off": 0,
+                                           "PR_on": 0,
+                                           "PR_off": 0,
+                                           "FS": 0.25})
 
 # =========================
 # Potential sp22 strategies
