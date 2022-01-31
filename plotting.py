@@ -34,9 +34,14 @@ def _add_metric_confidence_interval(ax, trajectories: List[Trajectory],
     color = trajectories[0].color
     ax.plot(x, nominal, label=f"Nominal (50%) [{name}]", color=color,
             linestyle="solid", zorder=zorder)
-    ci_label = "%.0f%% CI %s" % (confidence_interval * 100, f"{name}")
-    ax.fill_between(x, ub, lb, label=ci_label, alpha=0.25,
-                    color=color, zorder=zorder)
+    # TODO (hwr26): Maybe have an argument that flags this on/off?
+    # ax.plot(x, lb, label=f"Optimistic (5%) [{name}]", color=color,
+    #         linestyle="dashed", zorder=zorder)
+    ax.plot(x, ub, label=f"Pessimistic (95%) [{name}]", color=color,
+            linestyle="dashed", zorder=zorder)
+
+    # ax.fill_between(x, ub, lb, label=ci_label, alpha=0.25,
+    #                 color=color, zorder=zorder)
 
 
 def _add_trajectory_metric(ax, trajectory: Trajectory, metric: Callable,
@@ -120,7 +125,8 @@ def _metric_confidence_intervals_over_time_axes(ax,
     ax.set_ylabel(metric_name)
     ax.set_xlabel("Time (Days)")
     if legend:
-        ax.legend()
+        # TODO (hwr26): Provide as argument?
+        ax.legend(loc="upper left")
 
 
 # =================
@@ -346,11 +352,11 @@ def plot_comprehensive_summary(outfile: str, trajectories: List[Trajectory]):
 def plot_comprehensive_confidence_interval_summary(outfile: str,
     trajectories: List[List[Trajectory]]) -> None:
     """Plot comprehensive summary of multiple trajectories sampled from prior."""
-    fig, axs = plt.subplots(4,2)
+    fig, axs = plt.subplots(2,2)
     axs = list(axs.flat)
     fig.tight_layout(pad=1)
     fig.subplots_adjust(left=0.1)
-    fig.set_size_inches(8.5, 11)
+    fig.set_size_inches(11, 8.5)
 
     _metric_confidence_intervals_over_time_axes(
         ax=axs[0],
@@ -358,7 +364,7 @@ def plot_comprehensive_confidence_interval_summary(outfile: str,
         metric_name="Total Infected",
         metric=metrics.get_total_infected,
         comparator=lambda x: x[-1],
-        legend=False
+        legend=True
     )
 
     _metric_confidence_intervals_over_time_axes(
@@ -366,7 +372,8 @@ def plot_comprehensive_confidence_interval_summary(outfile: str,
         trajectories=trajectories,
         metric_name="Total Discovered",
         metric=metrics.get_total_discovered,
-        comparator=lambda x: x[-1]
+        comparator=lambda x: x[-1],
+        legend=False
     )
 
     _metric_confidence_intervals_over_time_axes(
@@ -386,20 +393,27 @@ def plot_comprehensive_confidence_interval_summary(outfile: str,
         comparator=lambda x: x[-1]
     )
 
+    fig.savefig(f"{outfile}_summary.png", facecolor='w')
+
+    # clear axes
+    for i in range(4):
+        axs[i].clear()
+
     group_names = ["UG", "GR", "PR", "FS"]
     groups = [["UG_on", "UG_off"], ["GR_on", "GR_off"], ["PR_on", "PR_off"], ["FS"]]
     for i in range(4):
         metric = lambda x: metrics.get_total_discovered(x, metagroup_names=groups[i])
         _metric_confidence_intervals_over_time_axes(
-            ax=axs[i+4],
+            ax=axs[i],
             trajectories=trajectories,
             metric_name=f"{group_names[i]} Discovered",
             metric=metric,
             comparator=lambda x: x[-1],
             legend=False
         )
+    axs[0].legend(loc="upper left")
 
-    fig.savefig(outfile, facecolor='w')
+    fig.savefig(f"{outfile}_discovered.png", facecolor='w')
 
 # ======================
 # CSV Summary Statistics

@@ -99,7 +99,7 @@ def sp22_no_testing_strategy(scenario: Dict):
     CLASSWORK_TRANSMISSION_MULTIPLIER = \
         list(scenario['classwork_transmission_multiplier'].values())
     return \
-        Strategy(name="UG+Prof. 2x/wk in Virtual Instr. Only",
+        Strategy(name="No Student Testing",
                 arrival_testing_regime=sp22_arrival_testing(scenario),
                 testing_regimes=[sp22_2x_week_testing_regime(scenario),
                                  sp22_2x_week_testing_regime(scenario),
@@ -120,7 +120,7 @@ def sp22_1x_week_testing_strategy(scenario: Dict):
     CLASSWORK_TRANSMISSION_MULTIPLIER = \
         list(scenario['classwork_transmission_multiplier'].values())
     return \
-        Strategy(name="UG+Prof. 2x/wk in Virtual Instr. 1x/wk After.",
+        Strategy(name="1x/wk UG+PR",
                 arrival_testing_regime=sp22_arrival_testing(scenario),
                 testing_regimes=[sp22_2x_week_testing_regime(scenario),
                                  sp22_2x_week_testing_regime(scenario),
