@@ -1,3 +1,5 @@
+from curses import meta
+from cv2 import mean
 import yaml
 import numpy as np
 import pandas as pd
@@ -29,35 +31,17 @@ def main():
     nominal["meta_matrix"] = \
         np.array([list(row.values()) for row in nominal["meta_matrix"].values()])
     scenario_family = ScenarioFamily(nominal, yaml.safe_load(open("prior.yaml", "r")))
+    nominal_scenario = scenario_family.get_nominal_scenario()
 
-    # generate N random trajectories sampled from the prior
-    np.random.seed(0)
-    trajectories = []
-    for _ in range(100):
-        scenario = scenario_family.get_sampled_scenario()
-        traj = sim_test_strategy(scenario=scenario,
-                                strategy=sp22_no_testing_strategy(scenario),
-                                color="white")
-        trajectories.append(traj)
+    # create trajectory
+    trajectory = sim_test_strategy(scenario=nominal_scenario,
+                                   strategy=sp22_no_testing_strategy(nominal_scenario),
+                                   color="white")
 
-    # initialize groups to create projections for
-    groups = {
-        "Total": None,
-        "Students": ["UG_on", "UG_off", "GR_on", "GR_off", "PR_on", "PR_off"],
-        "Staff": ["FS"]
-    }
-
-    # create CSV with projected discovered with confidence intervals
+    # create CSV with projected discovered
     df = pd.DataFrame()
-    scenario = trajectories[0].scenario
-    df['x'] = np.arange(scenario["T"]) * scenario["generation_time"]
-
-    for group in groups:
-        metric = lambda x: get_total_discovered(x, metagroup_names=groups[group])
-        lb, nominal, ub = confidence_interval(trajectories, metric)
-        df[f"{group}_05"] = lb
-        df[f"{group}_50"] = nominal
-        df[f"{group}_95"] = ub
+    df['x'] = np.arange(nominal_scenario["T"]) * nominal_scenario["generation_time"]
+    df['y'] = get_total_discovered(trajectory)
     df.to_csv("sp22_projections.csv")
 
 
