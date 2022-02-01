@@ -370,7 +370,7 @@ def plot_comprehensive_confidence_interval_summary(outfile: str,
     _metric_confidence_intervals_over_time_axes(
         ax=axs[1],
         trajectories=trajectories,
-        metric_name="Total Discovered",
+        metric_name="Total Detected",
         metric=metrics.get_total_discovered,
         comparator=lambda x: x[-1],
         legend=False
@@ -406,7 +406,7 @@ def plot_comprehensive_confidence_interval_summary(outfile: str,
         _metric_confidence_intervals_over_time_axes(
             ax=axs[i],
             trajectories=trajectories,
-            metric_name=f"{group_names[i]} Discovered",
+            metric_name=f"{group_names[i]} Detected",
             metric=metric,
             comparator=lambda x: x[-1],
             legend=False

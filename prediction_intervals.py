@@ -26,22 +26,22 @@ scenario_family = ScenarioFamily(nominal, yaml.safe_load(open("prior.yaml", "r")
 # [Run] Compare trajectories
 # ==========================
 
-no_testing_trajectories = []
+# no_testing_trajectories = []
 once_week_trajectories = []
 np.random.seed(0)
 for _ in range(100):
     scenario = scenario_family.get_sampled_scenario()
-    no_testing_traj = \
-        sim_test_strategy(scenario=scenario,
-                          strategy=sp22_no_testing_strategy(scenario),
-                          color="#9ecae1",
-                          name=str(scenario["booster_rate"]["FS"]))
+    # no_testing_traj = \
+    #     sim_test_strategy(scenario=scenario,
+    #                       strategy=sp22_no_testing_strategy(scenario),
+    #                       color="#9ecae1",
+    #                       name=str(scenario["booster_rate"]["FS"]))
     once_testing_traj = \
         sim_test_strategy(scenario=scenario,
                           strategy=sp22_1x_week_testing_strategy(scenario),
                           color="#800080",
                           name=str(scenario["booster_rate"]["FS"]))
-    no_testing_trajectories.append(no_testing_traj)
+    # no_testing_trajectories.append(no_testing_traj)
     once_week_trajectories.append(once_testing_traj)
 
 # ======
@@ -50,5 +50,5 @@ for _ in range(100):
 
 plotting.plot_comprehensive_confidence_interval_summary(
     outfile="prediction_intervals",
-    trajectories=[no_testing_trajectories, once_week_trajectories]
+    trajectories=[once_week_trajectories]
 )
