@@ -65,7 +65,7 @@ outside_rate_FS:
   scale: "linear"
   a: 0      #must be positive
   b: .inf
-  mu: 16    # ~112/week
+  mu: 12    # ~84/week
   std: 1.25
 
 #TODO [Sam], add parameter for uncertainty around student/FS proportions for outside_rate
