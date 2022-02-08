@@ -187,14 +187,16 @@ booster_hospitalization_multiplier: "booster_hospitalization_multiplier"
 
 # Current policy is booster mandate for students
 # (though some will have exemptions).
+# These numbers are based on reported booster rates from the dashboard [2/8/22]
+# https://covid.cornell.edu/testing/dashboard/
 booster_rate:                   # rate of booster vaccination
-  UG_on: 0.95
-  UG_off: 0.95
-  GR_on: 0.95
-  GR_off: 0.95
-  PR_on: 0.95
-  PR_off: 0.95
-  FS: 0.95
+  UG_on: 0.85
+  UG_off: 0.85
+  GR_on: 0.85
+  GR_off: 0.85
+  PR_on: 0.85
+  PR_off: 0.85
+  FS: 0.88
 
 generation_time: 4              # generation time (days)
 arrival_period: 5               # length of arrival period (in generations)
