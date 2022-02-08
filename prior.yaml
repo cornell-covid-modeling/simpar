@@ -92,15 +92,19 @@ booster_multiplier:
   std: 0.0425
 
 # Owner: Bonnie (@bca44)
-# Based on the "Prior on booster_hospitalization_multiplier" in
-# https://docs.google.com/spreadsheets/d/1IH33SYF9uYkZn01DSEL7vfVkL56Pta2gLnQKztAIaRQ/edit#gid=1416940777
+# We fit a log-normal distribution to a set of multipliers derived from four
+# different papers. We use a log-normal because the multiplier cannot be
+# negative.  This gives a log normal with parameters mu = -1.3 (corresponding
+# to a median of 0.27) and sigma = 0.75. We truncate above at 1 because boosters
+# are not believed to be able to increase the conditional probability of
+# hospitalization given a SARS-CoV-2 infection.
 booster_hospitalization_multiplier:
   scale: "log"
   a: -.inf
   b: 0
-  mu: -1.039720771
-  std: 0.5198603854
-  # mean 0.5, [1/8, 1] 2 std interval
+  mu: -1.3
+  std: 0.75
+  # mean 0.27, [0.06, 1] 2 std interval
 
 # Owner: Bonnie (@bca44)
 # (bca44): We are using the same PCR sensitivity
