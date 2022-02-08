@@ -32,13 +32,13 @@ population_count:               # population count (by meta group)
 # https://docs.google.com/spreadsheets/d/1bWOtKMsK4dBm47GPHWb3LhiPNuYlXFHvDr-f0BIv7IY/edit?usp=sharing
 
 dec_surge_infections:
-  UG_on: 874      # [1900 * 0.46]
-  UG_off: 1026     # [1900 * 0.54]
-  GR_on: 0
-  GR_off: 0
-  PR_on: 0
-  PR_off: 0
-  FS: 0
+  UG_on: 762      # [1900 * 0.46]
+  UG_off: 1177     # [1900 * 0.54]
+  GR_on: 6
+  GR_off: 247
+  PR_on: 8
+  PR_off: 152
+  FS: 322
 
 # [1/27/2022] This parameter was re-calibrated based on observed arrival
 # testing data. The calculations can be found in the Google Sheet below.
