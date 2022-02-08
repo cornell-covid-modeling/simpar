@@ -60,12 +60,12 @@ winter_break_infections:
 # The faculty / staff parameters are computed in "Faculty / Staff" sheet
 # https://docs.google.com/spreadsheets/d/1IH33SYF9uYkZn01DSEL7vfVkL56Pta2gLnQKztAIaRQ/edit#gid=909204111
 pct_winter_break_infections_discovered_on_arrival:
-  UG_on: 0.04786736425
-  UG_off: 0.01643789526
-  GR_on: 0.1252183107
-  GR_off: 0.02006247988
+  UG_on: 0.03631039254
+  UG_off: 0.01246917265
+  GR_on: 0.09498592801
+  GR_off: 0.015218647
   PR_on: 0
-  PR_off: 0.03303064518
+  PR_off: 0.02505581226
   FS: 0
 
  # TODO: Possible changes based on new data? (bca44)
@@ -99,12 +99,12 @@ pct_winter_break_infections_discovered_on_arrival:
 # The faculty / staff parameters are computed in "Faculty / Staff" sheet
 # https://docs.google.com/spreadsheets/d/1IH33SYF9uYkZn01DSEL7vfVkL56Pta2gLnQKztAIaRQ/edit#gid=909204111
 active_infections:
-  UG_on: 121
-  UG_off: 60
-  GR_on: 13
-  GR_off: 38
+  UG_on: 177
+  UG_off: 88
+  GR_on: 19
+  GR_off: 55
   PR_on: 0
-  PR_off: 42
+  PR_off: 61
   FS: 53
 
 # @Yujia's analyis
