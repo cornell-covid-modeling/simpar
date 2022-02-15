@@ -6,7 +6,7 @@ import metrics
 from transform import transform
 from scenario import ScenarioFamily
 from sim_helper import sim_test_strategy
-from sp22_strategies import sp22_no_testing_strategy, sp22_1x_week_testing_strategy
+from sp22_strategies import sp22_no_testing_strategy, sp22_1x_week_then_no_testing_strategy
 import plotting
 
 COLORS = ['#084594', '#2171b5', '#4292c6', '#6baed6',
@@ -38,7 +38,7 @@ for _ in range(100):
     #                       name=str(scenario["booster_rate"]["FS"]))
     once_testing_traj = \
         sim_test_strategy(scenario=scenario,
-                          strategy=sp22_1x_week_testing_strategy(scenario),
+                          strategy=sp22_1x_week_then_no_testing_strategy(scenario),
                           color="#800080",
                           name=str(scenario["booster_rate"]["FS"]))
     # no_testing_trajectories.append(no_testing_traj)

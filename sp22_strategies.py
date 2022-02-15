@@ -131,3 +131,27 @@ def sp22_1x_week_testing_strategy(scenario: Dict):
                                           CLASSWORK_TRANSMISSION_MULTIPLIER,
                                           CLASSWORK_TRANSMISSION_MULTIPLIER],
                 period_lengths=[1,1,4,T-6-1])
+
+
+def sp22_1x_week_then_no_testing_strategy(scenario: Dict):
+    """Pre-departure + arrival testing. Surveillance of UG and professional
+    students before classes and during virtual instruction at 2x/wk. It does
+    not surveil GR or FS. After that, move to 1x/wk testing for 2 weeks
+    followed by no testing."""
+    T = scenario['T']
+    CLASSWORK_TRANSMISSION_MULTIPLIER = \
+        list(scenario['classwork_transmission_multiplier'].values())
+    return \
+        Strategy(name="1x/wk -> 0x/wk UG+PR",
+                arrival_testing_regime=sp22_arrival_testing(scenario),
+                testing_regimes=[sp22_2x_week_testing_regime(scenario),
+                                 sp22_2x_week_testing_regime(scenario),
+                                 sp22_2x_week_testing_regime(scenario),
+                                 sp22_1x_week_testing_regime(scenario),
+                                 no_testing_testing_regime(scenario)],
+                transmission_multipliers=[0.5,
+                                          0.75,
+                                          CLASSWORK_TRANSMISSION_MULTIPLIER,
+                                          CLASSWORK_TRANSMISSION_MULTIPLIER,
+                                          CLASSWORK_TRANSMISSION_MULTIPLIER],
+                period_lengths=[1,1,4,4,T-10-1])

@@ -5,7 +5,8 @@ import yaml
 from scenario import ScenarioFamily
 from sim_helper import sim_test_regime, sim_test_strategy
 from sp22_strategies import (no_testing_strategy, arrival_testing_strategy,
-                             sp22_no_testing_strategy, sp22_1x_week_testing_strategy)
+                             sp22_no_testing_strategy, sp22_1x_week_testing_strategy,
+                             sp22_1x_week_then_no_testing_strategy)
 import plotting
 
 
@@ -61,7 +62,7 @@ def main(yaml_file='nominal.yaml', simple_plot=False, out_file='sp22_sim.png', *
     if plot == 4:
         trajectories = [
             sim_test_strategy(params, sp22_1x_week_testing_strategy(params), 'purple'),
-            sim_test_strategy(params, sp22_no_testing_strategy(params), 'black'),
+            sim_test_strategy(params, sp22_1x_week_then_no_testing_strategy(params), 'black'),
         ]
 
     # =================
