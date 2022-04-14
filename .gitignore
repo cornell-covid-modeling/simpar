@@ -1,9 +1,3 @@
-# sim results
-*.png
-sp22_sim_summary_stats.csv
-sp22_projections.csv
-test.ipynb
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
