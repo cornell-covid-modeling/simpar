@@ -3,7 +3,7 @@ from cv2 import mean
 import yaml
 import numpy as np
 import pandas as pd
-from scenario import ScenarioFamily
+import amps
 from sim_helper import sim_test_strategy
 from sp22_strategies import sp22_no_testing_strategy
 from metrics import get_total_discovered
@@ -30,7 +30,7 @@ def main():
     nominal = yaml.safe_load(open("nominal.yaml", "r"))
     nominal["meta_matrix"] = \
         np.array([list(row.values()) for row in nominal["meta_matrix"].values()])
-    scenario_family = ScenarioFamily(nominal, yaml.safe_load(open("prior.yaml", "r")))
+    scenario_family = amps.ScenarioFamily(nominal, yaml.safe_load(open("prior.yaml", "r")))
     nominal_scenario = scenario_family.get_nominal_scenario()
 
     # create trajectory

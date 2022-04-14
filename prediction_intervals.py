@@ -4,7 +4,7 @@ import numpy as np
 from groups import population
 import metrics
 from transform import transform
-from scenario import ScenarioFamily
+import amps
 from sim_helper import sim_test_strategy
 from sp22_strategies import sp22_no_testing_strategy, sp22_1x_week_then_no_testing_strategy
 import plotting
@@ -20,7 +20,7 @@ nominal = yaml.safe_load(open("nominal.yaml", "r"))
 nominal["meta_matrix"] = \
     np.array([list(row.values()) for row in nominal["meta_matrix"].values()])
 # load prior
-scenario_family = ScenarioFamily(nominal, yaml.safe_load(open("prior.yaml", "r")))
+scenario_family = amps.ScenarioFamily(nominal, yaml.safe_load(open("prior.yaml", "r")))
 
 # ==========================
 # [Run] Compare trajectories
