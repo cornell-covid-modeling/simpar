@@ -1,5 +1,5 @@
 import numpy as np
-from isolation import compute_isolated
+from .isolation import compute_isolated
 from typing import Union
 
 class sim:

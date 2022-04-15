@@ -1,6 +1,6 @@
-from strategy import Strategy
-from groups import population
-from sim import sim
+from .strategy import Strategy
+from .groups import population
+from .sim import sim
 from typing import Dict
 
 

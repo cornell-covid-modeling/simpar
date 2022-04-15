@@ -1,8 +1,8 @@
 from functools import reduce
 from operator import iconcat
 import numpy as np
-from trajectory import Trajectory
-from isolation import compute_isolated
+from .trajectory import Trajectory
+from .isolation import compute_isolated
 from typing import List
 
 

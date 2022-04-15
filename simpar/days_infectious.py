@@ -2,13 +2,13 @@ import sys
 import numpy as np
 import json
 import yaml
-import micro
-from sim import sim
-from groups import meta_group, population
+from . import micro
+from .sim import sim
+from .groups import meta_group, population
 import matplotlib
 import matplotlib.pyplot as plt
 import warnings
-import plotting
+from . import plotting
 warnings.filterwarnings("ignore",category=matplotlib.cbook.mplDeprecation)
 np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
 

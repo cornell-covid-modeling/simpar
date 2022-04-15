@@ -1,6 +1,6 @@
 import numpy as np
-from groups import population
-from micro import days_infectious
+from .groups import population
+from .micro import days_infectious
 from typing import List, Dict, Union
 np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
 
