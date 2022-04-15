@@ -156,7 +156,7 @@ def test_days_infectious():
     # presence of testing should be whatever the length of the maximum infectious
     # period is. This should be true regardless of the sensitivity.
     assert __days_infectious_perfect_sensitivity__(np.inf, 1, max_infectious_days=5) == 5
-    assert days_infectious(np.inf, 1, max_infectious_day=5) == 5
+    assert days_infectious(np.inf, 1, max_infectious_days=5) == 5
 
     # Time infectious with testing should be less than the maximum
     assert days_infectious(2, 1, max_infectious_days=5) < 5
