@@ -36,7 +36,7 @@ jobs:
           name: run linting via flake8
           command: |
             . venv/bin/activate
-            flake8 dmtools
+            flake8 simpar
 
       - save_cache:
           key: deps1-{{ .Branch }}-{{ checksum "test_requirements.txt" }}
