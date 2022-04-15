@@ -1,7 +1,7 @@
 import numpy as np
-from groups import meta_group, population
-from sim import sim
-from micro import __days_infectious_perfect_sensitivity__, days_infectious
+from simpar.groups import meta_group, population
+from simpar.sim import sim
+from simpar.micro import __days_infectious_perfect_sensitivity__, days_infectious
 import matplotlib.pyplot as plt
 
 
