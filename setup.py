@@ -28,7 +28,9 @@ setup(
         "numpy>=1.21",
         "pandas>=1.2",
         "matplotlib>=3.3",
-        "scipy>=1.6"
+        "scipy>=1.6",
+        "pyyaml>=5.4",
+        "json5>=0.9.5"
     ],
     extras_require={
         "dev": ['pytest>=5',
