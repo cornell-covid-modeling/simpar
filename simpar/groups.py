@@ -6,12 +6,13 @@ This module contains code for working with groups and meta-groups
 '''
 
 class meta_group:
-    '''
-    A "meta-group" is a collection of groups.
-    Each group within the meta-group is associated with a level of contact.
+    ''' 
+    A "meta-group" is a collection of groups.  Each group within the meta-group
+    is associated with a level of contact.
 
-    Given that a contact exposes a member of a meta-group, the probability that the person exposed is within group i
-    is proportional to the population of group i times group i's level of contact.
+    Given that a contact exposes a member of a meta-group, the probability that
+    the person exposed is within group i is proportional to the population of
+    group i times group i's level of contact.
 
     Examples of meta-groups: UG, Grad-Professional, Staff/Faculty, Grad-Research
     '''
@@ -25,20 +26,24 @@ class meta_group:
     # used to be called well_mixed_infection_rate(pop, marginal_contacts, infections_per_contact)
     def infection_matrix(self, infections_per_contact_unit):
         '''
-        Returns an infection rate matrix that corresponds to well-mixed interactions within the meta-group.
+            
+        Returns an infection rate matrix that corresponds to well-mixed
+        interactions within the meta-group.
 
-        The matrix returned has entry [i,j] equal to the total number of secondary infections expected in
-        group j that result from a single infection in group i, assuming that each contact_unit results in
+        The matrix returned has entry [i,j] equal to the total number of
+        secondary infections expected in group j that result from a single
+        infection in group i, assuming that each contact_unit results in
         infections_per_contact_unit total secondary infections.
 
-        A person in group i has an amount of contact during their infectious period (summed over all exposed groups)
-        equal to self.contact_units[i].
+        A person in group i has an amount of contact during their infectious
+        period (summed over all exposed groups) equal to self.contact_units[i].
 
-        The units in "contact units" can be total contacts over the course of someone's infectious period,
-        in which case infections_per_contact is the same as the probability of transmission given contact.
-        It could also be the *rate* at which people have contact per day, in which case infections_per_contact
-        should be the probability of transmission given contact times the expected length of a person's
-        infectious period.
+        The units in "contact units" can be total contacts over the course of
+        someone's infectious period, in which case infections_per_contact is
+        the same as the probability of transmission given contact.  It could
+        also be the *rate* at which people have contact per day, in which case
+        infections_per_contact should be the probability of transmission given
+        contact times the expected length of a person's infectious period.
         '''
 
         # An incoming contact lands in a population with a probability proportional to its number of outgoing contacts,
@@ -60,10 +65,10 @@ class meta_group:
         Specify a weight used to distribute the initial infections and initial
         recovered across the groups within this metagroup.
 
-        Use "population" if each person is equally likely to be infected.
-        Use "population x contacts" if a person's probability of being infected
-        is proportional to their amount of contact.
-        Use "most social" if we know that the initial infections were among the most social.
+        Use "population" if each person is equally likely to be infected.  Use
+        "population x contacts" if a person's probability of being infected is
+        proportional to their amount of contact.  Use "most social" if we know
+        that the initial infections were among the most social.
 
         Args:
             initial_infectious (float): Initial infectious count.
@@ -93,13 +98,16 @@ class population:
 
     def __init__(self, meta_group_list: List[meta_group], meta_group_contact_matrix: np.ndarray):
         '''
-        meta_group_matrix[i,j] is a matrix that gives the number of contacts that occurred where the source case was
-        in meta-group i and the exposed group was in meta-group j.
+        meta_group_matrix[i,j] is a matrix that gives the number of contacts
+        that occurred where the source case was in meta-group i and the exposed
+        group was in meta-group j.
 
-        We normalize each row so that it sums to 1, so that meta_group[i,j] is the conditional probability that
-        the exposed is in meta-group j, given that the source is in meta-group i.  Note that these conditional
-        probabilities may be influenced by the population sizes -- if meta-group j is bigger, then it may be more
-        likely to be the exposed meta-group.
+        We normalize each row so that it sums to 1, so that meta_group[i,j] is
+        the conditional probability that the exposed is in meta-group j, given
+        that the source is in meta-group i.  Note that these conditional
+        probabilities may be influenced by the population sizes -- if
+        meta-group j is bigger, then it may be more likely to be the exposed
+        meta-group.
         '''
         self.meta_group_contact_matrix = meta_group_contact_matrix
         self.meta_group_list = meta_group_list
@@ -138,27 +146,30 @@ class population:
 
     def infection_matrix(self, infections_per_contact_unit):
         '''
-        Returns an infection rate matrix that corresponds to well-mixed interactions within each meta-group,
-        and interactions across meta-groups given by self.meta_group_contact_matrix.
 
-        The matrix returned has entry [i,j] equal to the total number of secondary infections expected in
-        group j that result from a single infection in group i, assuming that each contact_unit results in
+        Returns an infection rate matrix that corresponds to well-mixed
+        interactions within each meta-group, and interactions across
+        meta-groups given by self.meta_group_contact_matrix.
+
+        The matrix returned has entry [i,j] equal to the total number of
+        secondary infections expected in group j that result from a single
+        infection in group i, assuming that each contact_unit results in
         infections_per_contact_unit total secondary infections.
 
-
-        Here, a "group" is an integer that corresponds to a meta-group and a group within that meta-group.
+        Here, a "group" is an integer that corresponds to a meta-group and a
+        group within that meta-group.
         '''
-        dim_tot = 0 #total number of meta-group-groups
-        cum_tot = [] #help keep track of location in res matrix
+        dim_tot = 0  # total number of meta-group-groups
+        cum_tot = []  # help keep track of location in res matrix
         for i in self.meta_group_list:
             cum_tot.append(dim_tot)
             dim_tot += i.K
 
         res = np.zeros((dim_tot, dim_tot))
-        for i in range(len(self.meta_group_list)): #source meta group
-            for j in range(self.meta_group_list[i].K): #source meta-group-group
-                for k in range(len(self.meta_group_list)): #exposed meta group
-                    for l in range(self.meta_group_list[k].K): #expoed meta-group-group
+        for i in range(len(self.meta_group_list)):  # source meta group
+            for j in range(self.meta_group_list[i].K):  # source meta-group-group
+                for k in range(len(self.meta_group_list)):  # exposed meta group
+                    for l in range(self.meta_group_list[k].K):  # expoed meta-group-group
                         q = self.meta_group_list[k].pop[l] * self.meta_group_list[k].contact_units[l] / np.sum(self.meta_group_list[k].pop * self.meta_group_list[k].contact_units)
                         res[cum_tot[i]+j, cum_tot[k]+l] = \
                         infections_per_contact_unit[i] * self.meta_group_list[i].contact_units[j] * self.meta_group_contact_matrix[i,k] * q
@@ -176,7 +187,8 @@ class population:
         '''
         Returns a string naming the group indexed by i, e.g., "UG 6".
 
-        The name is a concatenation of the group's meta-group name and the group's number of contact units
+        The name is a concatenation of the group's meta-group name and the
+        group's number of contact units
         '''
         return self.idx2groupname[i]
 
@@ -261,7 +273,7 @@ class population:
         Args:
             outside_rates: list of #outside infections/day for each metagroup
         '''
-        dim_tot = 0 #keep track of 2d structure within flattened array
+        dim_tot = 0  # keep track of 2d structure within flattened array
         cum_tot = []
         for i in self.meta_group_list:
             cum_tot.append(dim_tot)

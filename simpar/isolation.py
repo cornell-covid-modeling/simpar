@@ -2,9 +2,12 @@ import numpy as np
 from typing import List
 
 
-def compute_isolated(discovered: np.ndarray, generation_time: float,
-    iso_lengths: List[int], iso_props: List[int]) -> np.ndarray:
-    """Return the isolated count over time given the discovered count over time.
+def compute_isolated(discovered: np.ndarray,
+                     generation_time: float,
+                     iso_lengths: List[int],
+                     iso_props: List[int]
+                     ) -> np.ndarray:
+    """Return the isolated count over time given the discovered count over time
 
     As an intermediate step, this function calculates isolation_frac, which
     tells us what fraction of discovered positives need isolation.
@@ -30,10 +33,11 @@ def compute_isolated(discovered: np.ndarray, generation_time: float,
         iso_props (List[int])): List of probability of isolation lengths.
     """
     iso_len = int(np.ceil(iso_lengths[-1]/generation_time))
+
     def cut01(s):
-        if s<0:
+        if s < 0:
             return 0
-        elif s>1:
+        elif s > 1:
             return 1
         else:
             return s

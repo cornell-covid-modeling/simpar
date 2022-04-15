@@ -34,11 +34,13 @@ def get_isolated(trajectory: Trajectory, metagroup_names: List[str] = None):
         sum(trajectory.strategy.get_arrival_discovered(scenario)[metagroup_idx])
     arrival_discovered = np.zeros(sim.max_T)
     for i in range(scenario["arrival_period"]):
-        arrival_discovered[i] += arrival_discovered_sum / scenario["arrival_period"]
-    additional_isolated = compute_isolated(discovered=arrival_discovered,
-                                           generation_time=sim.generation_time,
-                                           iso_lengths=scenario["isolation_durations"],
-                                           iso_props=scenario["isolation_fracs"])
+        arrival_discovered[i] += \
+            arrival_discovered_sum / scenario["arrival_period"]
+    additional_isolated = \
+        compute_isolated(discovered=arrival_discovered,
+                         generation_time=sim.generation_time,
+                         iso_lengths=scenario["isolation_durations"],
+                         iso_props=scenario["isolation_fracs"])
 
     return isolated + additional_isolated
 
@@ -74,17 +76,21 @@ def get_total_discovered(trajectory: Trajectory, metagroup_names: List[str] = No
     idx = reduce(iconcat, group_idx, [])
     all_metagroup_names = trajectory.pop.metagroup_names()
     metagroup_idx = [all_metagroup_names.index(i) for i in metagroup_names]
-    discovered = sim.get_total_discovered_for_different_groups(idx, cumulative=True)
+    discovered = \
+        sim.get_total_discovered_for_different_groups(idx, cumulative=True)
 
     arrival_discovered_sum = \
         sum(trajectory.strategy.get_arrival_discovered(scenario)[metagroup_idx])
     arrival_discovered = np.zeros(sim.max_T)
     for i in range(scenario["arrival_period"]):
-        arrival_discovered[i] += arrival_discovered_sum / scenario["arrival_period"]
+        arrival_discovered[i] += \
+            arrival_discovered_sum / scenario["arrival_period"]
 
     return np.cumsum(arrival_discovered) + discovered
 
-def get_total_infected(trajectory: Trajectory, metagroup_names: List[str] = None):
+
+def get_total_infected(trajectory: Trajectory,
+                       metagroup_names: List[str] = None):
     """Return the number of infected positives at each generation,
         including those discovered to be infected upon arrival.
 
@@ -110,9 +116,11 @@ def get_total_infected(trajectory: Trajectory, metagroup_names: List[str] = None
         sum(trajectory.strategy.get_arrival_discovered(scenario)[metagroup_idx])
     arrival_discovered = np.zeros(sim.max_T)
     for i in range(scenario["arrival_period"]):
-        arrival_discovered[i] += arrival_discovered_sum / scenario["arrival_period"]
+        arrival_discovered[i] \
+            += arrival_discovered_sum / scenario["arrival_period"]
 
     return np.cumsum(arrival_discovered) + infected
+
 
 def get_peak_hotel_rooms(trajectory: Trajectory):
     """Return the peak number of hotel room used over the semester."""
@@ -132,7 +140,7 @@ def get_ug_prof_days_in_isolation_in_person(trajectory: Trajectory):
     during the portion of the semester that is in-person."""
     isolated = get_ug_pr_isolated(trajectory=trajectory)
     # TODO (hwr26): Is there some way to compute this from trajectory.strategy?
-    START_OF_IN_PERSON = 5 # generation when we start in-person instruction
+    START_OF_IN_PERSON = 5  # generation when we start in-person instruction
     scenario = trajectory.scenario
     return int(np.sum(isolated[START_OF_IN_PERSON:]) * scenario["generation_time"])
 
@@ -143,7 +151,8 @@ def get_ug_prof_days_in_isolation(trajectory: Trajectory):
     return int(np.sum(isolated) * trajectory.scenario["generation_time"])
 
 
-def _get_cumulative_hospitalizations(trajectory: Trajectory, metagroups: List[str]):
+def _get_cumulative_hospitalizations(trajectory: Trajectory,
+                                     metagroups: List[str]):
     """Return the cumulative number of hospitalizations at each generation."""
     s = trajectory.sim
     pop = trajectory.pop
@@ -158,7 +167,7 @@ def _get_cumulative_hospitalizations(trajectory: Trajectory, metagroups: List[st
 
 
 def get_cumulative_all_hospitalizations(trajectory: Trajectory):
-    """Return the cumulative number of all hospitalizations at each generation."""
+    """Return cumulative number of all hospitalizations at each generation."""
     pop = trajectory.pop
     metagroups = pop.metagroup_names()
     cumulative_hospitalizations = \
@@ -176,7 +185,7 @@ def get_total_hospitalizations(trajectory: Trajectory):
 
 
 def get_total_employee_hospitalizations(trajectory: Trajectory):
-    """Return the total number of employee hospitalizations over the semester."""
+    """Return total number of employee hospitalizations over the semester."""
     cumulative_hospitalizations = \
         _get_cumulative_hospitalizations(trajectory, ["FS"])
     return cumulative_hospitalizations[-1]

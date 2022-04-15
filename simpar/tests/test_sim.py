@@ -1,8 +1,7 @@
 import numpy as np
-from simpar.groups import meta_group, population
+from simpar.groups import meta_group
 from simpar.sim import sim
 from simpar.micro import __days_infectious_perfect_sensitivity__, days_infectious
-import matplotlib.pyplot as plt
 
 
 def is_constant_population_size(s):
@@ -80,7 +79,7 @@ def test_sim8():
     marginal_contacts = np.array([1,1,1])
     mg = meta_group('Test', pop, marginal_contacts)
     infection_rate = mg.infection_matrix(infections_per_contact)
-    generation_time = 4/7 # in units of weeks
+    generation_time = 4/7  # in units of weeks
 
     s = sim(T,S0,I0,R0,infection_rate,0,0,generation_time)
     s.step(T-1)
@@ -101,7 +100,7 @@ def test_sim8():
     contact_rates = np.array([1])
     infection_rate = np.outer(contact_rates,pop/100)
 
-    generation_time = 4/7 # in units of weeks
+    generation_time = 4/7  # in units of weeks
 
     s = sim(T,S0,I0,R0,infection_rate,generation_time)
     s.step(T-1)
@@ -124,7 +123,7 @@ def test_sim_zero_prob_discvoered():
     infections_per_contact = 1
     marginal_contacts = np.array([0,1,2])
     infection_rate = meta_group("UG", pop, marginal_contacts).infection_matrix(infections_per_contact)
-    generation_time = 4/7 # in units of weeks
+    generation_time = 4/7  # in units of weeks
 
     s = sim(T, S0, I0, R0, infection_rate=infection_rate,
             generation_time=generation_time, infection_discovery_frac=0,
@@ -156,14 +155,14 @@ def test_days_infectious():
     # If there is infinite time between tests, the time infectious in the
     # presence of testing should be whatever the length of the maximum infectious
     # period is. This should be true regardless of the sensitivity.
-    assert __days_infectious_perfect_sensitivity__(np.inf,1,max_infectious_days = 5) == 5
-    assert days_infectious(np.inf,1,max_infectious_days = 5) == 5
+    assert __days_infectious_perfect_sensitivity__(np.inf, 1, max_infectious_days=5) == 5
+    assert days_infectious(np.inf, 1, max_infectious_day=5) == 5
 
     # Time infectious with testing should be less than the maximum
-    assert days_infectious(2,1,max_infectious_days = 5) < 5
+    assert days_infectious(2, 1, max_infectious_days=5) < 5
 
     # Testing with more delay should result in a longer time infectious
-    assert days_infectious(7,1) > days_infectious(2, 1)
+    assert days_infectious(7,1) > days_infectious(2,1)
 
     # A shorter max infectioun time should result in fewer days infectious
     assert days_infectious(5, 1, max_infectious_days=5) < days_infectious(5, 1, max_infectious_days=7)
@@ -176,42 +175,8 @@ def test_days_infectious():
     assert days_infectious(5, 1, sensitivity=.5) > days_infectious(5, 1, sensitivity=.7)
 
     # A sensitivity of 0 should be like not testing
-    assert days_infectious(2,1,max_infectious_days = 5, sensitivity = 0) == 5
+    assert days_infectious(2, 1, max_infectious_days=5, sensitivity=0) == 5
 
     # days infectious should be larger when the days between tests is larger
     for d in range(20):
         assert days_infectious(d+2, 1) > days_infectious(d+1, 1)
-
-    # TODO (hwr): commenting out plots created by this test to reduce clutter
-    # but leaving commented out in case someone wants to view them later.
-
-    # days_between_tests = np.arange(1, 20, .1)
-    # y70 = [days_infectious(d, 1, sensitivity = 0.7) for d in days_between_tests]
-    # y90 = [days_infectious(d, 1, sensitivity = 0.9) for d in days_between_tests]
-    # y100 = [days_infectious(d, 1, sensitivity = 1) for d in days_between_tests]
-    # plt.plot(days_between_tests, y70, label = 'Sensitivity = 70%')
-    # plt.plot(days_between_tests, y90, label = 'Sensitivity = 90%')
-    # plt.plot(days_between_tests, y100, label = 'Sensitivity = 100%')
-    # plt.legend()
-    # plt.xlabel('Number of days between tests')
-    # plt.ylabel('Expected Days infectious')
-    # plt.savefig('test_days_infectious1.png', facecolor='w')
-    # plt.close()
-
-    # # Compare what we are using here to what we used before
-    # days_between_tests = np.arange(1, 20, .1)
-    # y_old = [days_infectious(d, 1, sensitivity=1, max_infectious_days=7) for d in days_between_tests]
-    # y_new = [days_infectious(d, 1) for d in days_between_tests]
-    # plt.plot(days_between_tests, y_old, 'k--', label='Sensitivity = 100%, max_infectious = 7 days, 1 day delay')
-    # plt.plot(days_between_tests, y_new, 'k-', label='Sensitivity = 60%, max_infectious = default, 1 day delay')
-
-    # y_old = [days_infectious(d, 2, sensitivity=1, max_infectious_days=7) for d in days_between_tests]
-    # y_new = [days_infectious(d, 2) for d in days_between_tests]
-    # plt.plot(days_between_tests, y_old, 'b--', label='Sensitivity = 100%, max_infectious = 7 days, 2 day delay')
-    # plt.plot(days_between_tests, y_new, 'b-', label='Sensitivity = 60%, max_infectious = default, 2 day delay')
-
-    # plt.legend()
-    # plt.xlabel('Number of days between tests')
-    # plt.ylabel('Expected Days infectious')
-    # plt.savefig('test_days_infectious2.png', facecolor='w')
-    # plt.close()

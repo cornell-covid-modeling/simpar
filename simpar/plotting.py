@@ -14,8 +14,12 @@ from . import metrics
 # Plot lines on existing Axes
 # ===========================
 
-def _add_metric_confidence_interval(ax, trajectories: List[Trajectory],
-    metric: Callable, confidence_interval=0.95, comparator : Callable = np.sum, zorder=0):
+def _add_metric_confidence_interval(ax,
+                                    trajectories: List[Trajectory],
+                                    metric: Callable,
+                                    confidence_interval=0.95,
+                                    comparator: Callable = np.sum,
+                                    zorder=0):
     """Add confidence interval of [metric] to the axes [ax]."""
     # sort the trajectories
     scenario = trajectories[0].scenario
@@ -44,8 +48,10 @@ def _add_metric_confidence_interval(ax, trajectories: List[Trajectory],
     #                 color=color, zorder=zorder)
 
 
-def _add_trajectory_metric(ax, trajectory: Trajectory, metric: Callable,
-    linestyle: str = "solid") -> None:
+def _add_trajectory_metric(ax,
+                           trajectory: Trajectory,
+                           metric: Callable,
+                           linestyle: str = "solid") -> None:
     """Add the [metric] for the [trajectory] to the axes [ax]."""
     scenario = trajectory.scenario
     label = trajectory.name
@@ -54,12 +60,18 @@ def _add_trajectory_metric(ax, trajectory: Trajectory, metric: Callable,
     y = metric(trajectory)
     ax.plot(x, y, label=label, color=color, linestyle=linestyle)
 
+
 # =======================
 # Initialize helpful Axes
 # =======================
 
-def _metric_over_time_axes(ax, trajectories: List[Trajectory],
-    metric_name: str, metric: Callable, title: str = None, legend = True):
+
+def _metric_over_time_axes(ax,
+                           trajectories: List[Trajectory],
+                           metric_name: str,
+                           metric: Callable,
+                           title: str = None,
+                           legend=True):
     """Set [ax] to plot [trajectories] for a given [metric] over time."""
     for trajectory in trajectories:
         _add_trajectory_metric(ax, trajectory, metric)
@@ -72,9 +84,13 @@ def _metric_over_time_axes(ax, trajectories: List[Trajectory],
         ax.legend()
 
 
-def _metrics_over_time_axes(ax, trajectories: List[Trajectory],
-    metric_names: List[str], metrics: List[Callable], title: str = None,
-    ylabel: str = None, legend = True) -> None:
+def _metrics_over_time_axes(ax,
+                            trajectories: List[Trajectory],
+                            metric_names: List[str],
+                            metrics: List[Callable],
+                            title: str = None,
+                            ylabel: str = None,
+                            legend=True) -> None:
     """Set [ax] to plot [trajectories] for a given [metrics] over time."""
     linestyles = ['solid', 'dashed', 'dotted', 'dashdot']
     for i in range(len(metrics)):
@@ -95,8 +111,13 @@ def _metrics_over_time_axes(ax, trajectories: List[Trajectory],
 
 
 def _metric_confidence_interval_over_time_axes(ax,
-    trajectories: List[Trajectory], metric_name: str, metric: Callable,
-    title: str = None, legend = True, comparator : Callable = np.sum) -> None:
+                                               trajectories: List[Trajectory],
+                                               metric_name: str,
+                                               metric: Callable,
+                                               title: str = None,
+                                               legend=True,
+                                               comparator: Callable = np.sum
+                                               ) -> None:
     """Set [ax] to plot 95% confidence interval of [metric] over time."""
     _add_metric_confidence_interval(ax=ax,
                                     trajectories=trajectories,
@@ -113,12 +134,18 @@ def _metric_confidence_interval_over_time_axes(ax,
 
 
 def _metric_confidence_intervals_over_time_axes(ax,
-    trajectories: List[List[Trajectory]], metric_name: str, metric: Callable,
-    title: str = None, legend = True, comparator : Callable = np.sum) -> None:
+                                                trajectories: List[List[Trajectory]],
+                                                metric_name: str,
+                                                metric: Callable,
+                                                title: str = None,
+                                                legend=True,
+                                                comparator: Callable = np.sum
+                                                ) -> None:
     """Set [ax] to plot [trajectories] CI for a given [metric] over time."""
     for i in range(len(trajectories)):
         trajs = deepcopy(trajectories[i])
-        _add_metric_confidence_interval(ax, trajs, metric, comparator=comparator, zorder=i)
+        _add_metric_confidence_interval(ax, trajs, metric,
+                                        comparator=comparator, zorder=i)
     if title is None:
         title = f"{metric_name} over the Spring Semester"
     ax.set_title(title)
@@ -133,8 +160,11 @@ def _metric_confidence_intervals_over_time_axes(ax,
 # Single Axes Plots
 # =================
 
-def plot_metric_over_time(outfile: str, trajectories: List[Trajectory],
-    metric_name: str, metric: Callable, title: str = None):
+def plot_metric_over_time(outfile: str,
+                          trajectories: List[Trajectory],
+                          metric_name: str,
+                          metric: Callable,
+                          title: str = None):
     """Plot the [trajectories] for a given [metric] over time.
 
     The x-axis of the plot is time while the y-axis is the value of the metric.
@@ -158,9 +188,12 @@ def plot_metric_over_time(outfile: str, trajectories: List[Trajectory],
     fig.savefig(outfile, facecolor='w')
 
 
-def plot_metrics_over_time(outfile: str, trajectories: List[Trajectory],
-    metric_names: List[str], metrics: List[Callable], title: str = None,
-    ylabel: str = None):
+def plot_metrics_over_time(outfile: str,
+                           trajectories: List[Trajectory],
+                           metric_names: List[str],
+                           metrics: List[Callable],
+                           title: str = None,
+                           ylabel: str = None):
     """Plot the [trajectories] for the given [metrics] over time.
 
     The x-axis of the plot is time while the y-axis is the value of the metric.
@@ -187,8 +220,13 @@ def plot_metrics_over_time(outfile: str, trajectories: List[Trajectory],
 
 
 def plot_metric_confidence_interval_over_time(outfile: str,
-    trajectories: List[Trajectory], metric_name: str, metric: Callable,
-    title: str = None, legend = True, comparator : Callable = np.sum) -> None:
+                                              trajectories: List[Trajectory],
+                                              metric_name: str,
+                                              metric: Callable,
+                                              title: str = None,
+                                              legend=True,
+                                              comparator: Callable = np.sum
+                                              ) -> None:
     """Plot the 95% confidence interval of [metric] over time.
 
     The x-axis of the plot is time while the y-axis is the value of the metric.
@@ -217,8 +255,9 @@ def plot_metric_confidence_interval_over_time(outfile: str,
     fig.savefig(outfile, facecolor='w')
 
 
-def plot_isolated(outfile: str, trajectories: List[Trajectory],
-    metagroup_names = None) -> None:
+def plot_isolated(outfile: str,
+                  trajectories: List[Trajectory],
+                  metagroup_names=None) -> None:
     """Plot the isolated count by day for each trajectory."""
     metric = lambda x: metrics.get_isolated(x, metagroup_names=metagroup_names)
     plot_metric_over_time(outfile=outfile,
@@ -238,17 +277,21 @@ def plot_hospitalization(outfile: str, trajectories: List[Trajectory]):
 
 
 def plot_total_infected_discovered(trajectories: List[Trajectory],
-    metagroup_names = None) -> None:
+                                   metagroup_names=None) -> None:
     """Plot total discovered, including arrival."""
     plot_metric_over_time(trajectories=trajectories,
                           metric_names=["Infected", "Discvoered"],
                           metrics=[metrics.get_total_infected, metrics.get_total_discovered],
                           title=f"Infections ({metagroup_names}) over Spring Semester",
-                          metagroup_names = metagroup_names)
+                          metagroup_names=metagroup_names)
 
 
-def plot_parameter_sensitivity(outfile: str, trajectories: List[Trajectory],
-    param_name: str, metric_name: str, metric: Callable, title: str = None):
+def plot_parameter_sensitivity(outfile: str,
+                               trajectories: List[Trajectory],
+                               param_name: str,
+                               metric_name: str,
+                               metric: Callable,
+                               title: str = None):
     """Plot a comparison of some [metric] over different values of a parameter.
 
     The x-axis of the plot is the value of the parameter (stored in the name
@@ -285,14 +328,14 @@ def plot_parameter_sensitivity(outfile: str, trajectories: List[Trajectory],
 # Multiple Axes Plots
 # ===================
 
-def plot_small_summary(outfile : str,
+def plot_small_summary(outfile: str,
                        trajectories: List[Trajectory]):
     """Plot a small summary of the simulation run."""
     plt.rcParams["figure.figsize"] = (18,16)
     plt.rcParams['font.size'] = 30
     plt.rcParams['lines.linewidth'] = 6
     plt.rcParams['legend.fontsize'] = 22
-    plt.subplots_adjust(hspace = 0.8)
+    plt.subplots_adjust(hspace=0.8)
     plt.subplot(211)
     plot_total_infected_discovered(trajectories)
     plt.subplot(212)

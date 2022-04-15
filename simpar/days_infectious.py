@@ -8,9 +8,9 @@ from .groups import meta_group, population
 import matplotlib
 import matplotlib.pyplot as plt
 import warnings
-from . import plotting
 warnings.filterwarnings("ignore",category=matplotlib.cbook.mplDeprecation)
 np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
+
 
 def main(yaml_file='nominal.yaml', out_file='days_infectious.png', **kwargs):
 
@@ -27,8 +27,6 @@ def main(yaml_file='nominal.yaml', out_file='days_infectious.png', **kwargs):
         np.array(params['infections_per_day_per_contact_unit'])
     MAX_INFECTIOUS_DAYS = params['max_infectious_days']
     PCR_SENSITIVITY = params['pcr_sensitivity']
-
-
 
     # =====================================================================
     # [Initialize] Assume a group's previous and new infections are divided
@@ -50,9 +48,6 @@ def main(yaml_file='nominal.yaml', out_file='days_infectious.png', **kwargs):
     S0, I0, R0 = popul.get_init_SIR_vec(initial_infections, past_infections,
                                         weight="population x contacts")
 
-    GENERATION_TIME = params['generation_time']
-
-
     # ==================================================
     # [Run]
     # ==================================================
@@ -65,25 +60,29 @@ def main(yaml_file='nominal.yaml', out_file='days_infectious.png', **kwargs):
 
     for i in range(len(days_between_tests)):
         d = days_between_tests[i]
-        days_infectious = micro.days_infectious(d, delay, sensitivity = PCR_SENSITIVITY, \
+        days_infectious = micro.days_infectious(d, delay, sensitivity=PCR_SENSITIVITY, \
                                                 max_infectious_days=MAX_INFECTIOUS_DAYS)
         infections_per_contact_unit = BOOSTER_EFFECTIVENESS * INFECTIONS_PER_DAY_PER_CONTACT_UNIT * days_infectious
         infection_rate = popul.infection_matrix(infections_per_contact_unit)
-        # infection_rate is a matrix where infection_rate[i,j] is the number of people in group j exposed by a positive in group i
+        # infection_rate is a matrix where infection_rate[i,j] is the number of
+        # people in group j exposed by a positive in group i
 
         # Instantiate a simulation object so we can get the fraction susceptible.
         # These options don't matter for this quantity:
-        # infection_discovery_frac, recovered_discovery_frac, generation_time, outside_rate
+        # infection_discovery_frac, recovered_discovery_frac, generation_time,
+        # outside_rate
         s = sim(T, S0, I0, R0, infection_rate=infection_rate)
 
-        # This is a column vector where susc[j] is the fraction of group j that is susceptible
+        # This is a column vector where susc[j] is the fraction of group j that
+        # is susceptible
         frac_susc = s.get_frac_susceptible()
 
-        # This is a column vector where entry i gives the number of secondary infections resulting from a source
-        # infection in group i
+        # This is a column vector where entry i gives the number of secondary
+        # infections resulting from a source infection in group i
         secondary_infections_by_group = np.matmul(infection_rate, frac_susc)
 
-        # This is a column vector whose entry i is the fraction of this group that is infected at the start
+        # This is a column vector whose entry i is the fraction of this group
+        # that is infected at the start
         infected_by_group = s.get_frac_infected()
 
         population_by_group = s.get_pop_count()
@@ -93,14 +92,14 @@ def main(yaml_file='nominal.yaml', out_file='days_infectious.png', **kwargs):
             # Group indices for those groups in the metagroup
             idx = popul.metagroup_indices(mgname)[0]
 
-            # Vectors giving fraction infected, population size, and number of secondary infections
-            # for those groups within the meta-group
+            # Vectors giving fraction infected, population size, and number of
+            # secondary infections for those groups within the meta-group
             mg_frac_infected = np.array([infected_by_group[i] for i in idx])
             mg_pop = np.array([population_by_group[i] for i in idx])
             mg_secondary_infections = np.array([secondary_infections_by_group[i] for i in idx])
 
-            # Calculate the conditional probability that a person is from group i, given that they are
-            # infected and from this meta-group
+            # Calculate the conditional probability that a person is from group
+            # i, given that they are infected and from this meta-group
             mg_num_infected = mg_pop * mg_frac_infected # Number of people infected in each group
             mg_prob = mg_num_infected / np.sum(mg_num_infected)
 
