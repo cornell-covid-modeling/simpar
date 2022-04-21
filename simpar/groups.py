@@ -6,7 +6,7 @@ This module contains code for working with groups and meta-groups
 '''
 
 class meta_group:
-    ''' 
+    '''
     A "meta-group" is a collection of groups.  Each group within the meta-group
     is associated with a level of contact.
 
@@ -23,10 +23,11 @@ class meta_group:
         self.K = len(contact_units) # Number of groups
         self.pop = pop # Number of people in each group
 
+    # TODO: (hwr26) The user should not access this directly. Computed once.
     # used to be called well_mixed_infection_rate(pop, marginal_contacts, infections_per_contact)
     def infection_matrix(self, infections_per_contact_unit):
         '''
-            
+
         Returns an infection rate matrix that corresponds to well-mixed
         interactions within the meta-group.
 
@@ -57,7 +58,7 @@ class meta_group:
         infection_rates = np.outer(r, q)
         return infection_rates
 
-
+    # TODO: (hwr26) The user should not access this directly. Computed once.
     def get_init_SIR(self, initial_infectious: float, initial_recovered: float,
                      weight: str = "population"):
         """Return initial SIR vectors.
