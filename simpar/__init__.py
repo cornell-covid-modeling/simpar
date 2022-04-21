@@ -11,7 +11,6 @@ regimes (with varying tests), and vaccination requirements.
 
 __author__ = "Cornell Covid Modeling Team"
 
-from . import days_infectious
 from . import groups
 from . import isolation
 from . import metrics
