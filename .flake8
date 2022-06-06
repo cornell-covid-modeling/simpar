@@ -5,6 +5,7 @@ ignore =
     W503, ; W503 conflicts with W504 standard
     E402, ; must define path before some local imports
     E741, ; ignoring ambiguous variable name 'l'
+    E743, ; ignoring ambiguous function name 'I'
 max-line-length = 79
 per-file-ignores =
     ./__init__.py:F401
