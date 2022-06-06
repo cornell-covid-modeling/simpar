@@ -1,12 +1,12 @@
 from .strategy import Strategy
-from .groups import population
-from .sim import sim
+from .groups import Population
+from .sim import Sim
 from typing import Dict
 
 
 class Trajectory:
 
-    def __init__(self, scenario: Dict, strategy: Strategy, sim: sim,
+    def __init__(self, scenario: Dict, strategy: Strategy, sim: Sim,
         color: str, name: str=None):
         """Manage all of the objects associated with a trajectory on a graph.
 
@@ -19,7 +19,7 @@ class Trajectory:
         """
         self.scenario = scenario
         # TODO (hwr26): patch--come back and think about the right thing here
-        self.pop = population.from_scenario(scenario)
+        self.pop = Population.from_scenario(scenario)
         self.strategy = strategy
         self.sim = sim
         self.color = color

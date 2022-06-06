@@ -1,8 +1,8 @@
 import numpy as np
 from .plotting import Trajectory
 from .strategy import TestingRegime, Strategy
-from .sim import sim
-from .groups import population
+from .sim import Sim
+from .groups import Population
 from typing import Dict
 
 
@@ -23,7 +23,7 @@ def sim_test_strategy(scenario: Dict, strategy: Strategy,
 
     Args:
         scenario (Dict): Scenario on which the simulation is run.
-        popul (population): The population of the simulation.
+        popul (Population): The population of the simulation.
         strategy (Strategy): The strategy to be used with the simulation.
         color (str): The color of the trajectory.
         name (str): Name of the trajectory. Defaults to the strategy name.
@@ -39,7 +39,7 @@ def sim_test_strategy(scenario: Dict, strategy: Strategy,
             booster_multiplier=BOOSTER_MULTIPLIER
         )
 
-    popul = population.from_scenario(scenario)
+    popul = Population.from_scenario(scenario)
 
     for i in range(strategy.periods):
         regime = strategy.testing_regimes[i]
@@ -65,7 +65,7 @@ def sim_test_strategy(scenario: Dict, strategy: Strategy,
         outside_rate = popul.get_outside_rate(outside_rates)
 
         if i == 0: # instantiate simulation object
-            s = sim(T, S0, I0, R0, infection_rate,
+            s = Sim(T, S0, I0, R0, infection_rate,
                     infection_discovery_frac=infection_discovery_frac ,
                     recovered_discovery_frac=recovered_discovery_frac,
                     generation_time=GENERATION_TIME, outside_rate=outside_rate)
