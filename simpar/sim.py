@@ -83,9 +83,9 @@ class Sim:
         assert (len(init_recovered) == self.K)
 
         self.infection_discovery_frac =  \
-            _validate_discovery_frac(infection_discovery_frac, self.K)
+            self._validate_discovery_frac(infection_discovery_frac, self.K)
         self.recovered_discovery_frac =  \
-            _validate_discovery_frac(recovered_discovery_frac, self.K)
+            self._validate_discovery_frac(recovered_discovery_frac, self.K)
 
         assert ((init_susceptible >= 0).all())
         assert ((init_infected >= 0).all())
@@ -147,13 +147,13 @@ class Sim:
             infection_discovery_frac = self.infection_discovery_frac
         elif np.isscalar(infection_discovery_frac):
             infection_discovery_frac = \
-                _validate_discovery_frac(infection_discovery_frac, self.K)
+                self._validate_discovery_frac(infection_discovery_frac, self.K)
 
         if recovered_discovery_frac is None:
             recovered_discovery_frac = self.recovered_discovery_frac
         elif np.isscalar(recovered_discovery_frac):
             recovered_discovery_frac = \
-                _validate_discovery_frac(recovered_discovery_frac, self.K)
+                self._validate_discovery_frac(recovered_discovery_frac, self.K)
 
         if outside_rate is None:
             outside_rate = self.outside_rate
@@ -192,6 +192,15 @@ class Sim:
 
         return self
 
+    @staticmethod
+    def _validate_discovery_frac(x, K):
+        """Return validated discovery fraction vector."""
+        if np.isscalar(x):
+            x = np.ones(K)
+        assert (x >= 0).all()
+        assert (x <= 1).all()
+        return x
+
     @property
     def maxT(self):
         """Return the number of time periods in the simulation."""
@@ -226,12 +235,3 @@ class Sim:
     def H(self):
         """Return the number of hidden people in each time period."""
         return self.H
-
-
-def _validate_discovery_frac(x, K):
-    """Return validated discovery fraction vector."""
-    if np.isscalar(x):
-        x = np.ones(K)
-    assert (x >= 0).all()
-    assert (x <= 1).all()
-    return x
