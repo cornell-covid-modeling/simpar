@@ -148,35 +148,3 @@ def test_sim_zero_prob_discvoered():
 # number of secondary infections from someone with 6 contacts is 5. We then
 # adjust this by multiplying by the number of days infectious under our
 # testing strategy, divided by the number under our December Omicron outbreak.
-
-
-def test_days_infectious():
-
-    # If there is infinite time between tests, the time infectious in the
-    # presence of testing should be whatever the length of the maximum infectious
-    # period is. This should be true regardless of the sensitivity.
-    assert __days_infectious_perfect_sensitivity__(np.inf, 1, max_infectious_days=5) == 5
-    assert days_infectious(np.inf, 1, max_infectious_days=5) == 5
-
-    # Time infectious with testing should be less than the maximum
-    assert days_infectious(2, 1, max_infectious_days=5) < 5
-
-    # Testing with more delay should result in a longer time infectious
-    assert days_infectious(7,1) > days_infectious(2,1)
-
-    # A shorter max infectioun time should result in fewer days infectious
-    assert days_infectious(5, 1, max_infectious_days=5) < days_infectious(5, 1, max_infectious_days=7)
-
-    # Codes should agree when sensitivity is perfect
-    assert days_infectious(7,1,sensitivity=1) == __days_infectious_perfect_sensitivity__(7,1)
-    assert days_infectious(4,2,sensitivity=1) == __days_infectious_perfect_sensitivity__(4,2)
-
-    # A lower sensitivity should result in more days infectious
-    assert days_infectious(5, 1, sensitivity=.5) > days_infectious(5, 1, sensitivity=.7)
-
-    # A sensitivity of 0 should be like not testing
-    assert days_infectious(2, 1, max_infectious_days=5, sensitivity=0) == 5
-
-    # days infectious should be larger when the days between tests is larger
-    for d in range(20):
-        assert days_infectious(d+2, 1) > days_infectious(d+1, 1)
