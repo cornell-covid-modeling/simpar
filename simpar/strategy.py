@@ -1,5 +1,5 @@
 import numpy as np
-from .groups import population
+from .groups import Population
 from .micro import days_infectious
 from typing import List, Dict, Union
 np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
@@ -18,7 +18,7 @@ class ArrivalTestingRegime:
             arrival_test_type (Union[float, dict]): The type of test to \
                 be used for arrival testing.
         """
-        popul = population.from_scenario(scenario)
+        popul = Population.from_scenario(scenario)
         K = len(popul.metagroup_names())
 
         mg_names = popul.metagroup_names()
@@ -67,7 +67,7 @@ class TestingRegime:
             test_type (Union[float, dict]): The type of test to be used.
             tests_per_week (Union[float, dict]): How often tests are collected.
         """
-        popul = population.from_scenario(scenario)
+        popul = Population.from_scenario(scenario)
 
         K = len(popul.metagroup_names()) # number of meta-groups
         self.days_infectious = np.zeros(K)
