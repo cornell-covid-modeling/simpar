@@ -181,6 +181,22 @@ class Population:
 
         return infections_per_contact_unit * res
 
+    def infection_discovery_frac(self, infection_discovery_frac):
+        """Return the fraction of infections that are discovered."""
+        res = []
+        for i, mg in enumerate(self.meta_group_list):
+            for _ in range(mg.K):
+                res.append(infection_discovery_frac[i])
+        return np.array(res)
+
+    def recovered_discovery_frac(self, recovered_discovery_frac):
+        """Return the fraction of recovered that are discovered."""
+        res = []
+        for i, mg in enumerate(self.meta_group_list):
+            for _ in range(mg.K):
+                res.append(recovered_discovery_frac[i])
+        return np.array(res)
+
     def outside_rate(self, outside_rates: np.ndarray):
         """Return the outside rate."""
         Ks = [mg.K for mg in self.meta_group_list]
