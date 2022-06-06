@@ -77,6 +77,7 @@ class Sim:
         """
         assert (max_T > 0)
         self.max_T = max_T  # number of periods to simulate
+        self.t = 0
 
         self.K = len(init_susceptible)  # number of groups
         assert (len(init_infected) == self.K)
