@@ -35,26 +35,6 @@ class MetaGroup:
         self.K = len(contact_units)
         self.pop = pop
 
-    @property
-    def name(self):
-        """Return the name of this meta-group."""
-        return self.name
-
-    @property
-    def K(self):
-        """Return the number of contact levels (groups) in this meta-group."""
-        return self.K
-
-    @property
-    def contact_units(self):
-        """Return the contact_units in this meta-group."""
-        return self.contact_units
-
-    @property
-    def pop(self):
-        """Return the distribution of the population across contact levels."""
-        return self.pop
-
     def infection_matrix(self, infections_per_contact_unit: float):
         """Return the infection matrix."""
         # Infection matrix among these groups assumes population is well-mixed.
@@ -152,11 +132,6 @@ class Population:
             contact_units = np.arange(1, len(pop) + 1)
             meta_groups.append(MetaGroup(name, pop, contact_units))
         return Population(meta_groups, np.array(scenario['meta_matrix']))
-
-    @property
-    def meta_group_names(self):
-        """Return the names of the meta-groups in this population."""
-        return self.meta_group_names
 
     def meta_group_ids(self, meta_group):
         """Return the group ids of the groups in the given meta-group."""
