@@ -130,7 +130,7 @@ def days_infectious_perfect_sensitivity(days_between_tests: float,
 
     assert T > 0
 
-    if T == np.inf:
+    if T == np.inf or D == np.inf:
         return max_infectious_days
 
     b = (R - D) / T
