@@ -200,38 +200,3 @@ class Sim:
         assert (x >= 0).all()
         assert (x <= 1).all()
         return x
-
-    @property
-    def maxT(self):
-        """Return the number of time periods in the simulation."""
-        return self.maxT
-
-    @property
-    def K(self):
-        """Return the number of groups in the simulation."""
-        return self.K
-
-    @property
-    def S(self):
-        """Return the number of susceptible people in each time period."""
-        return self.S
-
-    @property
-    def I(self):
-        """Return the number of infected people in each time period."""
-        return self.I
-
-    @property
-    def R(self):
-        """Return the number of recovered people in each time period."""
-        return self.R
-
-    @property
-    def D(self):
-        """Return the number of discovered people in each time period."""
-        return self.D
-
-    @property
-    def H(self):
-        """Return the number of hidden people in each time period."""
-        return self.H
