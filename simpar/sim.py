@@ -197,7 +197,7 @@ class Sim:
     def _validate_discovery_frac(x, K):
         """Return validated discovery fraction vector."""
         if np.isscalar(x):
-            x = np.ones(K)
+            x = x * np.ones(K)
         assert (x >= 0).all()
         assert (x <= 1).all()
         return x
