@@ -101,6 +101,8 @@ class Sim:
         self.S[0] = init_susceptible
         self.I[0] = init_infected
         self.R[0] = init_recovered
+        # TODO: It would be good to be able to provide the discovered and
+        # hidden explicitly as well to capture arrival testing better
         self.D[0] = \
             np.multiply(self.I[0],self.infection_discovery_frac) + self.R[0]
         self.H[0] = np.multiply(self.I[0],1-self.infection_discovery_frac)
