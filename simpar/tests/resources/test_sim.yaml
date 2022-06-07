@@ -1,0 +1,73 @@
+three_groups_symmetric_pop:
+  T: 20
+  S0: [22, 22, 22]
+  I0: [1, 1, 1]
+  R0: [10, 10, 10]
+  infection_rate: [[0.0, 0.0, 0.0],
+                   [0.3, 0.3, 0.3],
+                   [0.6, 0.6, 0.6]]
+  infection_discovery_frac: 0.8
+  recovered_discovery_frac: 0.5
+  outside_rate: 0
+
+noninfectious_group:
+  T: 20
+  S0: [15, 15, 15]
+  I0: [0, 1, 1]
+  R0: [19, 19, 19]
+  infection_rate: [[0.0, 0.2, 0.3],
+                   [0.0, 0.7, 0.4],
+                   [0.0, 0.4, 0.9]]
+  infection_discovery_frac: 0.8
+  recovered_discovery_frac: 0.5
+  outside_rate: 0
+
+no_infections_zero_outside_rate:
+  T: 20
+  S0: [15, 15, 15]
+  I0: [0, 0, 0]
+  R0: [20, 20, 20]
+  infection_rate: [[0.0, 0.0, 0.0],
+                   [0.3, 0.3, 0.3],
+                   [0.6, 0.6, 0.6]]
+  infection_discovery_frac: 0.8
+  recovered_discovery_frac: 0.5
+  outside_rate: 0
+
+no_infections_nonzero_outside_rate:
+  T: 20
+  S0: [15, 15, 15]
+  I0: [0, 0, 0]
+  R0: [20, 20, 20]
+  infection_rate: [[0.0, 0.0, 0.0],
+                   [0.3, 0.3, 0.3],
+                   [0.6, 0.6, 0.6]]
+  infection_discovery_frac: 0.8
+  recovered_discovery_frac: 0.5
+  outside_rate: 1
+
+
+no_discovery:
+  T: 20
+  S0: [15, 15, 15]
+  I0: [0, 0, 0]
+  R0: [0, 0, 0]
+  infection_rate: [[0.0, 0.0, 0.0],
+                   [0.3, 0.3, 0.3],
+                   [0.6, 0.6, 0.6]]
+  infection_discovery_frac: 0
+  recovered_discovery_frac: 0
+  outside_rate: 0
+
+
+perfect_sensitivity:
+  T: 20
+  S0: [15, 15, 15]
+  I0: [0, 0, 0]
+  R0: [20, 20, 20]
+  infection_rate: [[0.0, 0.0, 0.0],
+                   [0.3, 0.3, 0.3],
+                   [0.6, 0.6, 0.6]]
+  infection_discovery_frac: 0
+  recovered_discovery_frac: 0
+  outside_rate: 0
