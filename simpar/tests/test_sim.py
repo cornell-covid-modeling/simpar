@@ -5,26 +5,10 @@ import numpy as np
 from simpar.sim import Sim
 
 
-def sim_from(dictionary):
-    T = dictionary["T"]
-    S0 = np.array(dictionary["S0"])
-    I0 = np.array(dictionary["I0"])
-    R0 = np.array(dictionary["R0"])
-    infection_rate = np.array(dictionary["infection_rate"])
-    infection_discovery_frac = np.array(dictionary["infection_discovery_frac"])
-    recovered_discovery_frac = np.array(dictionary["recovered_discovery_frac"])
-    outside_rate = np.array(dictionary["outside_rate"])
-    return Sim(max_T=T, init_susceptible=S0, init_infected=I0,
-               init_recovered=R0, infection_rate=infection_rate,
-               infection_discovery_frac=infection_discovery_frac,
-               recovered_discovery_frac=recovered_discovery_frac,
-               outside_rate=outside_rate)
-
-
 RESOURCES_PATH = os.path.join(os.path.dirname(__file__), 'resources')
 with open(os.path.join(RESOURCES_PATH, "test_sim.yaml"), "r") as f:
     sims = yaml.safe_load(f)
-    SIMULATIONS = {k: sim_from(v) for k,v in sims.items()}
+    SIMULATIONS = {k: Sim.from_dictionary(v) for k,v in sims.items()}
     # run all simulations to completion
     for _, v in SIMULATIONS.items():
         v.step(v.max_T - 1)
