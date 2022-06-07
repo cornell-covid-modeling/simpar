@@ -1,171 +1,205 @@
+"""Manage types of surveillance tests and strategies.
+
+This module defines a [Test] class which maintains properties about a specific
+surveillance test. Furthermore, it defines an [ArrivalTestingRegime] and
+[TestingRegime] which are used to comprise a [Strategy]. This specifies how
+people are tested upon arrival and what testing regime(s) are used after they
+arrive and for what periods of time.
+"""
+
+__author__ = "Henry Robbins (henryrobbins)"
+
+
 import numpy as np
-from .groups import Population
 from .micro import days_infectious
-from typing import List, Dict, Union
+from typing import List
 np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
 
 
-class ArrivalTestingRegime:
+class Test:
+    __test__ = False  # include so pytest ignores
+    """
+    This class maintains properties about a surveillance test.
+    """
 
-    def __init__(self, scenario: Dict, pre_departure_test_type: Union[float, dict],
-        arrival_test_type: Union[float, dict]):
+    def __init__(self, name: str, sensitivity: float, test_delay: float,
+                 compliance: float = 1):
+        """Initialize a test
+
+        Args:
+            name (str): Name of the surveillance test.
+            sensitivity (float): Probability of positive given infectious.
+            test_delay (float): Delay in receiving results from test (in days).
+            compliance (float, optional): Compliance with test. Defaults to 1.
+        """
+        self.name = name
+        self.sensitivity = sensitivity
+        self.test_delay = test_delay
+        self.compliance = compliance
+
+    @staticmethod
+    def from_dictionary(name, d):
+        """Initialize a [Test] from a dictionary"""
+        return Test(name, d["sensitivity"], d["test_delay"], d["compliance"])
+
+
+class ArrivalTestingRegime:
+    """
+    This class maintains an arrival testing regime.
+
+    It offers methods to return the percentage of people that are discovered
+    in pre-departure testing and the percentage of people that are discovered
+    upon arrival. This allows for planning surrounding potential isolation of
+    those who arrive and test positive.
+    """
+
+    def __init__(self, pre_departure_test_type: List[Test],
+                 arrival_test_type: List[Test]):
         """Initialize an arrival testing regime.
 
         Args:
-            scenario (Dict): The scenario under which the testing regime is used.
-            pre_departure_test_type (Union[float, dict]): The type of test to \
-                be used for pre-departure testing.
-            arrival_test_type (Union[float, dict]): The type of test to \
-                be used for arrival testing.
+            pre_departure_test_type (List[Test]): The type of test to be used \
+                for pre-departure testing per meta-group.
+            arrival_test_type (List[Test]): The type of test to be used for \
+                arrival testing per meta-group.
         """
-        popul = Population.from_scenario(scenario)
-        K = len(popul.metagroup_names())
-
-        mg_names = popul.metagroup_names()
-        for i in range(len(mg_names)):
-
-            if isinstance(pre_departure_test_type, dict):
-                _pre_departure_test_type = pre_departure_test_type[mg_names[i]]
-            else:
-                _pre_departure_test_type = pre_departure_test_type
-            if isinstance(arrival_test_type, dict):
-                _arrival_test_type = arrival_test_type[mg_names[i]]
-            else:
-                _arrival_test_type = arrival_test_type
-
-            pre_departure_sensitivity = \
-                scenario["tests"][_pre_departure_test_type]["sensitivity"] * \
-                scenario["tests"][_pre_departure_test_type]["compliance"]
-
-            arrival_sensitivity = \
-                scenario["tests"][_arrival_test_type]["sensitivity"] * \
-                scenario["tests"][_arrival_test_type]["compliance"]
-
-            self.pct_discovered_in_pre_departure = \
-                np.multiply(np.ones(K), pre_departure_sensitivity)
-
-            self.pct_discovered_in_arrival_test = \
-                np.multiply(
-                    1 - self.pct_discovered_in_pre_departure,
-                    arrival_sensitivity)
+        self.pre_departure_test_type = pre_departure_test_type
+        self.arrival_test_type = arrival_test_type
 
     def get_pct_discovered_in_pre_departure(self):
-        return self.pct_discovered_in_pre_departure
+        """Return the percentage of infections discovered in pre-departure."""
+        sensitivities = [t.sensitivity for t in self.pre_departure_test_type]
+        compliances = [t.compliance for t in self.pre_departure_test_type]
+        return np.array(sensitivities) * np.array(compliances)
 
     def get_pct_discovered_in_arrival_test(self):
-        return self.pct_discovered_in_arrival_test
+        """Return the percentage of infections discovered upon arrival."""
+        sensitivities = [t.sensitivity for t in self.arrival_test_type]
+        compliances = [t.compliance for t in self.arrival_test_type]
+        arrival_sensitivity = np.array(sensitivities) * np.array(compliances)
+        pct_undiscovered_in_pre_departure = \
+            1 - self.get_pct_discovered_in_pre_departure()
+        return pct_undiscovered_in_pre_departure * arrival_sensitivity
 
 
 class TestingRegime:
+    __test__ = False  # include so pytest ignores
+    """
+    This class maintains a testing regime.
 
-    def __init__(self, scenario: Dict, test_type: Union[float, dict],
-        tests_per_week: Union[float, dict]):
+    It offers methods to return the number of days someone is expected to be
+    free and infectious, the infectious discovery rate, and the recovered
+    discovery rate.
+    """
+
+    def __init__(self, test_type: List[Test], tests_per_week: np.ndarray):
         """Initialize a testing regime.
 
         Args:
-            scenario (Dict): The scenario under which the testing regime is used.
-            test_type (Union[float, dict]): The type of test to be used.
-            tests_per_week (Union[float, dict]): How often tests are collected.
+            test_type (List[Test]): The test type to be used per meta-group.
+            tests_per_week (np.ndarray): Test frequency per meta-group.
         """
-        popul = Population.from_scenario(scenario)
+        self.test_type = test_type
+        self.tests_per_week = tests_per_week
 
-        K = len(popul.metagroup_names()) # number of meta-groups
-        self.days_infectious = np.zeros(K)
-        self.infection_discovery_frac = np.zeros(K)
-        self.recovered_discovery_frac = np.zeros(K)
+    def get_days_infectious(self, max_infectious_days: float):
+        """Return the expected number of days infectious.
 
-        # TODO (hwr26): deprecating this temporaroily
-        self.name = ""
-        # Name the testing regime
-        # if tests_per_week == 0: # No surveillance
-        #     self.name = "No surveillance"
-        # elif np.isscalar(tests_per_week) and np.isscalar(test_delay):
-        #     self.name = "%dx/wk, %.1fd delay" % (tests_per_week, test_delay)
-        # else:
-        #     self.name = ''
-        #     for mg in popul.metagroup_names():
-        #         if np.isscalar(tests_per_week):
-        #             _tests_per_week = tests_per_week
-        #         else:
-        #             _tests_per_week = tests_per_week[mg]
-        #         if np.isscalar(test_delay):
-        #             _test_delay = test_delay
-        #         else:
-        #             _test_delay = test_delay[mg]
+        This value requires the context of the maximum infectious days.
 
-        #         if _tests_per_week > 0:
-        #             self.name = self.name + 'mg: %dx/wk %.1fd delay ' % (_tests_per_week, _test_delay)
-        #         else:
-        #             self.name = self.name + 'mg: no surveillance'
+        Args:
+            max_infectious_days (float): Max days someone is infected."""
+        ret = np.zeros(len(self.test_type))
 
+        for i, (t, f) in enumerate(zip(self.test_type, self.tests_per_week)):
+            days_between_tests = np.inf if f == 0 else 7 / f
+            ret[i] = days_infectious(days_between_tests=days_between_tests,
+                                     isolation_delay=t.test_delay,
+                                     sensitivity=t.sensitivity,
+                                     max_infectious_days=max_infectious_days)
 
-        mg_names = popul.metagroup_names()
-        for i in range(len(mg_names)):
+        return ret
 
-            # Extract tests per week and test delay from the function arguments for this meta-group
-            if isinstance(tests_per_week, dict):
-                _tests_per_week = tests_per_week[mg_names[i]]
+    # TODO: Discuss this with Peter
+    def get_infection_discovery_frac(self, symptomatic_rate: float):
+        """Return the discovery rate among infected people.
+
+        This value requires the context of the fraction of people who
+        experience symptoms (this becomes the infected discovery fraction
+        when no surveillance testing is done).
+
+        Args:
+            symptomatic_rate (float): Symptomatic rate.
+        """
+        infection_discovery_frac = np.zeros(len(self.test_type))
+        for i, (t, f) in enumerate(zip(self.test_type, self.tests_per_week)):
+            if f == 0:
+                # Should this be multiplied by sensitivity?
+                infection_discovery_frac[i] = symptomatic_rate
             else:
-                _tests_per_week = tests_per_week
-            if isinstance(test_type, dict):
-                _test_type = test_type[mg_names[i]]
+                infection_discovery_frac[i] = 1  # old code
+                # suggested change:
+                # infection_discovery_frac[i] = t.sensitivity
+        return infection_discovery_frac
+
+    # TODO: Discuss this with Peter
+    def get_recovered_discovery_frac(self, no_surveillance_test_rate: float):
+        """Return the discovery rate among recovered people.
+
+        This value requires the context of the test rate when no surveillance
+        testing is being done. E.g. testing done by cautious individuals.
+
+        Args:
+            no_surveillance_test_rate (float): Test rate per meta-group.
+        """
+        recovered_discovery_frac = np.zeros(len(self.test_type))
+        for i, (t, f) in enumerate(zip(self.test_type, self.tests_per_week)):
+            if f == 0:
+                # Should this be multiplied by sensitivity?
+                recovered_discovery_frac[i] = no_surveillance_test_rate
             else:
-                _test_type = test_type
-
-            # Figure out days between tests, infection_discovery_frac, and recovered_discovery frac
-            # for this meta-group
-            if _tests_per_week == 0:
-                _days_between_tests = np.inf
-                self.infection_discovery_frac[i] = scenario["symptomatic_rate"]
-                self.recovered_discovery_frac[i] = scenario["no_surveillance_test_rate"][mg_names[i]]
-            else:
-                _days_between_tests = 7 / _tests_per_week
-                self.infection_discovery_frac[i] = 1
-                self.recovered_discovery_frac[i] = 1
-
-            sensitivity = scenario["tests"][_test_type]["sensitivity"] * \
-                          scenario["tests"][_test_type]["compliance"]
-            delay = scenario["tests"][_test_type]["test_delay"]
-
-            self.days_infectious[i] = days_infectious(_days_between_tests, delay, \
-                                                 sensitivity=sensitivity, \
-                                                 max_infectious_days=scenario["max_infectious_days"])
-
-    def get_days_infectious(self):
-        return self.days_infectious
-
-    def get_infection_discovery_frac(self):
-        return self.infection_discovery_frac
-
-    def get_recovered_discovery_frac(self):
-        return self.recovered_discovery_frac
-
-    def get_name(self):
-        return self.name
-
+                # Not sure what this should be changed to?
+                # Some function of test sensitivity and test frequency?
+                recovered_discovery_frac[i] = 1  # old code
+        return recovered_discovery_frac
 
 
 class Strategy:
+    """
+    This class maintains a testing strategy comprised of an
+    [ArrivalTestingRegime] and a list of [TestingRegime]s.
 
-    def __init__(self,
-        name: str,
-        arrival_testing_regime: ArrivalTestingRegime,
-        testing_regimes: List[TestingRegime],
-        transmission_multipliers: List[float],
-        period_lengths: List[int]):
-        """Initialize a strategy for Spring 2022 Covid-19 response.
+    If offers methods to return the initial number of infections, the
+    initial number of recovered, and the arrival discovered (useful for
+    understanding isolation capacity needs).
+    """
+
+    def __init__(self, name: str, period_lengths: List[int],
+                 testing_regimes: List[TestingRegime],
+                 transmission_multipliers: List[float] = None,
+                 arrival_testing_regime: ArrivalTestingRegime = None):
+        """Initialize a testing strategy.
 
         Args:
             name (str): Name for this strategy.
-            arrival_testing_regime: Arrival testing regime to be used.
-            testing_regimes (List[TestingRegime]): Testing regime to be used in \
-                each period of the simulation.
-            transmission_multipliers (List[float]): Transmission multiplier to \
-                be used in each period of the simulation.
-            period_lengths (List[int]): Length (in generations) of each period \
-                of the simulation.
+            period_lengths (List[int]): Length (in generations) of each
+                period of the simulation.
+            testing_regimes (List[TestingRegime]): Testing regime to be used \
+                in each period of the simulation.
+            transmission_multipliers (List[float]): Transmission multiplier \
+                to be used in each period of the simulation. Defaults to 1.
+            arrival_testing_regime (ArrivalTestingRegime): Arrival testing \
+                regime to be used. Defaults to None.
         """
         self.name = name
+        assert len(period_lengths) == len(testing_regimes)
+        self.period_lengths = period_lengths
+        self.testing_regimes = testing_regimes
+        self.transmission_multipliers = transmission_multipliers
+        self.arrival_testing_regime = arrival_testing_regime
+
+        if self.transmission_multipliers is None:
+            self.transmission_multipliers = np.ones(len(period_lengths))
 
         if arrival_testing_regime is None:
             self.pct_discovered_in_pre_departure = 0
@@ -176,49 +210,47 @@ class Strategy:
             self.pct_discovered_in_arrival_test = \
                 arrival_testing_regime.get_pct_discovered_in_arrival_test()
 
-        n = len(period_lengths)
-        assert len(testing_regimes) == n
-        assert len(transmission_multipliers) == n
+    # TODO: Update this when passing D and H to sim becomes supported.
+    def get_initial_infections(self, active_infections: np.ndarray):
+        """Return the initial infections when this strategy is used.
 
-        self.periods = n
-        self.testing_regimes = testing_regimes
-        self.transmission_multipliers = transmission_multipliers
-        self.period_lengths = period_lengths
-
-    def get_initial_infections(self, params):
-        """Return the initial infections when this strategy is used."""
-        active_infections = np.array(list(params["active_infections"].values()))
+        Args:
+            active_infections (np.ndarray): True number of active infections \
+                per meta-group.
+        """
         pct_discovered = self.pct_discovered_in_pre_departure + \
-                         self.pct_discovered_in_arrival_test
+            self.pct_discovered_in_arrival_test
         return (1 - pct_discovered) * active_infections
 
-    def get_past_infections(self, params):
-        """Return the past infections (recovered) when this strategy is used."""
-        dec_surge_infections = np.array(list(params["dec_surge_infections"].values()))
-        winter_break_infections = np.array(list(params["winter_break_infections"].values()))
-        active_infections = np.array(list(params["active_infections"].values()))
-        pct_discovered = self.pct_discovered_in_pre_departure + \
-                         self.pct_discovered_in_arrival_test
-        # all of these past infections begin as recovered in the simulation
-        # TODO (hwr26): Maybe it makes more sense to initialize the sim with
-        # the people found in arrival testing as discovered infectious
-        past_infections = dec_surge_infections + \
-                          winter_break_infections + \
-                          (pct_discovered * active_infections)
-        return past_infections
+    def get_initial_recovered(self, recovered: np.ndarray,
+                              active_infections: np.ndarray):
+        """Return the initial recovered when this strategy is used.
 
-    # TODO pf98 hwr26 Would be good to be able to initialize the simulator where people are discovered
-    #  and recovered. This corresponds to someone who arrives as positive, is tested and found immediately.
-
-    def get_arrival_discovered(self, params):
-        """Return the infections discovered in arrival when this strategy is used.
-
-        Currently, this refers only to those active cases found through arrival
-        testing (NOT pre-departure testing).
+        Args:
+            recovered (np.ndarray): Recovered per meta-group.
+            active_infections (np.ndarray): True number of active infections \
+                per meta-group.
         """
-        active_infections = np.array(list(params["active_infections"].values()))
-        active_arrival_discovered = active_infections * self.pct_discovered_in_arrival_test
+        pct_discovered = self.pct_discovered_in_pre_departure + \
+            self.pct_discovered_in_arrival_test
+        return recovered + (pct_discovered * active_infections)
+
+    # TODO: Can pct_recovered_discovered_on_arrival be computed?
+    def get_arrival_discovered(self, recovered: np.ndarray,
+                               active_infections: np.ndarray,
+                               pct_recovered_discovered_arrival: np.ndarray):
+        """Return the infections discovered in arrival.
+
+        Args:
+            recovered (np.ndarray): Recovered per meta-group.
+            active_infections (np.ndarray): True number of active infections \
+                per meta-group.
+            pct_recovered_discovered_arrival (np.ndarray): The percent of \
+                recovered (inactive) people who discover they are positive \
+                for the first time during arrival testing.
+        """
+        active_arrival_discovered = \
+            active_infections * self.pct_discovered_in_arrival_test
         inactive_arrival_discovered = \
-            np.multiply(np.array(list(params["winter_break_infections"].values())),
-                        np.array(list(params['pct_winter_break_infections_discovered_on_arrival'].values())))
+            recovered * pct_recovered_discovered_arrival
         return active_arrival_discovered + inactive_arrival_discovered
