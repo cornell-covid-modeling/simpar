@@ -134,18 +134,29 @@ class Population:
                 list(range(cum_tot[i] - mg.K, cum_tot[i]))
 
     @staticmethod
-    def from_scenario(scenario):
-        """Initialize a population from the parameters in a scenario."""
-        population_count = scenario["population_count"]
+    def from_truncated_paretos(names: List[str], populations: List[float],
+                               shapes: List[float], ubs: List[float],
+                               meta_group_contact_matrix: np.ndarray):
+        """Initialize a [Population] using truncated Pareto meta-groups.
+
+        Args:
+            names (List[str]): List of meta-group names.
+            populations (List[float]): Population counts for each meta-group.
+            shapes (List[float]): Shape parameter for Pareto of each meta-group.
+            ubs (List[float]): Truncation limit for Pareto of each meta-group.
+            meta_group_contact_matrix (np.ndarray): Interactions between \
+                meta-groups where entry (i,j) is the conditional probability \
+                that the exposed is in meta-group j, given that the source is \
+                in meta-group i.
+        """
         meta_groups = []
-        for meta_group in scenario["metagroups"]:
-            name = meta_group
-            population = population_count[meta_group]
-            a = scenario['pop_fracs_pareto'][meta_group]
-            ub = scenario['pop_fracs_max'][meta_group]
-            mg = MetaGroup.from_truncated_pareto(name, population, a, ub)
+        for i, name in enumerate(names):
+            pop = populations[i]
+            a = shapes[i]
+            ub = ubs[i]
+            mg = MetaGroup.from_truncated_pareto(name, pop, a, ub)
             meta_groups.append(mg)
-        return Population(meta_groups, np.array(scenario['meta_matrix']))
+        return Population(meta_groups, meta_group_contact_matrix)
 
     def meta_group_ids(self, meta_group):
         """Return the group ids of the groups in the given meta-group."""
