@@ -2,7 +2,8 @@ import os
 import yaml
 import numpy as np
 from simpar.micro import days_infectious
-from simpar.strategy import Test, ArrivalTestingRegime, TestingRegime, Strategy
+from simpar.strategy import Test, ArrivalTestingRegime, TestingRegime, \
+                            Strategy, strategies_from_dictionary
 
 
 RESOURCES_PATH = os.path.join(os.path.dirname(__file__), 'resources')
@@ -18,9 +19,7 @@ with open(os.path.join(RESOURCES_PATH, "test_strategy.yaml"), "r") as f:
     TESTING_REGIMES = \
         {k: TestingRegime.from_dictionary(v, TESTS)
          for k,v in testing_regimes.items()}
-    strategy = yaml_file["strategy"]
-    STRATEGY = Strategy.from_dictionary(strategy, ARRIVAL_TESTING_REGIMES,
-                                        TESTING_REGIMES)
+    STRATEGY = strategies_from_dictionary(yaml_file, TESTS)["test"]
 
 
 def test_test_initialization():

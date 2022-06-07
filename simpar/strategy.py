@@ -320,3 +320,22 @@ class Strategy:
         inactive_arrival_discovered = \
             recovered * pct_recovered_discovered_arrival
         return active_arrival_discovered + inactive_arrival_discovered
+
+
+def strategies_from_dictionary(d: Dict, tests: Dict):
+    """Return a dictionary of strategies.
+
+    Args:
+        d (Dict): Dictionary maintaining strategies.
+        tests (Dict): Dictionary of test types used in the strategies.
+    """
+    arrival_regimes = \
+        {k: ArrivalTestingRegime.from_dictionary(v, tests)
+         for k,v in d["arrival_testing_regimes"].items()}
+    testing_regimes = \
+        {k: TestingRegime.from_dictionary(v, tests)
+         for k,v in d["testing_regimes"].items()}
+    strategies = \
+        {k: Strategy.from_dictionary(v, arrival_regimes, testing_regimes)
+         for k,v in d["strategies"].items()}
+    return strategies

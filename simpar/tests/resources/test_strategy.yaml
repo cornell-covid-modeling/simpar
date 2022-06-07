@@ -27,9 +27,10 @@ testing_regimes:
     test_type: ["antigen", "pcr", "antigen"]
     tests_per_week: [0,2,2]
 
-strategy:
-  name: "test"
-  period_lengths: [5, 5]
-  testing_regimes: ["three_meta_groups", "three_meta_groups"]
-  transmission_multipliers: [1, 0.75]
-  arrival_testing_regime: "three_meta_groups"
+strategies:
+  test:
+    name: "test"
+    period_lengths: [5, 5]
+    testing_regimes: ["three_meta_groups", "three_meta_groups"]
+    transmission_multipliers: [1, 0.75]
+    arrival_testing_regime: "three_meta_groups"
