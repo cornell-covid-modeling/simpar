@@ -10,9 +10,10 @@ arrive and for what periods of time.
 __author__ = "Henry Robbins (henryrobbins)"
 
 
+from django.test import TestCase
 import numpy as np
 from .micro import days_infectious
-from typing import List
+from typing import List, Dict
 np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
 
 
@@ -66,6 +67,25 @@ class ArrivalTestingRegime:
         self.pre_departure_test_type = pre_departure_test_type
         self.arrival_test_type = arrival_test_type
 
+    @staticmethod
+    def from_dictionary(d: Dict, tests: Dict[str, Test]):
+        """Initialize a [ArrivalTestingRegime] instance.
+
+        The dictionary [d] should contain two keys: [pre_departure_test_type]
+        and [arrival_test_type] which contain list of strings. These are
+        interpreted as keys in the [tests] dictionary which provides the
+        corresponding [Test] instance.
+
+        Args:
+            d (Dict): Dictionary representing the arrival testing regime.
+            tests (Dict[str, Test]): Dictionary of [Test] instances.
+        """
+        pre_departure_test_type = d["pre_departure_test_type"]
+        pre_departure_test_type = [tests[i] for i in pre_departure_test_type]
+        arrival_test_type = d["arrival_test_type"]
+        arrival_test_type = [tests[i] for i in arrival_test_type]
+        return ArrivalTestingRegime(pre_departure_test_type, arrival_test_type)
+
     def get_pct_discovered_in_pre_departure(self):
         """Return the percentage of infections discovered in pre-departure."""
         sensitivities = [t.sensitivity for t in self.pre_departure_test_type]
@@ -101,6 +121,22 @@ class TestingRegime:
         """
         self.test_type = test_type
         self.tests_per_week = tests_per_week
+
+    @staticmethod
+    def from_dictionary(d: Dict, tests: Dict[str, Test]):
+        """Initialize a [TestingRegime] instance.
+
+        The dictionary [d] should contain a key [test_type] which contain list
+        of strings. These are interpreted as keys in the [tests] dictionary
+        which provides the corresponding [Test] instance.
+
+        Args:
+            d (Dict): Dictionary representing the testing regime.
+            tests (Dict[str, Test]): Dictionary of [Test] instances.
+        """
+        test_type = [tests[i] for i in d["test_type"]]
+        tests_per_week = np.array(d["tests_per_week"])
+        return TestingRegime(test_type, tests_per_week)
 
     def get_days_infectious(self, max_infectious_days: float):
         """Return the expected number of days infectious.
@@ -209,6 +245,36 @@ class Strategy:
                 arrival_testing_regime.get_pct_discovered_in_pre_departure()
             self.pct_discovered_in_arrival_test = \
                 arrival_testing_regime.get_pct_discovered_in_arrival_test()
+
+    @staticmethod
+    def from_dictionary(d: Dict, arrival_testing_regimes: Dict,
+                        testing_regimes: Dict):
+        """Initialize a [Strategy] instance.
+
+        The dictionary [d] should contain a key [testing_regimes] and may
+        contain a arrival_testing_regime
+
+         which contain list
+        of strings. These are interpreted as keys in the [tests] dictionary
+        which provides the corresponding [Test] instance.
+
+        Args:
+            d (Dict): Dictionary representing the strategy.
+            arrival_testing_regimes (Dict): Dictionary of \
+                [ArrivalTestingRegimes] instances.
+            testing_regimes (Dict): Dictionary of [TestingRegimes] instances.
+        """
+        name = d["name"]
+        period_lengths = np.array(d["period_lengths"])
+        test_regimes = [testing_regimes[i] for i in d["testing_regimes"]]
+        transmission_multipliers = d["transmission_multipliers"]
+        if transmission_multipliers is not None:
+            transmission_multipliers = np.array(transmission_multipliers)
+        arrival_regime = d["arrival_testing_regime"]
+        if arrival_regime is not None:
+            arrival_regime = arrival_testing_regimes[arrival_regime]
+        return Strategy(name, period_lengths, test_regimes,
+                        transmission_multipliers, arrival_regime)
 
     # TODO: Update this when passing D and H to sim becomes supported.
     def get_initial_infections(self, active_infections: np.ndarray):

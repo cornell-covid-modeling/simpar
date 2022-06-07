@@ -1,0 +1,35 @@
+tests:
+  pcr:
+    sensitivity: 0.8
+    test_delay: 1.5
+    compliance: 0.9
+  antigen:
+    sensitivity: 0.6
+    test_delay: 0
+    compliance: 0.5
+
+arrival_testing_regimes:
+  single_meta_group:
+    pre_departure_test_type: ["antigen"]
+    arrival_test_type: ["pcr"]
+  three_meta_groups:
+    pre_departure_test_type: ["antigen", "pcr", "antigen"]
+    arrival_test_type: ["pcr", "pcr", "antigen"]
+
+testing_regimes:
+  single_meta_group_with_testing:
+    test_type: ["pcr"]
+    tests_per_week: [2]
+  single_meta_group_no_testing:
+    test_type: ["pcr"]
+    tests_per_week: [0]
+  three_meta_groups:
+    test_type: ["antigen", "pcr", "antigen"]
+    tests_per_week: [0,2,2]
+
+strategy:
+  name: "test"
+  period_lengths: [5, 5]
+  testing_regimes: ["three_meta_groups", "three_meta_groups"]
+  transmission_multipliers: [1, 0.75]
+  arrival_testing_regime: "three_meta_groups"
