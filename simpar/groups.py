@@ -35,6 +35,22 @@ class MetaGroup:
         self.K = len(contact_units)
         self.pop = pop
 
+    @staticmethod
+    def from_truncated_pareto(name: str, population: float, a: float, ub: int):
+        """Initialize a meta-group from a truncated Pareto distribution.
+
+        Args:
+            name (str): Name of the metagroup.
+            population (float): Total population in this metagroup.
+            a (float): Shape parameter (alpha) for the Pareto distribution.
+            ub (int): Truncation point for the Pareto distribution.
+        """
+        pop_frac = np.array([pareto.pdf(k,a) for k in range(1, ub+1)])
+        pop_frac = pop_frac / np.sum(pop_frac)  # normalize
+        pop = population * pop_frac
+        contact_units = np.arange(1, len(pop) + 1)
+        return MetaGroup(name, pop, contact_units)
+
     def infection_matrix(self, infections_per_contact_unit: float):
         """Return the infection matrix."""
         # Infection matrix among these groups assumes population is well-mixed.
@@ -124,13 +140,11 @@ class Population:
         meta_groups = []
         for meta_group in scenario["metagroups"]:
             name = meta_group
-            b = scenario['pop_fracs_pareto'][meta_group]
-            n = scenario['pop_fracs_max'][meta_group]
-            pop_frac = np.array([pareto.pdf(k,b) for k in range(1, n+1)])
-            pop_frac = pop_frac / np.sum(pop_frac)
-            pop = population_count[meta_group] * pop_frac
-            contact_units = np.arange(1, len(pop) + 1)
-            meta_groups.append(MetaGroup(name, pop, contact_units))
+            population = population_count[meta_group]
+            a = scenario['pop_fracs_pareto'][meta_group]
+            ub = scenario['pop_fracs_max'][meta_group]
+            mg = MetaGroup.from_truncated_pareto(name, population, a, ub)
+            meta_groups.append(mg)
         return Population(meta_groups, np.array(scenario['meta_matrix']))
 
     def meta_group_ids(self, meta_group):
