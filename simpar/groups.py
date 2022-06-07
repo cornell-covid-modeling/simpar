@@ -9,7 +9,7 @@ contact. Furthermore, it defines a [Population] which is comprised of multiple
 __author__ = "Sam Stan (samstan) and Xiangyu Zhang (xiangyu-zhang-95)"
 
 
-from typing import List
+from typing import List, Dict
 import numpy as np
 from scipy.stats import pareto
 
@@ -157,6 +157,25 @@ class Population:
             mg = MetaGroup.from_truncated_pareto(name, pop, a, ub)
             meta_groups.append(mg)
         return Population(meta_groups, meta_group_contact_matrix)
+
+
+    @staticmethod
+    def from_truncated_paretos_dictionary(d: Dict):
+        """Return a [Population] initialized from the given dictionary."""
+        meta_group_names = []
+        population_counts = []
+        shapes = []
+        ubs = []
+        for mg in d["meta_groups"]:
+            meta_group_names.append(d["meta_group_names"][mg])
+            population_counts.append(d["population_counts"][mg])
+            shapes.append(d["pop_pareto_shapes"][mg])
+            ubs.append(d["pop_pareto_ubs"][mg])
+        meta_group_contact_matrix = d["meta_group_contact_matrix"]
+        return Population.from_truncated_paretos(meta_group_names,
+                                                 population_counts, shapes,
+                                                 ubs,
+                                                 meta_group_contact_matrix)
 
     def meta_group_ids(self, meta_group):
         """Return the group ids of the groups in the given meta-group."""
