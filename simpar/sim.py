@@ -181,13 +181,13 @@ class Sim:
         self.S[t+1] = self.S[t] - self.I[t+1]
         self.R[t+1] = self.R[t] + self.I[t]
 
-        # Discover some fraction of those infected in this time period
-        self.D[t+1] = np.multiply(self.I[t+1], infection_discovery_frac)
-        self.H[t+1] = np.multiply(self.I[t+1], 1-infection_discovery_frac)
-
         # Discover some fraction of hidden recoveries
-        self.D[t+1] += np.multiply(self.H[t], recovered_discovery_frac)
-        self.H[t+1] += np.multiply(self.H[t], 1 - recovered_discovery_frac)
+        self.D[t+1] = self.D[t] + np.multiply(self.H[t], recovered_discovery_frac)
+        self.H[t+1] = np.multiply(self.H[t], 1 - recovered_discovery_frac)
+
+        # Discover some fraction of those infected in this time period
+        self.D[t+1] += np.multiply(self.I[t+1], infection_discovery_frac)
+        self.H[t+1] += np.multiply(self.I[t+1], 1-infection_discovery_frac)
 
         self.t = self.t + 1  # move time forward by one step
 
