@@ -9,7 +9,7 @@ parameters can be specified and the base parameters are used by default.
 __author__ = "Peter Frazier (peter-i-frazier)"
 
 import numpy as np
-from typing import Union
+from typing import Union, Dict
 
 
 class Sim:
@@ -107,6 +107,25 @@ class Sim:
 
         self.infection_rate = infection_rate
         self.outside_rate = outside_rate
+
+
+    @staticmethod
+    def from_dictionary(d: Dict):
+        """Initialize an instance of Sim from a dictionary."""
+        T = d["T"]
+        S0 = np.array(d["S0"])
+        I0 = np.array(d["I0"])
+        R0 = np.array(d["R0"])
+        infection_rate = np.array(d["infection_rate"])
+        infection_discovery_frac = np.array(d["infection_discovery_frac"])
+        recovered_discovery_frac = np.array(d["recovered_discovery_frac"])
+        outside_rate = np.array(d["outside_rate"])
+        return Sim(max_T=T, init_susceptible=S0, init_infected=I0,
+                init_recovered=R0, infection_rate=infection_rate,
+                infection_discovery_frac=infection_discovery_frac,
+                recovered_discovery_frac=recovered_discovery_frac,
+                outside_rate=outside_rate)
+
 
     def step(self, n: int = 1, infection_rate: np.ndarray = None,
              infection_discovery_frac: Union[float,np.ndarray] = None,
