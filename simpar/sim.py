@@ -146,13 +146,13 @@ class Sim:
 
         if infection_discovery_frac is None:
             infection_discovery_frac = self.infection_discovery_frac
-        elif np.isscalar(infection_discovery_frac):
+        else:
             infection_discovery_frac = \
                 self._validate_discovery_frac(infection_discovery_frac, self.K)
 
         if recovered_discovery_frac is None:
             recovered_discovery_frac = self.recovered_discovery_frac
-        elif np.isscalar(recovered_discovery_frac):
+        else:
             recovered_discovery_frac = \
                 self._validate_discovery_frac(recovered_discovery_frac, self.K)
 
