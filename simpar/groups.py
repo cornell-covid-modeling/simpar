@@ -230,15 +230,12 @@ class Population:
 
         return res
 
-    def get_init_SIR(self, init_infections: float, init_recovered: float,
-                     weight: str = "population"):
+    def get_init_SIR(self, init_infections: np.ndarray,
+                     init_recovered: np.ndarray, weight: str = "population"):
         """Return initial SIR vectors.
 
-        Given [init_infections] and [init_recovered] aggregated at the
-        population level, assume that both are distributed across meta-groups
-        proportional to the population.
-
-        The [weight] parameter specifies how these counts should be distributed
+        Given [init_infections] and [init_recovered] at the meta-group level,
+        the [weight] parameter specifies how these counts should be distributed
         across the groups within each metagroup. The available options for
         [weight] are:
 
@@ -248,20 +245,10 @@ class Population:
         - "most social": The initial infections are in the most social group.
 
         Args:
-            init_infections (float): Initial infections count in population.
-            init_recovered (float): Initial recovered count in population.
+            init_infections (np.ndarray): Initial infections per meta-group.
+            init_recovered (np.ndarray): Initial recovered per meta-group.
             weight (str): {population, population x contacts, most_social}
         """
-        meta_group_pops = np.array([sum(g.pop) for g in self.meta_group_list])
-        meta_group_prop = meta_group_pops / sum(meta_group_pops)
-        init_infections = init_infections * meta_group_prop
-        init_recovered = init_recovered * meta_group_prop
-
-        return self._get_init_SIR_vec(init_infections, init_recovered, weight)
-
-    def _get_init_SIR_vec(self, init_infections: np.ndarray,
-                          init_recovered: np.ndarray,
-                          weight: str = "population"):
         SIR = []
         for i in range(len(self.meta_group_list)):
             group = self.meta_group_list[i]
