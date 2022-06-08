@@ -105,79 +105,52 @@ class Population:
     A population is a collection of meta-groups.
     """
 
-    def __init__(self, meta_group_list: List[MetaGroup],
+    def __init__(self, meta_groups_dict: Dict[str, MetaGroup],
                  meta_group_contact_matrix: np.ndarray):
         """
         Initialize a population.
 
-        A population is defined by a list of meta-groups: [meta_group_list].
-        Meta-group interactions are not assumed to be well-mixed. The matrix
-        [meta_group_contact_matrix] indicates how metagroups interact with
-        one another. This is encoded in the [infection_matrix] which is
-        normalized to be in "contact units."
+        A population is defined by a dictionary of meta-groups:
+        [meta_groups_dict]. Meta-group interactions are not assumed to be
+        well-mixed. The matrix [meta_group_contact_matrix] indicates how
+        metagroups interact with one another. This is encoded in the
+        [infection_matrix] which is normalized to be in "contact units."
 
         Args:
-            meta_group_list (List[MetaGroup]): List of meta-groups.
+            meta_groups_dict (Dict[str, MetaGroup]): Dictionary of meta-groups.
             meta_group_contact_matrix (np.ndarray): Interactions between \
                 meta-groups where entry (i,j) is the conditional probability \
                 that the exposed is in meta-group j, given that the source is \
                 in meta-group i.
         """
-        self.meta_group_list = meta_group_list
-        self.meta_group_names = [mg.name for mg in meta_group_list]
+        self.meta_groups_dict = meta_groups_dict
+        self.meta_group_names = list(self.meta_groups_dict.keys())
+        self.meta_group_list = list(self.meta_groups_dict.values())
         self.meta_group_contact_matrix = meta_group_contact_matrix
 
-        cum_tot = np.cumsum([mg.K for mg in meta_group_list])
+        cum_tot = np.cumsum([mg.K for _, mg in meta_groups_dict.items()])
 
         self._meta_group2idx = {}
-        for i, mg in enumerate(meta_group_list):
-            self._meta_group2idx[mg] = \
+        for i, (name, mg) in enumerate(meta_groups_dict.items()):
+            self._meta_group2idx[name] = \
                 list(range(cum_tot[i] - mg.K, cum_tot[i]))
-
-    @staticmethod
-    def from_truncated_paretos(names: List[str], populations: List[float],
-                               shapes: List[float], ubs: List[float],
-                               meta_group_contact_matrix: np.ndarray):
-        """Initialize a [Population] using truncated Pareto meta-groups.
-
-        Args:
-            names (List[str]): List of meta-group names.
-            populations (List[float]): Population counts for each meta-group.
-            shapes (List[float]): Shape parameter for Pareto of each meta-group.
-            ubs (List[float]): Truncation limit for Pareto of each meta-group.
-            meta_group_contact_matrix (np.ndarray): Interactions between \
-                meta-groups where entry (i,j) is the conditional probability \
-                that the exposed is in meta-group j, given that the source is \
-                in meta-group i.
-        """
-        meta_groups = []
-        for i, name in enumerate(names):
-            pop = populations[i]
-            a = shapes[i]
-            ub = ubs[i]
-            mg = MetaGroup.from_truncated_pareto(name, pop, a, ub)
-            meta_groups.append(mg)
-        return Population(meta_groups, meta_group_contact_matrix)
 
 
     @staticmethod
     def from_truncated_paretos_dictionary(d: Dict):
         """Return a [Population] initialized from the given dictionary."""
-        meta_group_names = []
-        population_counts = []
-        shapes = []
-        ubs = []
-        for mg in d["meta_groups"]:
-            meta_group_names.append(d["meta_group_names"][mg])
-            population_counts.append(d["population_counts"][mg])
-            shapes.append(d["pop_pareto_shapes"][mg])
-            ubs.append(d["pop_pareto_ubs"][mg])
+        meta_groups = {}
+        for key in d["meta_groups"]:
+            name = d["meta_group_names"][key]
+            pop = d["population_counts"][key]
+            a = d["pop_pareto_shapes"][key]
+            ub = d["pop_pareto_ubs"][key]
+            meta_group = MetaGroup.from_truncated_pareto(name, pop, a, ub)
+            meta_groups[key] = meta_group
+
         meta_group_contact_matrix = np.array(d["meta_group_contact_matrix"])
-        return Population.from_truncated_paretos(meta_group_names,
-                                                 np.array(population_counts),
-                                                 np.array(shapes),
-                                                 np.array(ubs),
-                                                 meta_group_contact_matrix)
+
+        return Population(meta_groups, meta_group_contact_matrix)
 
     def meta_group_ids(self, meta_group):
         """Return the group ids of the groups in the given meta-group."""
