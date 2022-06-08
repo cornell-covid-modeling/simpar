@@ -58,6 +58,11 @@ no_surveillance_test_rate:
   g2: 0.2
   g3: 0.1
 
+hospitalization_rates:
+  g1: 0.001
+  g2: 0.002
+  g3: 0.01
+
 pct_recovered_discovered_arrival:
   g1: 0
   g2: 0.2
