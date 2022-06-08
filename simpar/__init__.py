@@ -12,7 +12,6 @@ regimes (with varying tests), and vaccination requirements.
 __author__ = "Cornell Covid Modeling Team"
 
 from . import groups
-from . import isolation
 from . import metrics
 from . import micro
 from . import plotting
