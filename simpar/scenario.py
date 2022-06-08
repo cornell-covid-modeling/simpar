@@ -36,6 +36,8 @@ class Scenario:
                  no_surveillance_test_rate: np.ndarray,
                  pct_recovered_discovered_arrival: np.ndarray,
                  hospitalization_rates: np.ndarray,
+                 isolation_lengths: np.ndarray,
+                 isolation_fracs: np.ndarray,
                  tests: Dict[str, Test]):
         """Initialize a [Scenario] instance.
 
@@ -60,6 +62,9 @@ class Scenario:
                 longer infectious) during arrival testing.
             hospitalization_rates (np.ndarray): Rate of hospitalizations \
                 among those who get infected across meta-groups.
+            isolation_lengths (np.ndarray): List of isolation periods in days.
+            isolation_fracs (np.ndarray): Combined with [isolation_lengths], \
+                indicates what fraction of people isolate for each length.
             tests (Dict[str, Test]): Dictionary of available tests.
         """
         self.population = population
@@ -75,6 +80,8 @@ class Scenario:
         self.pct_recovered_discovered_arrival = \
             pct_recovered_discovered_arrival
         self.hospitalization_rates = hospitalization_rates
+        self.isolation_lengths = isolation_lengths
+        self.isolation_fracs = isolation_fracs
         self.tests = tests
 
     @staticmethod
@@ -102,6 +109,8 @@ class Scenario:
             _to_np_array(d["pct_recovered_discovered_arrival"], order)
         hospitalization_rates = \
             _to_np_array(d["hospitalization_rates"], order)
+        isolation_lengths = np.array(d["isolation_lengths"])
+        isolation_fracs = np.array(d["isolation_fracs"])
 
         return Scenario(population=population, max_T=max_T,
                         generation_time=generation_time,
@@ -116,6 +125,8 @@ class Scenario:
                         pct_recovered_discovered_arrival=
                         pct_recovered_discovered_arrival,
                         hospitalization_rates=hospitalization_rates,
+                        isolation_lengths=isolation_lengths,
+                        isolation_fracs=isolation_fracs,
                         tests=tests)
 
     def simulate_strategy(self, strategy: Strategy):
