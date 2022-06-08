@@ -10,7 +10,6 @@ arrive and for what periods of time.
 __author__ = "Henry Robbins (henryrobbins)"
 
 
-from django.test import TestCase
 import numpy as np
 from .micro import days_infectious
 from typing import List, Dict

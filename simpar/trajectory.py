@@ -9,7 +9,6 @@ __author__ = "Henry Robbins (henryrobbins)"
 
 from .scenario import Scenario
 from .strategy import Strategy
-from .groups import Population
 from .sim import Sim
 
 
@@ -23,7 +22,7 @@ class Trajectory:
     """
 
     def __init__(self, scenario: Scenario, strategy: Strategy, sim: Sim,
-                 color: str="black", name: str=None):
+                 color: str = "black", name: str = None):
         """Initialize a [Trajectory] instance.
 
         Args:

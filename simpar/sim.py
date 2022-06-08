@@ -110,7 +110,6 @@ class Sim:
         self.infection_rate = infection_rate
         self.outside_rate = outside_rate
 
-
     @staticmethod
     def from_dictionary(d: Dict):
         """Initialize an instance of Sim from a dictionary."""
@@ -123,11 +122,10 @@ class Sim:
         recovered_discovery_frac = np.array(d["recovered_discovery_frac"])
         outside_rate = np.array(d["outside_rate"])
         return Sim(max_T=T, init_susceptible=S0, init_infected=I0,
-                init_recovered=R0, infection_rate=infection_rate,
-                infection_discovery_frac=infection_discovery_frac,
-                recovered_discovery_frac=recovered_discovery_frac,
-                outside_rate=outside_rate)
-
+                   init_recovered=R0, infection_rate=infection_rate,
+                   infection_discovery_frac=infection_discovery_frac,
+                   recovered_discovery_frac=recovered_discovery_frac,
+                   outside_rate=outside_rate)
 
     def step(self, n: int = 1, infection_rate: np.ndarray = None,
              infection_discovery_frac: Union[float,np.ndarray] = None,
@@ -203,7 +201,8 @@ class Sim:
         self.R[t+1] = self.R[t] + self.I[t]
 
         # Discover some fraction of hidden recoveries
-        self.D[t+1] = self.D[t] + np.multiply(self.H[t], recovered_discovery_frac)
+        self.D[t+1] = \
+            self.D[t] + np.multiply(self.H[t], recovered_discovery_frac)
         self.H[t+1] = np.multiply(self.H[t], 1 - recovered_discovery_frac)
 
         # Discover some fraction of those infected in this time period

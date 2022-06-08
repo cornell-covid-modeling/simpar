@@ -25,7 +25,7 @@ def test_sim8():
     mg = MetaGroup('Test', pop, marginal_contacts)
     infection_rate = mg.infection_matrix(infections_per_contact)
 
-    sim= Sim(T,S0,I0,R0,infection_rate,0,0)
+    sim = Sim(T,S0,I0,R0,infection_rate,0,0)
     sim.step(T-1)
 
     validate(sim)
