@@ -36,9 +36,8 @@ class Scenario:
                  no_surveillance_test_rate: np.ndarray,
                  pct_recovered_discovered_arrival: np.ndarray,
                  hospitalization_rates: np.ndarray,
-                 isolation_lengths: np.ndarray,
-                 isolation_fracs: np.ndarray,
-                 tests: Dict[str, Test]):
+                 isolation_lengths: np.ndarray, isolation_fracs: np.ndarray,
+                 arrival_period: float, tests: Dict[str, Test]):
         """Initialize a [Scenario] instance.
 
         Args:
@@ -65,6 +64,8 @@ class Scenario:
             isolation_lengths (np.ndarray): List of isolation periods in days.
             isolation_fracs (np.ndarray): Combined with [isolation_lengths], \
                 indicates what fraction of people isolate for each length.
+            arrival_period (float): The number of generations the arrival \
+                occurs over. Testing is assumed constant over these days.
             tests (Dict[str, Test]): Dictionary of available tests.
         """
         self.population = population
@@ -82,6 +83,7 @@ class Scenario:
         self.hospitalization_rates = hospitalization_rates
         self.isolation_lengths = isolation_lengths
         self.isolation_fracs = isolation_fracs
+        self.arrival_period = arrival_period
         self.tests = tests
 
     @staticmethod
@@ -111,6 +113,7 @@ class Scenario:
             _to_np_array(d["hospitalization_rates"], order)
         isolation_lengths = np.array(d["isolation_lengths"])
         isolation_fracs = np.array(d["isolation_fracs"])
+        arrival_period = d["arrival_period"]
 
         return Scenario(population=population, max_T=max_T,
                         generation_time=generation_time,
@@ -127,6 +130,7 @@ class Scenario:
                         hospitalization_rates=hospitalization_rates,
                         isolation_lengths=isolation_lengths,
                         isolation_fracs=isolation_fracs,
+                        arrival_period=arrival_period,
                         tests=tests)
 
     def simulate_strategy(self, strategy: Strategy):
