@@ -35,6 +35,7 @@ class Scenario:
                  symptomatic_rate: float,
                  no_surveillance_test_rate: np.ndarray,
                  pct_recovered_discovered_arrival: np.ndarray,
+                 hospitalization_rates: np.ndarray,
                  tests: Dict[str, Test]):
         """Initialize a [Scenario] instance.
 
@@ -57,6 +58,8 @@ class Scenario:
             pct_recovered_discovered_arrival (np.ndarray): Percentage of the \
                 recovered population who discover they are positive (but no \
                 longer infectious) during arrival testing.
+            hospitalization_rates (np.ndarray): Rate of hospitalizations \
+                among those who get infected across meta-groups.
             tests (Dict[str, Test]): Dictionary of available tests.
         """
         self.population = population
@@ -71,6 +74,7 @@ class Scenario:
         self.no_surveillance_test_rate = no_surveillance_test_rate
         self.pct_recovered_discovered_arrival = \
             pct_recovered_discovered_arrival
+        self.hospitalization_rates = hospitalization_rates
         self.tests = tests
 
     @staticmethod
@@ -96,6 +100,8 @@ class Scenario:
             _to_np_array(d["no_surveillance_test_rate"], order)
         pct_recovered_discovered_arrival = \
             _to_np_array(d["pct_recovered_discovered_arrival"], order)
+        hospitalization_rates = \
+            _to_np_array(d["hospitalization_rates"], order)
 
         return Scenario(population=population, max_T=max_T,
                         generation_time=generation_time,
@@ -109,6 +115,7 @@ class Scenario:
                         no_surveillance_test_rate=no_surveillance_test_rate,
                         pct_recovered_discovered_arrival=
                         pct_recovered_discovered_arrival,
+                        hospitalization_rates=hospitalization_rates,
                         tests=tests)
 
     def simulate_strategy(self, strategy: Strategy):
