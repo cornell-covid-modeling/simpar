@@ -80,6 +80,7 @@ tests:
 
 isolation_lengths: [5, 10]
 isolation_fracs: [0.8, 0.2]
+arrival_period: 3
 
 arrival_testing_regimes:
   three_meta_groups:
