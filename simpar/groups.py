@@ -127,7 +127,8 @@ class Population:
         self.meta_group_names = [mg.name for mg in meta_group_list]
         self.meta_group_contact_matrix = meta_group_contact_matrix
 
-        cum_tot = np.cumsum(mg.K for mg in meta_group_list)
+        cum_tot = np.cumsum([mg.K for mg in meta_group_list])
+
         self._meta_group2idx = {}
         for i, mg in enumerate(meta_group_list):
             self._meta_group2idx[mg] = \
@@ -171,10 +172,11 @@ class Population:
             population_counts.append(d["population_counts"][mg])
             shapes.append(d["pop_pareto_shapes"][mg])
             ubs.append(d["pop_pareto_ubs"][mg])
-        meta_group_contact_matrix = d["meta_group_contact_matrix"]
+        meta_group_contact_matrix = np.array(d["meta_group_contact_matrix"])
         return Population.from_truncated_paretos(meta_group_names,
-                                                 population_counts, shapes,
-                                                 ubs,
+                                                 np.array(population_counts),
+                                                 np.array(shapes),
+                                                 np.array(ubs),
                                                  meta_group_contact_matrix)
 
     def meta_group_ids(self, meta_group):
@@ -185,7 +187,7 @@ class Population:
         """Return the infection matrix."""
         Ks = [mg.K for mg in self.meta_group_list]
         dim_tot = np.sum(Ks)
-        cum_tot = np.cumsum(Ks)
+        cum_tot = np.hstack((0, np.cumsum(Ks)))
 
         res = np.zeros((dim_tot, dim_tot))
         for a, source in enumerate(self.meta_group_list):
@@ -195,10 +197,11 @@ class Population:
                         q = exposed.pop[j] * exposed.contact_units[j] / \
                             np.sum(exposed.pop * exposed.contact_units)
                         res[cum_tot[a]+i, cum_tot[b]+j] = \
-                            source.contact_units[j] * \
+                            source.contact_units[i] * \
+                            infections_per_contact_unit[a] * \
                             self.meta_group_contact_matrix[a,b] * q
 
-        return infections_per_contact_unit * res
+        return res
 
     def infection_discovery_frac(self, infection_discovery_frac):
         """Return the fraction of infections that are discovered."""
@@ -220,7 +223,7 @@ class Population:
         """Return the outside rate."""
         Ks = [mg.K for mg in self.meta_group_list]
         dim_tot = np.sum(Ks)
-        cum_tot = np.cumsum(Ks)
+        cum_tot = np.hstack((0, np.cumsum(Ks)))
 
         res = np.zeros(dim_tot)
         for i, meta_group in enumerate(self.meta_group_list):
@@ -249,16 +252,15 @@ class Population:
             init_recovered (np.ndarray): Initial recovered per meta-group.
             weight (str): {population, population x contacts, most_social}
         """
-        SIR = []
+        SIR = [[],[],[]]
         for i in range(len(self.meta_group_list)):
             group = self.meta_group_list[i]
             S0, I0, R0 = group.get_init_SIR(init_infections[i],
                                             init_recovered[i],
                                             weight=weight)
-            SIR.append([S0, I0, R0])
-        SIR = np.array(SIR)
+            SIR[0] += list(S0)
+            SIR[1] += list(I0)
+            SIR[2] += list(R0)
 
-        S0 = SIR[:,0].flatten()
-        I0 = SIR[:,1].flatten()
-        R0 = SIR[:,2].flatten()
-        return S0, I0, R0
+        SIR = np.array(SIR)
+        return SIR[0], SIR[1], SIR[2]
