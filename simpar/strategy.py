@@ -179,20 +179,21 @@ class TestingRegime:
         return infection_discovery_frac
 
     # TODO: Discuss this with Peter
-    def get_recovered_discovery_frac(self, no_surveillance_test_rate: float):
+    def get_recovered_discovery_frac(self,
+                                     no_surveillance_test_rate: np.ndarray):
         """Return the discovery rate among recovered people.
 
         This value requires the context of the test rate when no surveillance
         testing is being done. E.g. testing done by cautious individuals.
 
         Args:
-            no_surveillance_test_rate (float): Test rate per meta-group.
+            no_surveillance_test_rate (np.ndarray): Test rate per meta-group.
         """
         recovered_discovery_frac = np.zeros(len(self.test_type))
         for i, (t, f) in enumerate(zip(self.test_type, self.tests_per_week)):
             if f == 0:
                 # Should this be multiplied by sensitivity?
-                recovered_discovery_frac[i] = no_surveillance_test_rate
+                recovered_discovery_frac[i] = no_surveillance_test_rate[i]
             else:
                 # Not sure what this should be changed to?
                 # Some function of test sensitivity and test frequency?

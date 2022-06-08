@@ -56,7 +56,7 @@ def test_testing_regime_one_meta_group_with_testing():
     assert regime.get_days_infectious(max_infectious_days=5) == expected
     # TODO this may change after discussing with Peter
     assert regime.get_infection_discovery_frac(0.3) == [1]
-    assert regime.get_recovered_discovery_frac(0) == [1]
+    assert regime.get_recovered_discovery_frac(np.array([0])) == [1]
 
 
 def test_testing_regime_one_meta_group_no_testing():
@@ -68,7 +68,7 @@ def test_testing_regime_one_meta_group_no_testing():
     assert regime.get_days_infectious(max_infectious_days=5) == expected
     # TODO this may change after discussing with Peter
     assert regime.get_infection_discovery_frac(0.3) == 0.3
-    assert regime.get_recovered_discovery_frac(0.4) == [0.4]
+    assert regime.get_recovered_discovery_frac(np.array([0.4])) == [0.4]
 
 
 def test_testing_regime_three_meta_groups():
@@ -90,7 +90,8 @@ def test_testing_regime_three_meta_groups():
     # TODO this may change after discussing with Peter
     assert np.isclose(regime.get_infection_discovery_frac(0.3),
                       np.array([0.3, 1, 1])).all()
-    assert np.isclose(regime.get_recovered_discovery_frac(0.7),
+    no_surveil_rate = np.array([0.7, 0.8, 0.6])
+    assert np.isclose(regime.get_recovered_discovery_frac(no_surveil_rate),
                       np.array([0.7, 1, 1])).all()
 
 
