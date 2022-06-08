@@ -1,21 +1,23 @@
 """Methods to perform "microscopic" calculations that predict days infectious.
 
-T | time between surveillance tests
-X | beginning of period when an individual is infectious (and detectable)
-D | delay to isolate after testing positive
-R | total length of the infectious period
-N | index of first surveillance to test
-I | total time an individual is infectious AND free
+.. code-block:: text
 
-========================================
-Example timeline:
-Individual tests positive on second test
+    T | time between surveillance tests
+    X | beginning of period when an individual is infectious (and detectable)
+    D | delay to isolate after testing positive
+    R | total length of the infectious period
+    N | index of first surveillance to test
+    I | total time an individual is infectious AND free
 
-|---|------|-----|----|-----|----|----|
-0   X      T    T+D   2T    I    3T   R
+    ========================================
+    Example timeline:
+    Individual tests positive on second test
 
-N          0          1          2
-========================================
+    |---|------|-----|----|-----|----|----|
+    0   X      T    T+D   2T    I    3T   R
+
+    N          0          1          2
+    ========================================
 
 We will use the above notation to discuss the calculations performed in
 this module. The infection begins between two surveillance tests at some

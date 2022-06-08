@@ -252,11 +252,8 @@ class Strategy:
         """Initialize a [Strategy] instance.
 
         The dictionary [d] should contain a key [testing_regimes] and may
-        contain a arrival_testing_regime
-
-         which contain list
-        of strings. These are interpreted as keys in the [tests] dictionary
-        which provides the corresponding [Test] instance.
+        contain a key [arrival_testing_regime]. These should be keys in
+        [arrival_testing_regimes] and [testing_regimes] respectively.
 
         Args:
             d (Dict): Dictionary representing the strategy.
