@@ -9,7 +9,7 @@ contact. Furthermore, it defines a [Population] which is comprised of multiple
 __author__ = "Sam Stan (samstan) and Xiangyu Zhang (xiangyu-zhang-95)"
 
 
-from typing import List, Dict
+from typing import Dict
 import numpy as np
 from scipy.stats import pareto
 
@@ -134,7 +134,6 @@ class Population:
         for i, (name, mg) in enumerate(meta_groups_dict.items()):
             self._meta_group2idx[name] = \
                 list(range(cum_tot[i] - mg.K, cum_tot[i]))
-
 
     @staticmethod
     def from_truncated_paretos_dictionary(d: Dict):

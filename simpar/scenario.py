@@ -97,7 +97,7 @@ class Scenario:
         population = Population.from_truncated_paretos_dictionary(d)
 
         order = d["meta_groups"]
-        infections_per_contact_unit = \
+        infect_per_contact_unit = \
             _to_np_array(d["infections_per_contact_unit"], order)
         init_infections = \
             _to_np_array(d["init_infections"], order)
@@ -107,7 +107,7 @@ class Scenario:
             _to_np_array(d["outside_rate"], order)
         no_surveillance_test_rate = \
             _to_np_array(d["no_surveillance_test_rate"], order)
-        pct_recovered_discovered_arrival = \
+        p_recov_discov_arrive = \
             _to_np_array(d["pct_recovered_discovered_arrival"], order)
         hospitalization_rates = \
             _to_np_array(d["hospitalization_rates"], order)
@@ -117,16 +117,14 @@ class Scenario:
 
         return Scenario(population=population, max_T=max_T,
                         generation_time=generation_time,
-                        infections_per_contact_unit=
-                        infections_per_contact_unit,
+                        infections_per_contact_unit=infect_per_contact_unit,
                         init_infections=init_infections,
                         init_recovered=init_recovered,
                         outside_rate=outside_rate,
                         max_infectious_days=max_infectious_days,
                         symptomatic_rate=symptomatic_rate,
                         no_surveillance_test_rate=no_surveillance_test_rate,
-                        pct_recovered_discovered_arrival=
-                        pct_recovered_discovered_arrival,
+                        pct_recovered_discovered_arrival=p_recov_discov_arrive,
                         hospitalization_rates=hospitalization_rates,
                         isolation_lengths=isolation_lengths,
                         isolation_fracs=isolation_fracs,

@@ -2,8 +2,8 @@ import os
 import yaml
 import numpy as np
 from simpar.micro import days_infectious
-from simpar.strategy import Test, ArrivalTestingRegime, TestingRegime, \
-                            Strategy, strategies_from_dictionary
+from simpar.strategy import (Test, ArrivalTestingRegime, TestingRegime,
+                             strategies_from_dictionary)
 
 
 RESOURCES_PATH = os.path.join(os.path.dirname(__file__), 'resources')
@@ -97,7 +97,7 @@ def test_testing_regime_three_meta_groups():
 
 def test_strategy():
     """Test [Strategy] class with three meta-groups."""
-    pct_discovered_in_pre_departure =  np.array([0.3, 0.72, 0.3])
+    pct_discovered_in_pre_departure = np.array([0.3, 0.72, 0.3])
     pct_discovered_in_arrival_test = np.array([0.504, 0.2016, 0.21])
     pct_discovered = \
         pct_discovered_in_pre_departure + pct_discovered_in_arrival_test

@@ -8,5 +8,5 @@ ignore =
     E743, ; ignoring ambiguous function name 'I'
 max-line-length = 79
 per-file-ignores =
-    ./__init__.py:F401
+    simpar/__init__.py:F401
     ; standard to ignore F401 in __init__.py
