@@ -1,25 +1,39 @@
+"""Simulation trajectory manager.
+
+Defines a [Trajectory] class which is comprised of a fully run [Sim] that
+was the result of applying a given [Strategy] to a [Scenario].
+"""
+
+__author__ = "Henry Robbins (henryrobbins)"
+
+
+from .scenario import Scenario
 from .strategy import Strategy
 from .groups import Population
 from .sim import Sim
-from typing import Dict
 
 
 class Trajectory:
+    """
+    Manages all of the attributes of a simulation run.
 
-    def __init__(self, scenario: Dict, strategy: Strategy, sim: Sim,
-        color: str, name: str=None):
-        """Manage all of the objects associated with a trajectory on a graph.
+    This includes the underlying simulation [Sim] and the scenario [Scenario]
+    and the strategy [Strategy] that was used. It also maintains a color and
+    name for use when plotting trajectories.
+    """
+
+    def __init__(self, scenario: Scenario, strategy: Strategy, sim: Sim,
+                 color: str="black", name: str=None):
+        """Initialize a [Trajectory] instance.
 
         Args:
-            scenario (Dict): Scenario that the simulation was run under.
+            scenario (Scenario): Scenario that the simulation was run under.
             strategy (Strategy): Strategy that was used to run the simulation.
             sim (sim): Simulation which used the provided strategy.
             color (str): Color of the trajectory when plotting.
-            name (str): Name of the trajectory.
+            name (str): Name of the trajectory when plotting.
         """
         self.scenario = scenario
-        # TODO (hwr26): patch--come back and think about the right thing here
-        self.pop = Population.from_scenario(scenario)
         self.strategy = strategy
         self.sim = sim
         self.color = color
