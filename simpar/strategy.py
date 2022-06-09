@@ -39,6 +39,8 @@ class Test:
         """
         self.name = name
         self.true_sensitivity = test_sensitivity * compliance
+        self.test_sensitivity = test_sensitivity
+        self.compliance = compliance
         self.test_delay = test_delay
 
     @staticmethod

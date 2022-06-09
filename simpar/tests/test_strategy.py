@@ -27,6 +27,8 @@ def test_test_initialization():
     test = TESTS["pcr"]
     assert test.name == "pcr"
     assert test.true_sensitivity == 0.8 * 0.9
+    assert test.test_sensitivity == 0.8
+    assert test.compliance == 0.9
     assert test.test_delay == 1.5
 
 
