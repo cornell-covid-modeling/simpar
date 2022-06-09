@@ -55,9 +55,8 @@ def test_testing_regime_one_meta_group_with_testing():
     expected = days_infectious(days_between_tests=3.5, isolation_delay=1.5,
                                sensitivity=0.8 * 0.9, max_infectious_days=R)
     assert regime.get_days_infectious(max_infectious_days=5) == expected
-    # TODO this may change after discussing with Peter
-    assert regime.get_infection_discovery_frac(0.3) == [1]
-    assert regime.get_recovered_discovery_frac(np.array([0])) == [1]
+    assert regime.get_infection_discovery_frac(0.3) == [0.8 * 0.9]
+    assert regime.get_recovered_discovery_frac(np.array([0])) == [0.8 * 0.9]
 
 
 def test_testing_regime_one_meta_group_no_testing():
@@ -67,9 +66,8 @@ def test_testing_regime_one_meta_group_no_testing():
     expected = days_infectious(days_between_tests=np.inf, isolation_delay=1.5,
                                sensitivity=0.8 * 0.9, max_infectious_days=R)
     assert regime.get_days_infectious(max_infectious_days=5) == expected
-    # TODO this may change after discussing with Peter
-    assert regime.get_infection_discovery_frac(0.3) == 0.3
-    assert regime.get_recovered_discovery_frac(np.array([0.4])) == [0.4]
+    assert regime.get_infection_discovery_frac(0.3) == 0.3 * 0.8
+    assert regime.get_recovered_discovery_frac(np.array([0.4])) == [0.4 * 0.8]
 
 
 def test_testing_regime_three_meta_groups():
@@ -88,12 +86,11 @@ def test_testing_regime_three_meta_groups():
 
     assert np.isclose(regime.get_days_infectious(max_infectious_days=5),
                       np.array(expected)).all()
-    # TODO this may change after discussing with Peter
     assert np.isclose(regime.get_infection_discovery_frac(0.3),
-                      np.array([0.3, 1, 1])).all()
+                      np.array([0.3 * 0.6, 0.8 * 0.9, 0.5 * 0.6])).all()
     no_surveil_rate = np.array([0.7, 0.8, 0.6])
     assert np.isclose(regime.get_recovered_discovery_frac(no_surveil_rate),
-                      np.array([0.7, 1, 1])).all()
+                      np.array([0.7 * 0.6, 0.8 * 0.9, 0.5 * 0.6])).all()
 
 
 def test_strategy():

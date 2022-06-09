@@ -159,13 +159,14 @@ class TestingRegime:
 
         return ret
 
-    # TODO: Discuss this with Peter
     def get_infection_discovery_frac(self, symptomatic_rate: float):
         """Return the discovery rate among infected people.
 
-        This value requires the context of the fraction of people who
-        experience symptoms (this becomes the infected discovery fraction
-        when no surveillance testing is done).
+        This value is equivalent to the "true sensitivity" of a test when
+        surveillance testing is in place. Otherwise, it is the test sensitivity
+        multiplied by the symptomatic rate as only those that are symptomatic
+        seek out a test. Note that this assumes all symptomatic people will
+        seek out a test. I.e. compliance among the symptomatic is 100%.
 
         Args:
             symptomatic_rate (float): Symptomatic rate.
@@ -173,21 +174,21 @@ class TestingRegime:
         infection_discovery_frac = np.zeros(len(self.test_type))
         for i, (t, f) in enumerate(zip(self.test_type, self.tests_per_week)):
             if f == 0:
-                # Should this be multiplied by sensitivity?
-                infection_discovery_frac[i] = symptomatic_rate
+                infection_discovery_frac[i] = \
+                    symptomatic_rate * t.test_sensitivity
             else:
-                infection_discovery_frac[i] = 1  # old code
-                # suggested change:
-                # infection_discovery_frac[i] = t.sensitivity
+                infection_discovery_frac[i] = t.true_sensitivity
         return infection_discovery_frac
 
-    # TODO: Discuss this with Peter
     def get_recovered_discovery_frac(self,
                                      no_surveillance_test_rate: np.ndarray):
         """Return the discovery rate among recovered people.
 
-        This value requires the context of the test rate when no surveillance
-        testing is being done. E.g. testing done by cautious individuals.
+        This value is equivalent to the "true sensitivity" of a test when
+        surveillance testing is in place. Note that this serves as a rough
+        estimate which becomes more inaccurate with less frequent testing.
+        If there is no surveillance testing, it is the no surveillance test
+        rate multiplied by the test sensitivity.
 
         Args:
             no_surveillance_test_rate (np.ndarray): Test rate per meta-group.
@@ -195,12 +196,10 @@ class TestingRegime:
         recovered_discovery_frac = np.zeros(len(self.test_type))
         for i, (t, f) in enumerate(zip(self.test_type, self.tests_per_week)):
             if f == 0:
-                # Should this be multiplied by sensitivity?
-                recovered_discovery_frac[i] = no_surveillance_test_rate[i]
+                recovered_discovery_frac[i] = \
+                    no_surveillance_test_rate[i] * t.test_sensitivity
             else:
-                # Not sure what this should be changed to?
-                # Some function of test sensitivity and test frequency?
-                recovered_discovery_frac[i] = 1  # old code
+                recovered_discovery_frac[i] = t.true_sensitivity
         return recovered_discovery_frac
 
 
