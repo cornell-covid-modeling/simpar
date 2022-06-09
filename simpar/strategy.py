@@ -20,22 +20,26 @@ class Test:
     __test__ = False  # include so pytest ignores
     """
     This class maintains properties about a surveillance test.
+
+    It computes [true_sensitivity] as [test_sensitivity] * [compliance] to
+    represent the true fraction of infections discovered in a single round of
+    testing. Note that this assumes compliance rates are equivalent across both
+    the susceptible and infected populations.
     """
 
-    def __init__(self, name: str, sensitivity: float, test_delay: float,
+    def __init__(self, name: str, test_sensitivity: float, test_delay: float,
                  compliance: float = 1):
         """Initialize a test
 
         Args:
             name (str): Name of the surveillance test.
-            sensitivity (float): Probability of positive given infectious.
+            test_sensitivity (float): Probability of positive given infectious.
             test_delay (float): Delay in receiving results from test (in days).
             compliance (float, optional): Compliance with test. Defaults to 1.
         """
         self.name = name
-        self.sensitivity = sensitivity
+        self.true_sensitivity = test_sensitivity * compliance
         self.test_delay = test_delay
-        self.compliance = compliance
 
     @staticmethod
     def from_dictionary(name, d):
@@ -87,15 +91,13 @@ class ArrivalTestingRegime:
 
     def get_pct_discovered_in_pre_departure(self):
         """Return the percentage of infections discovered in pre-departure."""
-        sensitivities = [t.sensitivity for t in self.pre_departure_test_type]
-        compliances = [t.compliance for t in self.pre_departure_test_type]
-        return np.array(sensitivities) * np.array(compliances)
+        x = [t.true_sensitivity for t in self.pre_departure_test_type]
+        return np.array(x)
 
     def get_pct_discovered_in_arrival_test(self):
         """Return the percentage of infections discovered upon arrival."""
-        sensitivities = [t.sensitivity for t in self.arrival_test_type]
-        compliances = [t.compliance for t in self.arrival_test_type]
-        arrival_sensitivity = np.array(sensitivities) * np.array(compliances)
+        x = [t.true_sensitivity for t in self.arrival_test_type]
+        arrival_sensitivity = np.array(x)
         pct_undiscovered_in_pre_departure = \
             1 - self.get_pct_discovered_in_pre_departure()
         return pct_undiscovered_in_pre_departure * arrival_sensitivity
@@ -150,7 +152,7 @@ class TestingRegime:
             days_between_tests = np.inf if f == 0 else 7 / f
             ret[i] = days_infectious(days_between_tests=days_between_tests,
                                      isolation_delay=t.test_delay,
-                                     sensitivity=t.sensitivity,
+                                     sensitivity=t.true_sensitivity,
                                      max_infectious_days=max_infectious_days)
 
         return ret

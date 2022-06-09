@@ -26,9 +26,8 @@ def test_test_initialization():
     """Test initialization of [Test] class from dictionary."""
     test = TESTS["pcr"]
     assert test.name == "pcr"
-    assert test.sensitivity == 0.8
+    assert test.true_sensitivity == 0.8 * 0.9
     assert test.test_delay == 1.5
-    assert test.compliance == 0.9
 
 
 def test_arrival_testing_regime_single_meta_group():
@@ -52,7 +51,7 @@ def test_testing_regime_one_meta_group_with_testing():
     regime = TESTING_REGIMES["single_meta_group_with_testing"]
     R = 5
     expected = days_infectious(days_between_tests=3.5, isolation_delay=1.5,
-                               sensitivity=0.8, max_infectious_days=R)
+                               sensitivity=0.8 * 0.9, max_infectious_days=R)
     assert regime.get_days_infectious(max_infectious_days=5) == expected
     # TODO this may change after discussing with Peter
     assert regime.get_infection_discovery_frac(0.3) == [1]
@@ -64,7 +63,7 @@ def test_testing_regime_one_meta_group_no_testing():
     regime = TESTING_REGIMES["single_meta_group_no_testing"]
     R = 5
     expected = days_infectious(days_between_tests=np.inf, isolation_delay=1.5,
-                               sensitivity=0.8, max_infectious_days=R)
+                               sensitivity=0.8 * 0.9, max_infectious_days=R)
     assert regime.get_days_infectious(max_infectious_days=5) == expected
     # TODO this may change after discussing with Peter
     assert regime.get_infection_discovery_frac(0.3) == 0.3
@@ -78,11 +77,11 @@ def test_testing_regime_three_meta_groups():
 
     expected = [
         days_infectious(days_between_tests=np.inf, isolation_delay=0,
-                        sensitivity=0.6, max_infectious_days=R),
+                        sensitivity=0.6 * 0.5, max_infectious_days=R),
         days_infectious(days_between_tests=3.5, isolation_delay=1.5,
-                        sensitivity=0.8, max_infectious_days=R),
+                        sensitivity=0.8 * 0.9, max_infectious_days=R),
         days_infectious(days_between_tests=3.5, isolation_delay=0,
-                        sensitivity=0.6, max_infectious_days=R)
+                        sensitivity=0.6 * 0.5, max_infectious_days=R)
     ]
 
     assert np.isclose(regime.get_days_infectious(max_infectious_days=5),
