@@ -6,7 +6,6 @@ from simpar.sim import Sim
 def validate(sim):
     pop = np.sum(sim.S, axis=1) + np.sum(sim.I, axis=1) + np.sum(sim.R, axis=1)
     assert all(np.isclose(pop, np.max(pop)))
-    print(sim.D + sim.H, sim.R + sim.I)
     assert np.isclose(sim.D + sim.H, sim.R + sim.I).all()
 
 

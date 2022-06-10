@@ -150,7 +150,6 @@ class Sim:
 
     @property
     def S(self):
-        print(self._S[0])
         return self._S.copy()
 
     @S.setter
