@@ -174,6 +174,7 @@ class Scenario:
                 population.outside_rate(self.outside_rate) * \
                 strategy.transmission_multipliers[i]
 
+            # initialize sim
             if i == 0:
                 sim = Sim(max_T=self.max_T, init_susceptible=S0,
                           init_infected=I0, init_recovered=R0,
@@ -182,11 +183,12 @@ class Scenario:
                           infection_discovery_frac=infection_discovery_frac,
                           recovered_discovery_frac=infection_discovery_frac,
                           outside_rate=outside_rate)
-            else:
-                sim.step(period_length, infection_rate=infection_matrix,
-                         infection_discovery_frac=infection_discovery_frac,
-                         recovered_discovery_frac=recovered_discovery_frac,
-                         outside_rate=outside_rate)
+
+            # step forward for this period length
+            sim.step(period_length, infection_rate=infection_matrix,
+                     infection_discovery_frac=infection_discovery_frac,
+                     recovered_discovery_frac=recovered_discovery_frac,
+                     outside_rate=outside_rate)
 
         return sim
 

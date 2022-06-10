@@ -100,11 +100,11 @@ class Sim:
         assert ((init_infected >= 0).all())
         assert ((init_recovered >= 0).all())
 
-        self._S = np.zeros((self.max_T, self.K))  # susceptible
-        self._I = np.zeros((self.max_T, self.K))  # infected
-        self._R = np.zeros((self.max_T, self.K))  # recovered
-        self._D = np.zeros((self.max_T, self.K))  # discovered
-        self._H = np.zeros((self.max_T, self.K))  # hidden
+        self._S = np.zeros((self.max_T+1, self.K))  # susceptible
+        self._I = np.zeros((self.max_T+1, self.K))  # infected
+        self._R = np.zeros((self.max_T+1, self.K))  # recovered
+        self._D = np.zeros((self.max_T+1, self.K))  # discovered
+        self._H = np.zeros((self.max_T+1, self.K))  # hidden
 
         self._S[0] = init_susceptible
         self._I[0] = init_infected
@@ -241,7 +241,7 @@ class Sim:
 
         t = self._t
 
-        assert(t+1 < self.max_T)  # enforce max generation
+        assert(t < self.max_T)  # enforce max generation
 
         # Fraction susceptible in each group
         # self._S[t] / (self._S[t] + self._I[t] + self._R[t])
