@@ -7,7 +7,6 @@ warnings.filterwarnings("ignore",category=matplotlib.cbook.mplDeprecation)
 from typing import List, Callable
 from copy import deepcopy
 from .trajectory import Trajectory
-from . import metrics
 
 
 # ===========================
