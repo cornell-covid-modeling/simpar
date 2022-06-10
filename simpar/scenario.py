@@ -142,7 +142,8 @@ class Scenario:
         init_infections = strategy.get_initial_infections(self.init_infections)
         init_recovered = strategy.get_initial_recovered(self.init_recovered,
                                                         self.init_infections)
-        S0, I0, R0 = population.get_init_SIR(init_infections, init_recovered)
+        S0, I0, R0, D0, H0 = \
+            population.get_init_SIR_and_DH(init_infections, init_recovered)
 
         # Iterate through the time periods of the simulation
         for i, period_length in enumerate(strategy.period_lengths):
@@ -166,6 +167,7 @@ class Scenario:
             if i == 0:
                 sim = Sim(max_T=self.max_T, init_susceptible=S0,
                           init_infected=I0, init_recovered=R0,
+                          init_discovered=D0, init_hidden=H0,
                           infection_rate=infection_matrix,
                           infection_discovery_frac=infection_discovery_frac,
                           recovered_discovery_frac=infection_discovery_frac,

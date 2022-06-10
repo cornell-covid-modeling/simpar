@@ -65,25 +65,38 @@ class MetaGroup:
         return outside_rate * (self.pop * self.contact_units /
                                np.sum(self.pop * self.contact_units))
 
-    def get_init_SIR(self, init_infections: float, init_recovered: float,
-                     weight: str = "population"):
-        """Return initial SIR vectors.
+    def get_init_SIR_and_DH(self, init_infections: float,
+                            init_recovered: float,
+                            init_discovered: float = None,
+                            init_hidden: float = None,
+                            weight: str = "population"):
+        """Return initial SIR and DH vectors.
 
-        Given [init_infections] and [init_recovered] aggregated at the
-        meta-group level, the [weight] parameter specifies how these counts
-        should be distributed across the groups within this metagroup. The
-        available options for [weight] are:
+        Given [init_infections] and [init_recovered] and optionally
+        [init_discovered] and [init_hidden] aggregated at the meta-group level,
+        the [weight] parameter specifies how these counts should be distributed
+        across the groups within this metagroup. The available options for
+        [weight] are:
 
         - "population": Each person is equally likely to be infected.
         - "population x contacts": A person's probability of being infected is
           proportional to their amount of contact.
         - "most social": The initial infections are in the most social group.
 
+        If [init_discovered] and [init_hidden] are not provided, assume that
+        everyone is discovered.
+
         Args:
             init_infections (float): Initial infections count in meta-group.
             init_recovered (float): Initial recovered count in meta-group.
+            init_discovered (float): Initial discovered count in meta-group.
+            init_hidden (float): Initial hidden count in meta-group.
             weight (str): {population, population x contacts, most_social}
         """
+        if init_discovered is None:
+            init_discovered = init_infections + init_recovered
+            init_hidden = 0
+
         if weight == "population":
             w = self.pop
         elif weight == "population x contacts":
@@ -97,7 +110,9 @@ class MetaGroup:
         R0 = init_recovered * w
         I0 = init_infections * w
         S0 = np.maximum(self.pop - R0 - I0, 0)
-        return S0, I0, R0
+        D0 = init_discovered * w
+        H0 = init_hidden * w
+        return S0, I0, R0, D0, H0
 
 
 class Population:
@@ -205,12 +220,16 @@ class Population:
 
         return res
 
-    def get_init_SIR(self, init_infections: np.ndarray,
-                     init_recovered: np.ndarray, weight: str = "population"):
-        """Return initial SIR vectors.
+    def get_init_SIR_and_DH(self, init_infections: np.ndarray,
+                            init_recovered: np.ndarray,
+                            init_discovered: np.ndarray = None,
+                            init_hidden: np.ndarray = None,
+                            weight: str = "population"):
+        """Return initial SIR and DH vectors.
 
-        Given [init_infections] and [init_recovered] at the meta-group level,
-        the [weight] parameter specifies how these counts should be distributed
+        Given [init_infections] and [init_recovered] and optionally
+        [init_discovered] and [init_hidden] at the meta-group level, the
+        [weight] parameter specifies how these counts should be distributed
         across the groups within each metagroup. The available options for
         [weight] are:
 
@@ -219,20 +238,33 @@ class Population:
           proportional to their amount of contact.
         - "most social": The initial infections are in the most social group.
 
+        If [init_discovered] and [init_hidden] are not provided, assume that
+        everyone is discovered.
+
         Args:
             init_infections (np.ndarray): Initial infections per meta-group.
             init_recovered (np.ndarray): Initial recovered per meta-group.
+            init_discovered (np.ndarray): Initial discovered per meta-group.
+            init_hidden (np.ndarray): Initial hidden per meta-group.
             weight (str): {population, population x contacts, most_social}
         """
-        SIR = [[],[],[]]
+        if init_discovered is None:
+            init_discovered = init_infections + init_recovered
+            init_hidden = np.zeros(len(init_discovered))
+
+        SIRDH = [[],[],[],[],[]]
         for i in range(len(self.meta_group_list)):
             group = self.meta_group_list[i]
-            S0, I0, R0 = group.get_init_SIR(init_infections[i],
-                                            init_recovered[i],
-                                            weight=weight)
-            SIR[0] += list(S0)
-            SIR[1] += list(I0)
-            SIR[2] += list(R0)
+            S0, I0, R0, D0, H0 = \
+                group.get_init_SIR_and_DH(init_infections[i],
+                                          init_recovered[i],
+                                          init_discovered[i],
+                                          init_hidden[i], weight=weight)
+            SIRDH[0] += list(S0)
+            SIRDH[1] += list(I0)
+            SIRDH[2] += list(R0)
+            SIRDH[3] += list(D0)
+            SIRDH[4] += list(H0)
 
-        SIR = np.array(SIR)
-        return SIR[0], SIR[1], SIR[2]
+        SIRDH = np.array(SIRDH)
+        return SIRDH[0], SIRDH[1], SIRDH[2], SIRDH[3], SIRDH[4]
