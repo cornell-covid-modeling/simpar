@@ -65,7 +65,8 @@ class Scenario:
             isolation_fracs (np.ndarray): Combined with [isolation_lengths], \
                 indicates what fraction of people isolate for each length.
             arrival_period (float): The number of generations the arrival \
-                occurs over. Testing is assumed constant over these days.
+                occurs over. Testing is assumed constant over these days. If \
+                there is no arrival period, set to None.
             tests (Dict[str, Test]): Dictionary of available tests.
         """
         self.population = population
@@ -133,6 +134,10 @@ class Scenario:
 
     def simulate_strategy(self, strategy: Strategy):
         """Return a simulation of the given strategy on this scenario."""
+        assert sum(strategy.period_lengths) == self.max_T
+        if self.arrival_period is None:
+            assert strategy.arrival_testing_regime is None
+
         population = self.population
 
         # Get initial infections and recovered based on arrival testing
@@ -142,7 +147,6 @@ class Scenario:
         S0, I0, R0 = population.get_init_SIR(init_infections, init_recovered)
 
         # Iterate through the time periods of the simulation
-        assert sum(strategy.period_lengths) == self.max_T
         for i, period_length in enumerate(strategy.period_lengths):
 
             testing_regime = strategy.testing_regimes[i]
