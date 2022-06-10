@@ -276,7 +276,6 @@ class Strategy:
         return Strategy(name, period_lengths, test_regimes,
                         transmission_multipliers, arrival_regime)
 
-    # TODO: Update this when passing D and H to sim becomes supported.
     def get_initial_infections(self, active_infections: np.ndarray):
         """Return the initial infections when this strategy is used.
 
@@ -300,6 +299,42 @@ class Strategy:
         pct_discovered = self.pct_discovered_in_pre_departure + \
             self.pct_discovered_in_arrival_test
         return recovered + (pct_discovered * active_infections)
+
+    def get_initial_discovered(self, recovered: np.ndarray,
+                               pct_recovered_discovered: np.ndarray,
+                               active_infections: np.ndarray):
+        """Return the initial discovered when this strategy is used.
+
+        Args:
+            recovered (np.ndarray): Recovered per meta-group.
+            pct_recovered_discovered (np.ndarray): Percentage of the \
+                recovered population that is discovered per meta-group.
+            active_infections (np.ndarray): True number of active infections \
+                per meta-group.
+        """
+        inactive_discovered = recovered * pct_recovered_discovered
+        pct_discovered = self.pct_discovered_in_pre_departure + \
+            self.pct_discovered_in_arrival_test
+        active_discovered = active_infections * pct_discovered
+        return inactive_discovered + active_discovered
+
+    def get_initial_hidden(self, recovered: np.ndarray,
+                           pct_recovered_discovered: np.ndarray,
+                           active_infections: np.ndarray):
+        """Return the initial hidden when this strategy is used.
+
+        Args:
+            recovered (np.ndarray): Recovered per meta-group.
+            pct_recovered_discovered (np.ndarray): Percentage of the \
+                recovered population that is discovered per meta-group.
+            active_infections (np.ndarray): True number of active infections \
+                per meta-group.
+        """
+        inactive_hidden = recovered * (1 - pct_recovered_discovered)
+        pct_discovered = self.pct_discovered_in_pre_departure + \
+            self.pct_discovered_in_arrival_test
+        active_hidden = active_infections * (1 - pct_discovered)
+        return inactive_hidden + active_hidden
 
 
 def strategies_from_dictionary(d: Dict, tests: Dict):
