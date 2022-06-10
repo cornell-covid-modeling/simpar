@@ -14,6 +14,15 @@ with open(os.path.join(RESOURCES_PATH, "test_sim.yaml"), "r") as f:
         v.step(v.max_T - 1)
 
 
+def test_return_copy():
+    """Ensure that a copy of the private instance variable is returned."""
+    sim = SIMULATIONS["three_groups_symmetric_pop"]
+    expected = sim.S.copy()
+    S = sim.S
+    S[0] = 5 * (S[0] + 5)
+    assert np.isclose(expected, sim.S).all()
+
+
 @pytest.mark.parametrize("name, sim", SIMULATIONS.items())
 def test_constant_population(name, sim):
     """Test that S+I+R is constant across the simulation."""

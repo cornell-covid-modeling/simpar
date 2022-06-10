@@ -77,37 +77,37 @@ class Sim:
         """
         assert (max_T > 0)
         self.max_T = max_T  # number of periods to simulate
-        self.t = 0
+        self._t = 0
 
         self.K = len(init_susceptible)  # number of groups
         assert (len(init_infected) == self.K)
         assert (len(init_recovered) == self.K)
 
-        self.infection_discovery_frac =  \
+        self._Infection_discovery_frac =  \
             self._validate_discovery_frac(infection_discovery_frac, self.K)
-        self.recovered_discovery_frac =  \
+        self._Recovered_discovery_frac =  \
             self._validate_discovery_frac(recovered_discovery_frac, self.K)
 
         assert ((init_susceptible >= 0).all())
         assert ((init_infected >= 0).all())
         assert ((init_recovered >= 0).all())
 
-        self.S = np.zeros((self.max_T, self.K))  # susceptible
-        self.I = np.zeros((self.max_T, self.K))  # infected
-        self.R = np.zeros((self.max_T, self.K))  # recovered
-        self.D = np.zeros((self.max_T, self.K))  # discovered
-        self.H = np.zeros((self.max_T, self.K))  # hidden
+        self._S = np.zeros((self.max_T, self.K))  # susceptible
+        self._I = np.zeros((self.max_T, self.K))  # infected
+        self._R = np.zeros((self.max_T, self.K))  # recovered
+        self._D = np.zeros((self.max_T, self.K))  # discovered
+        self._H = np.zeros((self.max_T, self.K))  # hidden
 
-        self.S[0] = init_susceptible
-        self.I[0] = init_infected
-        self.R[0] = init_recovered
+        self._S[0] = init_susceptible
+        self._I[0] = init_infected
+        self._R[0] = init_recovered
         # TODO: It would be good to be able to provide the discovered and
         # hidden explicitly as well to capture arrival testing better
-        self.D[0] = \
-            np.multiply(self.I[0],self.infection_discovery_frac) + self.R[0]
-        self.H[0] = np.multiply(self.I[0],1-self.infection_discovery_frac)
+        self._D[0] = \
+            np.multiply(self._I[0],self._Infection_discovery_frac) + self._R[0]
+        self._H[0] = np.multiply(self._I[0],1-self._Infection_discovery_frac)
 
-        self.infection_rate = infection_rate
+        self._Infection_rate = infection_rate
         self.outside_rate = outside_rate
 
     @staticmethod
@@ -126,6 +126,47 @@ class Sim:
                    infection_discovery_frac=infection_discovery_frac,
                    recovered_discovery_frac=recovered_discovery_frac,
                    outside_rate=outside_rate)
+
+    @property
+    def S(self):
+        print(self._S[0])
+        return self._S.copy()
+
+    @S.setter
+    def S(self, value):
+        self._S = value
+
+    @property
+    def I(self):
+        return self._I.copy()
+
+    @I.setter
+    def I(self, value):
+        self._I = value
+
+    @property
+    def R(self):
+        return self._R.copy()
+
+    @R.setter
+    def R(self, value):
+        self._R = value
+
+    @property
+    def D(self):
+        return self._D.copy()
+
+    @D.setter
+    def D(self, value):
+        self._D = value
+
+    @property
+    def H(self):
+        return self._H.copy()
+
+    @H.setter
+    def H(self, value):
+        self._H = value
 
     def step(self, n: int = 1, infection_rate: np.ndarray = None,
              infection_discovery_frac: Union[float,np.ndarray] = None,
@@ -161,16 +202,16 @@ class Sim:
             return
 
         if infection_rate is None:
-            infection_rate = self.infection_rate
+            infection_rate = self._Infection_rate
 
         if infection_discovery_frac is None:
-            infection_discovery_frac = self.infection_discovery_frac
+            infection_discovery_frac = self._Infection_discovery_frac
         else:
             infection_discovery_frac = \
                 self._validate_discovery_frac(infection_discovery_frac, self.K)
 
         if recovered_discovery_frac is None:
-            recovered_discovery_frac = self.recovered_discovery_frac
+            recovered_discovery_frac = self._Recovered_discovery_frac
         else:
             recovered_discovery_frac = \
                 self._validate_discovery_frac(recovered_discovery_frac, self.K)
@@ -178,38 +219,38 @@ class Sim:
         if outside_rate is None:
             outside_rate = self.outside_rate
 
-        t = self.t
+        t = self._t
 
         assert(t+1 < self.max_T)  # enforce max generation
 
         # Fraction susceptible in each group
-        # self.S[t] / (self.S[t] + self.I[t] + self.R[t])
+        # self._S[t] / (self._S[t] + self._I[t] + self._R[t])
         frac_susceptible = \
-            np.divide(self.S[t], (self.S[t] + self.I[t] + self.R[t]),
-                      out=np.zeros_like(self.S[t]),
-                      where=(self.S[t] + self.I[t] + self.R[t]) != 0)
+            np.divide(self._S[t], (self._S[t] + self._I[t] + self._R[t]),
+                      out=np.zeros_like(self._S[t]),
+                      where=(self._S[t] + self._I[t] + self._R[t]) != 0)
 
         # Infected from internal spread and outside rate
-        self.I[t+1] = np.matmul(self.I[t], infection_rate) * frac_susceptible
-        self.I[t+1] += frac_susceptible * outside_rate
+        self._I[t+1] = np.matmul(self._I[t], infection_rate) * frac_susceptible
+        self._I[t+1] += frac_susceptible * outside_rate
         # Can not infect more than the infected number of people
-        self.I[t+1] = np.minimum(self.I[t+1], self.S[t])
+        self._I[t+1] = np.minimum(self._I[t+1], self._S[t])
 
         # Set susceptible to reflect those that were infected and set
         # recovered to be the number of people previously infected
-        self.S[t+1] = self.S[t] - self.I[t+1]
-        self.R[t+1] = self.R[t] + self.I[t]
+        self._S[t+1] = self._S[t] - self._I[t+1]
+        self._R[t+1] = self._R[t] + self._I[t]
 
         # Discover some fraction of hidden recoveries
-        self.D[t+1] = \
-            self.D[t] + np.multiply(self.H[t], recovered_discovery_frac)
-        self.H[t+1] = np.multiply(self.H[t], 1 - recovered_discovery_frac)
+        self._D[t+1] = \
+            self._D[t] + np.multiply(self._H[t], recovered_discovery_frac)
+        self._H[t+1] = np.multiply(self._H[t], 1 - recovered_discovery_frac)
 
         # Discover some fraction of those infected in this time period
-        self.D[t+1] += np.multiply(self.I[t+1], infection_discovery_frac)
-        self.H[t+1] += np.multiply(self.I[t+1], 1-infection_discovery_frac)
+        self._D[t+1] += np.multiply(self._I[t+1], infection_discovery_frac)
+        self._H[t+1] += np.multiply(self._I[t+1], 1-infection_discovery_frac)
 
-        self.t = self.t + 1  # move time forward by one step
+        self._t = self._t + 1  # move time forward by one step
 
         return self
 
