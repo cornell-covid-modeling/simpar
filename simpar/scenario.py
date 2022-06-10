@@ -34,7 +34,7 @@ class Scenario:
                  max_infectious_days: float,
                  symptomatic_rate: float,
                  no_surveillance_test_rate: np.ndarray,
-                 pct_recovered_discovered_arrival: np.ndarray,
+                 pct_recovered_discovered: np.ndarray,
                  hospitalization_rates: np.ndarray,
                  isolation_lengths: np.ndarray, isolation_fracs: np.ndarray,
                  arrival_period: float, tests: Dict[str, Test]):
@@ -56,9 +56,8 @@ class Scenario:
             symptomatic_rate (float): Symptomatic rate.
             no_surveillance_test_rate (np.ndarray): Rate at which people test \
                 under no surveillance testing across meta-groups.
-            pct_recovered_discovered_arrival (np.ndarray): Percentage of the \
-                recovered population who discover they are positive (but no \
-                longer infectious) during arrival testing.
+            pct_recovered_discovered (np.ndarray): Percentage of the \
+                recovered population who are discovered across meta-groups.
             hospitalization_rates (np.ndarray): Rate of hospitalizations \
                 among those who get infected across meta-groups.
             isolation_lengths (np.ndarray): List of isolation periods in days.
@@ -79,8 +78,7 @@ class Scenario:
         self.max_infectious_days = max_infectious_days
         self.symptomatic_rate = symptomatic_rate
         self.no_surveillance_test_rate = no_surveillance_test_rate
-        self.pct_recovered_discovered_arrival = \
-            pct_recovered_discovered_arrival
+        self.pct_recovered_discovered = pct_recovered_discovered
         self.hospitalization_rates = hospitalization_rates
         self.isolation_lengths = isolation_lengths
         self.isolation_fracs = isolation_fracs
@@ -108,8 +106,8 @@ class Scenario:
             _to_np_array(d["outside_rate"], order)
         no_surveillance_test_rate = \
             _to_np_array(d["no_surveillance_test_rate"], order)
-        p_recov_discov_arrive = \
-            _to_np_array(d["pct_recovered_discovered_arrival"], order)
+        pct_recovered_discovered = \
+            _to_np_array(d["pct_recovered_discovered"], order)
         hospitalization_rates = \
             _to_np_array(d["hospitalization_rates"], order)
         isolation_lengths = np.array(d["isolation_lengths"])
@@ -125,7 +123,7 @@ class Scenario:
                         max_infectious_days=max_infectious_days,
                         symptomatic_rate=symptomatic_rate,
                         no_surveillance_test_rate=no_surveillance_test_rate,
-                        pct_recovered_discovered_arrival=p_recov_discov_arrive,
+                        pct_recovered_discovered=pct_recovered_discovered,
                         hospitalization_rates=hospitalization_rates,
                         isolation_lengths=isolation_lengths,
                         isolation_fracs=isolation_fracs,

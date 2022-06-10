@@ -301,26 +301,6 @@ class Strategy:
             self.pct_discovered_in_arrival_test
         return recovered + (pct_discovered * active_infections)
 
-    # TODO: Can pct_recovered_discovered_on_arrival be computed?
-    def get_arrival_discovered(self, recovered: np.ndarray,
-                               active_infections: np.ndarray,
-                               pct_recovered_discovered_arrival: np.ndarray):
-        """Return the infections discovered in arrival.
-
-        Args:
-            recovered (np.ndarray): Recovered per meta-group.
-            active_infections (np.ndarray): True number of active infections \
-                per meta-group.
-            pct_recovered_discovered_arrival (np.ndarray): The percent of \
-                recovered (inactive) people who discover they are positive \
-                for the first time during arrival testing.
-        """
-        active_arrival_discovered = \
-            active_infections * self.pct_discovered_in_arrival_test
-        inactive_arrival_discovered = \
-            recovered * pct_recovered_discovered_arrival
-        return active_arrival_discovered + inactive_arrival_discovered
-
 
 def strategies_from_dictionary(d: Dict, tests: Dict):
     """Return a dictionary of strategies.

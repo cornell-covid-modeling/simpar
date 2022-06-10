@@ -63,10 +63,10 @@ hospitalization_rates:
   g2: 0.002
   g3: 0.01
 
-pct_recovered_discovered_arrival:
-  g1: 0
-  g2: 0.2
-  g3: 0.1
+pct_recovered_discovered:
+  g1: 0.8
+  g2: 0.9
+  g3: 0.7
 
 tests:
   pcr:

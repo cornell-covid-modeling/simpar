@@ -109,10 +109,3 @@ def test_strategy():
     expected = recovered + active_infections * pct_discovered
     value = STRATEGY.get_initial_recovered(recovered, active_infections)
     assert np.isclose(value, expected).all()
-
-    pct_recovered_discovered_on_arrival = 0.5 * np.ones(3)
-    expected = (pct_discovered_in_arrival_test * active_infections) + \
-        (pct_recovered_discovered_on_arrival * recovered)
-    val = STRATEGY.get_arrival_discovered(recovered, active_infections,
-                                          pct_recovered_discovered_on_arrival)
-    assert np.isclose(val, expected).all()
