@@ -139,11 +139,21 @@ class Scenario:
         population = self.population
 
         # Get initial infections and recovered based on arrival testing
+        # Additionally, compute those that are discovered and hidden
         init_infections = strategy.get_initial_infections(self.init_infections)
         init_recovered = strategy.get_initial_recovered(self.init_recovered,
                                                         self.init_infections)
+        init_discovered = \
+            strategy.get_initial_discovered(self.init_recovered,
+                                            self.pct_recovered_discovered,
+                                            self.init_infections)
+        init_hidden = \
+            strategy.get_initial_hidden(self.init_recovered,
+                                        self.pct_recovered_discovered,
+                                        self.init_infections)
         S0, I0, R0, D0, H0 = \
-            population.get_init_SIR_and_DH(init_infections, init_recovered)
+            population.get_init_SIR_and_DH(init_infections, init_recovered,
+                                           init_discovered, init_hidden)
 
         # Iterate through the time periods of the simulation
         for i, period_length in enumerate(strategy.period_lengths):
