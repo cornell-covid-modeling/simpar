@@ -6,6 +6,7 @@ from simpar.sim import Sim
 def validate(sim):
     pop = np.sum(sim.S, axis=1) + np.sum(sim.I, axis=1) + np.sum(sim.R, axis=1)
     assert all(np.isclose(pop, np.max(pop)))
+    print(sim.D + sim.H, sim.R + sim.I)
     assert np.isclose(sim.D + sim.H, sim.R + sim.I).all()
 
 
@@ -25,7 +26,7 @@ def test_sim8():
     mg = MetaGroup('Test', pop, marginal_contacts)
     infection_rate = mg.infection_matrix(infections_per_contact)
 
-    sim = Sim(T,S0,I0,R0,infection_rate,0,0)
+    sim = Sim(T,S0,I0,R0,infection_rate)
     sim.step(T-1)
 
     validate(sim)

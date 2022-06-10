@@ -3,6 +3,8 @@ three_groups_symmetric_pop:
   S0: [22, 22, 22]
   I0: [1, 1, 1]
   R0: [10, 10, 10]
+  D0: null
+  H0: null
   infection_rate: [[0.0, 0.0, 0.0],
                    [0.3, 0.3, 0.3],
                    [0.6, 0.6, 0.6]]
@@ -15,6 +17,8 @@ noninfectious_group:
   S0: [15, 15, 15]
   I0: [0, 1, 1]
   R0: [19, 19, 19]
+  D0: null
+  H0: null
   infection_rate: [[0.0, 0.2, 0.3],
                    [0.0, 0.7, 0.4],
                    [0.0, 0.4, 0.9]]
@@ -27,6 +31,8 @@ no_infections_zero_outside_rate:
   S0: [15, 15, 15]
   I0: [0, 0, 0]
   R0: [20, 20, 20]
+  D0: null
+  H0: null
   infection_rate: [[0.0, 0.0, 0.0],
                    [0.3, 0.3, 0.3],
                    [0.6, 0.6, 0.6]]
@@ -39,6 +45,8 @@ no_infections_nonzero_outside_rate:
   S0: [15, 15, 15]
   I0: [0, 0, 0]
   R0: [20, 20, 20]
+  D0: null
+  H0: null
   infection_rate: [[0.0, 0.0, 0.0],
                    [0.3, 0.3, 0.3],
                    [0.6, 0.6, 0.6]]
@@ -52,6 +60,8 @@ no_discovery:
   S0: [15, 15, 15]
   I0: [0, 0, 0]
   R0: [0, 0, 0]
+  D0: null
+  H0: null
   infection_rate: [[0.0, 0.0, 0.0],
                    [0.3, 0.3, 0.3],
                    [0.6, 0.6, 0.6]]
@@ -65,6 +75,8 @@ perfect_sensitivity:
   S0: [15, 15, 15]
   I0: [0, 0, 0]
   R0: [20, 20, 20]
+  D0: null
+  H0: null
   infection_rate: [[0.0, 0.0, 0.0],
                    [0.3, 0.3, 0.3],
                    [0.6, 0.6, 0.6]]

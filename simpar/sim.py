@@ -31,6 +31,8 @@ class Sim:
     def __init__(self, max_T: int, init_susceptible: np.ndarray,
                  init_infected: np.ndarray, init_recovered: np.ndarray,
                  infection_rate: np.ndarray,
+                 init_discovered: np.ndarray = None,
+                 init_hidden: np.ndarray = None,
                  infection_discovery_frac: Union[float,np.ndarray] = 1,
                  recovered_discovery_frac: Union[float,np.ndarray] = 1,
                  outside_rate: np.ndarray = 0):
@@ -38,8 +40,10 @@ class Sim:
 
         The initial state of the simulation is passed through the
         [init_susceptible], [init_infected], and [init_recovered] parameters.
-        Note: the initial discovered and hidden assumes all recovered are
-        discovered and [infection_discovery_frac] of infected are discovered.
+        The [init_discovered] and [init_hidden] are optional parameters. If
+        they are not set, the initial discovered and hidden assumes all
+        recovered are discovered and [infection_discovery_frac] of infected
+        are discovered.
 
         Internal infection spread is determined by the [infection_rate] matrix
         parameter which indicates the number new infections that an infected
@@ -64,6 +68,10 @@ class Sim:
             infection_rate (np.ndarray): Matrix where infection_rate[i,j] is \
                 the number of new infections that an infected person in \
                 group i creates in group j
+            init_discovered (np.ndarray): Vector of the initial number of \
+                people in each group that are discovered.
+            init_hidden (np.ndarray): Vector of the initial number of \
+                people in each group that are hidden.
             infection_discovery_frac (float or np.ndarray): Fraction of \
                 infections discovered in the generation they are infected.
                 Can be specified globally (as a float) or separately for \
@@ -83,9 +91,9 @@ class Sim:
         assert (len(init_infected) == self.K)
         assert (len(init_recovered) == self.K)
 
-        self._Infection_discovery_frac =  \
+        self.infection_discovery_frac =  \
             self._validate_discovery_frac(infection_discovery_frac, self.K)
-        self._Recovered_discovery_frac =  \
+        self.recovered_discovery_frac =  \
             self._validate_discovery_frac(recovered_discovery_frac, self.K)
 
         assert ((init_susceptible >= 0).all())
@@ -101,13 +109,23 @@ class Sim:
         self._S[0] = init_susceptible
         self._I[0] = init_infected
         self._R[0] = init_recovered
-        # TODO: It would be good to be able to provide the discovered and
-        # hidden explicitly as well to capture arrival testing better
-        self._D[0] = \
-            np.multiply(self._I[0],self._Infection_discovery_frac) + self._R[0]
-        self._H[0] = np.multiply(self._I[0],1-self._Infection_discovery_frac)
 
-        self._Infection_rate = infection_rate
+        if init_discovered is None:
+            self._D[0] = self._R[0] + \
+                (self._I[0] * self.infection_discovery_frac)
+        else:
+            self._D[0] = init_discovered
+
+        if init_hidden is None:
+            self._H[0] = self._I[0] * (1 - self.infection_discovery_frac)
+        else:
+            self._H[0] = init_hidden
+
+        initial_IR = self._I[0] + self._R[0]
+        initial_DH = self._D[0] + self._H[0]
+        assert np.isclose(initial_IR, initial_DH).all()
+
+        self.infection_rate = infection_rate
         self.outside_rate = outside_rate
 
     @staticmethod
@@ -117,12 +135,15 @@ class Sim:
         S0 = np.array(d["S0"])
         I0 = np.array(d["I0"])
         R0 = np.array(d["R0"])
+        D0 = None if d["D0"] is None else np.array(d["D0"])
+        H0 = None if d["H0"] is None else np.array(d["H0"])
         infection_rate = np.array(d["infection_rate"])
         infection_discovery_frac = np.array(d["infection_discovery_frac"])
         recovered_discovery_frac = np.array(d["recovered_discovery_frac"])
         outside_rate = np.array(d["outside_rate"])
         return Sim(max_T=T, init_susceptible=S0, init_infected=I0,
                    init_recovered=R0, infection_rate=infection_rate,
+                   init_discovered=D0, init_hidden=H0,
                    infection_discovery_frac=infection_discovery_frac,
                    recovered_discovery_frac=recovered_discovery_frac,
                    outside_rate=outside_rate)
@@ -202,16 +223,16 @@ class Sim:
             return
 
         if infection_rate is None:
-            infection_rate = self._Infection_rate
+            infection_rate = self.infection_rate
 
         if infection_discovery_frac is None:
-            infection_discovery_frac = self._Infection_discovery_frac
+            infection_discovery_frac = self.infection_discovery_frac
         else:
             infection_discovery_frac = \
                 self._validate_discovery_frac(infection_discovery_frac, self.K)
 
         if recovered_discovery_frac is None:
-            recovered_discovery_frac = self._Recovered_discovery_frac
+            recovered_discovery_frac = self.recovered_discovery_frac
         else:
             recovered_discovery_frac = \
                 self._validate_discovery_frac(recovered_discovery_frac, self.K)
