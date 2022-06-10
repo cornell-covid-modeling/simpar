@@ -13,7 +13,6 @@ __author__ = "Cornell Covid Modeling Team"
 
 from . import groups
 from . import micro
-from . import plotting
 from . import sim
 from . import strategy
 from . import trajectory
