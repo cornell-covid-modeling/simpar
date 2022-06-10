@@ -21,4 +21,6 @@ but not implement.
 
 As a general note, as of [7-10-22], we have just completed a large refactor and
 it would be good to have more eyes go through the code/documentation and add
-more test cases especially for the groups and trajectory modules.
+more test cases especially for the groups and trajectory modules. It would also
+be great to have a some example parameter files available and a section about
+them on the documentation site.
