@@ -1,10 +1,11 @@
 """Manage types of surveillance tests and strategies.
 
 This module defines a [Test] class which maintains properties about a specific
-surveillance test. Furthermore, it defines an [ArrivalTestingRegime] and
-[TestingRegime] which are used to comprise a [Strategy]. This specifies how
-people are tested upon arrival and what testing regime(s) are used after they
-arrive and for what periods of time.
+surveillance test. Furthermore, it defines an [IsolationRegime],
+[ArrivalTestingRegime], and [TestingRegime] which are used to comprise a
+[Strategy]. This specifies how long people are isolated, how people are tested
+upon arrival, and what testing regime(s) are used after they arrive and for
+what periods of time.
 """
 
 __author__ = "Henry Robbins (henryrobbins)"
@@ -47,6 +48,27 @@ class Test:
     def from_dictionary(name, d):
         """Initialize a [Test] from a dictionary"""
         return Test(name, d["sensitivity"], d["test_delay"], d["compliance"])
+
+
+class IsolationRegime:
+    """
+    This class maintains properties about an isolation regime.
+    """
+
+    def __init__(self, iso_lengths: List[int], iso_props: List[int]):
+        """Initialize an isolation regime.
+
+        Args:
+            iso_lengths (List[int]): List of isolation lengths (in days).
+            iso_props (List[int])): List of probability of isolation lengths.
+        """
+        self.iso_lengths = iso_lengths
+        self.iso_props = iso_props
+
+    @staticmethod
+    def from_dictionary(d):
+        """Initialize an [IsolationRegime] from a dictionary"""
+        return IsolationRegime(d["iso_lengths"], d["iso_props"])
 
 
 class ArrivalTestingRegime:
@@ -205,8 +227,8 @@ class TestingRegime:
 
 class Strategy:
     """
-    This class maintains a testing strategy comprised of an
-    [ArrivalTestingRegime] and a list of [TestingRegime]s.
+    This class maintains a testing strategy comprised of an [IsolationRegime],
+    [ArrivalTestingRegime], and a list of [TestingRegime]s.
 
     If offers methods to return the initial number of infections, the
     initial number of recovered, and the arrival discovered (useful for
@@ -216,7 +238,8 @@ class Strategy:
     def __init__(self, name: str, period_lengths: List[int],
                  testing_regimes: List[TestingRegime],
                  transmission_multipliers: List[float] = None,
-                 arrival_testing_regime: ArrivalTestingRegime = None):
+                 arrival_testing_regime: ArrivalTestingRegime = None,
+                 isolation_regime: IsolationRegime = None):
         """Initialize a testing strategy.
 
         Args:
@@ -229,6 +252,8 @@ class Strategy:
                 to be used in each period of the simulation. Defaults to 1.
             arrival_testing_regime (ArrivalTestingRegime): Arrival testing \
                 regime to be used. Defaults to None.
+            isolation_regime (IsolationRegime): Isolation regime to be used. \
+                Defaults to None.
         """
         self.name = name
         assert len(period_lengths) == len(testing_regimes)
@@ -236,6 +261,7 @@ class Strategy:
         self.testing_regimes = testing_regimes
         self.transmission_multipliers = transmission_multipliers
         self.arrival_testing_regime = arrival_testing_regime
+        self.isolation_regime = isolation_regime
 
         if self.transmission_multipliers is None:
             self.transmission_multipliers = np.ones(len(period_lengths))
@@ -273,8 +299,13 @@ class Strategy:
         arrival_regime = d["arrival_testing_regime"]
         if arrival_regime is not None:
             arrival_regime = arrival_testing_regimes[arrival_regime]
+        isolation_regime = d["isolation_regime"]
+        if isolation_regime is not None:
+            isolation_regime = \
+                IsolationRegime.from_dictionary(isolation_regime)
         return Strategy(name, period_lengths, test_regimes,
-                        transmission_multipliers, arrival_regime)
+                        transmission_multipliers, arrival_regime,
+                        isolation_regime)
 
     def get_initial_infections(self, active_infections: np.ndarray):
         """Return the initial infections when this strategy is used.

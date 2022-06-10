@@ -8,6 +8,11 @@ tests:
     test_delay: 0
     compliance: 0.5
 
+isolation_regimes:
+  test:
+    iso_lengths: [10, 5]
+    iso_props: [0.2, 0.8]
+
 arrival_testing_regimes:
   single_meta_group:
     pre_departure_test_type: ["antigen"]
@@ -33,4 +38,7 @@ strategies:
     period_lengths: [5, 5]
     testing_regimes: ["three_meta_groups", "three_meta_groups"]
     transmission_multipliers: [1, 0.75]
+    isolation_regime:
+      iso_lengths: [10, 5]
+      iso_props: [0.2, 0.8]
     arrival_testing_regime: "three_meta_groups"

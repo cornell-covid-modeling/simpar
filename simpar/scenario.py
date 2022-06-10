@@ -36,7 +36,6 @@ class Scenario:
                  no_surveillance_test_rate: np.ndarray,
                  pct_recovered_discovered: np.ndarray,
                  hospitalization_rates: np.ndarray,
-                 isolation_lengths: np.ndarray, isolation_fracs: np.ndarray,
                  arrival_period: float, tests: Dict[str, Test]):
         """Initialize a [Scenario] instance.
 
@@ -60,9 +59,6 @@ class Scenario:
                 recovered population who are discovered across meta-groups.
             hospitalization_rates (np.ndarray): Rate of hospitalizations \
                 among those who get infected across meta-groups.
-            isolation_lengths (np.ndarray): List of isolation periods in days.
-            isolation_fracs (np.ndarray): Combined with [isolation_lengths], \
-                indicates what fraction of people isolate for each length.
             arrival_period (float): The number of generations the arrival \
                 occurs over. Testing is assumed constant over these days. If \
                 there is no arrival period, set to None.
@@ -80,8 +76,6 @@ class Scenario:
         self.no_surveillance_test_rate = no_surveillance_test_rate
         self.pct_recovered_discovered = pct_recovered_discovered
         self.hospitalization_rates = hospitalization_rates
-        self.isolation_lengths = isolation_lengths
-        self.isolation_fracs = isolation_fracs
         self.arrival_period = arrival_period
         self.tests = tests
 
@@ -110,8 +104,6 @@ class Scenario:
             _to_np_array(d["pct_recovered_discovered"], order)
         hospitalization_rates = \
             _to_np_array(d["hospitalization_rates"], order)
-        isolation_lengths = np.array(d["isolation_lengths"])
-        isolation_fracs = np.array(d["isolation_fracs"])
         arrival_period = d["arrival_period"]
 
         return Scenario(population=population, max_T=max_T,
@@ -125,8 +117,6 @@ class Scenario:
                         no_surveillance_test_rate=no_surveillance_test_rate,
                         pct_recovered_discovered=pct_recovered_discovered,
                         hospitalization_rates=hospitalization_rates,
-                        isolation_lengths=isolation_lengths,
-                        isolation_fracs=isolation_fracs,
                         arrival_period=arrival_period,
                         tests=tests)
 

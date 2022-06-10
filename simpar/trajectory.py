@@ -11,7 +11,7 @@ __author__ = "Henry Robbins (henryrobbins)"
 import numpy as np
 from typing import List
 from .scenario import Scenario
-from .strategy import Strategy
+from .strategy import IsolationRegime, Strategy
 from .sim import Sim
 
 
@@ -140,18 +140,17 @@ class Trajectory:
         """
         scenario = self.scenario
         generation_time = scenario.generation_time
-        iso_lengths = scenario.isolation_lengths
-        iso_props = scenario.isolation_fracs
+        isolation_regime = self.strategy.isolation_regime
 
         D = self.get_bucket(bucket="D", meta_groups=meta_groups,
                             aggregate=aggregate, cumulative=cumulative,
                             normalize=normalize)
 
-        return _get_isolated(D, generation_time, iso_lengths, iso_props)
+        return _get_isolated(D, generation_time, isolation_regime)
 
 
 def _get_isolated(discovered: np.ndarray, generation_time: float,
-                  iso_lengths: List[int], iso_props: List[int]):
+                  isolation_regime: IsolationRegime):
     """Return the isolated count (not including the arrival positives).
 
     As an intermediate step, this function calculates isolation_frac, which
@@ -173,9 +172,11 @@ def _get_isolated(discovered: np.ndarray, generation_time: float,
     Args:
         discovered (np.ndarray): Number of people discovered.
         generation_time (float): The number of days per generation.
-        iso_lengths (List[int]): List of isolation lengths (in days).
-        iso_props (List[int])): List of probability of isolation lengths.
+        isolation_regime (IsolationRegime): Isolation regime being used.
     """
+    iso_lengths = isolation_regime.iso_lengths
+    iso_props = isolation_regime.iso_props
+
     max_isolation = int(np.ceil(iso_lengths[-1] / generation_time))
 
     # Compute isolation_frac as described above

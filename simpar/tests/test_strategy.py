@@ -2,8 +2,8 @@ import os
 import yaml
 import numpy as np
 from simpar.micro import days_infectious
-from simpar.strategy import (Test, ArrivalTestingRegime, TestingRegime,
-                             strategies_from_dictionary)
+from simpar.strategy import (IsolationRegime, Test, ArrivalTestingRegime,
+                             TestingRegime, strategies_from_dictionary)
 
 
 RESOURCES_PATH = os.path.join(os.path.dirname(__file__), 'resources')
@@ -11,6 +11,9 @@ with open(os.path.join(RESOURCES_PATH, "test_strategy.yaml"), "r") as f:
     yaml_file = yaml.safe_load(f)
     tests = yaml_file["tests"]
     TESTS = {k: Test.from_dictionary(k, v) for k,v in tests.items()}
+    isolations = yaml_file["isolation_regimes"]
+    ISOLATION_REGIMES = \
+        {k: IsolationRegime.from_dictionary(v) for k,v in isolations.items()}
     arrival_testing_regimes = yaml_file["arrival_testing_regimes"]
     ARRIVAL_TESTING_REGIMES = \
         {k: ArrivalTestingRegime.from_dictionary(v, TESTS)
@@ -30,6 +33,13 @@ def test_test_initialization():
     assert test.test_sensitivity == 0.8
     assert test.compliance == 0.9
     assert test.test_delay == 1.5
+
+
+def test_isolation_regime_initialization():
+    """Test initialization of [IsolationRegime] class from dictionary."""
+    isolation_regime = ISOLATION_REGIMES["test"]
+    assert isolation_regime.iso_lengths == [10, 5]
+    assert isolation_regime.iso_props == [0.2, 0.8]
 
 
 def test_arrival_testing_regime_single_meta_group():
