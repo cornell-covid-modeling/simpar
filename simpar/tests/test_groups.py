@@ -26,7 +26,7 @@ def test_sim8():
     infection_rate = mg.infection_matrix(infections_per_contact)
 
     sim = Sim(T,S0,I0,R0,infection_rate)
-    sim.step(T-1)
+    sim.step(T)
 
     validate(sim)
 
@@ -45,7 +45,7 @@ def test_sim8():
     infection_rate = np.outer(contact_rates,pop/100)
 
     s = Sim(T,S0,I0,R0,infection_rate)
-    s.step(T-1)
+    s.step(T)
 
     inf_2 = sim.I
     assert(np.isclose(inf_1, inf_2).all())

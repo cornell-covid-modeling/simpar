@@ -11,7 +11,7 @@ with open(os.path.join(RESOURCES_PATH, "test_sim.yaml"), "r") as f:
     SIMULATIONS = {k: Sim.from_dictionary(v) for k,v in sims.items()}
     # run all simulations to completion
     for _, v in SIMULATIONS.items():
-        v.step(v.max_T - 1)
+        v.step(v.max_T)
 
 
 def test_return_copy():
@@ -57,16 +57,16 @@ def test_noninfectious_group():
     """Test zero cases in a non-infectious group."""
     sim = SIMULATIONS["noninfectious_group"]
     # The group with 0 contacts should not have any infections
-    assert np.isclose(sim.I[:,0], np.zeros(sim.max_T)).all()
+    assert np.isclose(sim.I[:,0], np.zeros(sim.max_T+1)).all()
 
 
 def test_zero_prob_discovered():
     """Test zero discovered cases when probability of discovery is zero."""
     sim = SIMULATIONS["no_discovery"]
-    assert np.isclose(np.sum(sim.D, axis=1), np.zeros(sim.max_T)).all()
+    assert np.isclose(np.sum(sim.D, axis=1), np.zeros(sim.max_T+1)).all()
 
 
 def test_perfect_sensitivity():
     """Test no hidden cases when probability of discovery is 1."""
     sim = SIMULATIONS["perfect_sensitivity"]
-    assert np.isclose(np.sum(sim.H, axis=1), np.zeros(sim.max_T)).all()
+    assert np.isclose(np.sum(sim.H, axis=1), np.zeros(sim.max_T+1)).all()
