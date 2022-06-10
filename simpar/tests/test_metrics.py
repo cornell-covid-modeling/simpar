@@ -2,8 +2,7 @@ import os
 import yaml
 from simpar.scenario import Scenario
 from simpar.strategy import strategies_from_dictionary
-from simpar.metrics import (get_bucket, get_hospitalizations,
-                            get_total_isolated, get_total_discovered)
+from simpar.metrics import (get_bucket, get_hospitalizations, get_isolated)
 from simpar.trajectory import Trajectory
 
 
@@ -32,17 +31,9 @@ def test_get_hospitalizations():
     get_hospitalizations(TRAJECTORY, normalize=True)
 
 
-def test_get_total_isolated():
-    get_total_isolated(TRAJECTORY)
-    get_total_isolated(TRAJECTORY, meta_groups=["g1", "g2"])
-    get_total_isolated(TRAJECTORY, meta_groups=["g1", "g2"], aggregate=True)
-    get_total_isolated(TRAJECTORY, cumulative=True)
-    get_total_isolated(TRAJECTORY, normalize=True)
-
-
-def test_get_total_discovered():
-    get_total_discovered(TRAJECTORY)
-    get_total_discovered(TRAJECTORY, meta_groups=["g1", "g2"])
-    get_total_discovered(TRAJECTORY, meta_groups=["g1", "g2"], aggregate=True)
-    get_total_discovered(TRAJECTORY, cumulative=True)
-    get_total_discovered(TRAJECTORY, normalize=True)
+def test_get_isolated():
+    get_isolated(TRAJECTORY)
+    get_isolated(TRAJECTORY, meta_groups=["g1", "g2"])
+    get_isolated(TRAJECTORY, meta_groups=["g1", "g2"], aggregate=True)
+    get_isolated(TRAJECTORY, cumulative=True)
+    get_isolated(TRAJECTORY, normalize=True)

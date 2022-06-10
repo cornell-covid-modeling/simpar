@@ -28,6 +28,12 @@ def get_bucket(trajectory: Trajectory, bucket: str,
     population = trajectory.scenario.population
     A = {"S": sim.S, "I": sim.I, "R": sim.R, "D": sim.D, "H": sim.H}[bucket]
 
+    # adjust for arrival period
+    arrival_period = trajectory.scenario.arrival_period
+    if arrival_period is not None:
+        for i in range(arrival_period):
+            A[i] *= (i / arrival_period)
+
     # aggregate across meta-groups
     A_ = []
     if meta_groups is None:
@@ -132,33 +138,9 @@ def _get_isolated(discovered: np.ndarray, generation_time: float,
     return isolated
 
 
-def get_total_discovered(trajectory: Trajectory, meta_groups: List[str] = None,
-                         aggregate: bool = True, cumulative: bool = False,
-                         normalize: bool = False):
-    """Return the number of discovered individuals at each iteration.
-
-    This includes those discovered in arrival spread across the arrival period.
-
-    Args:
-        trajectory (Trajectory): Trajectory object.
-        meta_groups (List[str]): Limit to isolated in these metagroups.
-        aggregate (bool): Aggregate over the meta-groups if True.
-        cumulative (bool): Return cumulative metric over time if True.
-        normalize (bool): Normalize relative to total population.
-    """
-    D = get_bucket(trajectory, bucket="D", meta_groups=meta_groups,
-                   aggregate=aggregate, cumulative=cumulative,
-                   normalize=normalize)
-    # TODO: think through this--I think this is double counting
-    arrival_discovered = _get_arrival_discovered(trajectory, meta_groups,
-                                                 aggregate=aggregate,
-                                                 normalize=normalize)
-    return D + arrival_discovered
-
-
-def get_total_isolated(trajectory: Trajectory, meta_groups: List[str] = None,
-                       aggregate: bool = True, cumulative: bool = False,
-                       normalize: bool = False):
+def get_isolated(trajectory: Trajectory, meta_groups: List[str] = None,
+                 aggregate: bool = True, cumulative: bool = False,
+                 normalize: bool = False):
     """Return the number of isolated individuals at each generation.
 
     This includes those isolating as a result of being discovered upon arrival.
@@ -171,60 +153,12 @@ def get_total_isolated(trajectory: Trajectory, meta_groups: List[str] = None,
         normalize (bool): Normalize relative to total population.
     """
     scenario = trajectory.scenario
-
     generation_time = scenario.generation_time
     iso_lengths = scenario.isolation_lengths
     iso_props = scenario.isolation_fracs
 
-    total_discovered = get_total_discovered(trajectory, meta_groups, aggregate,
-                                            cumulative, normalize)
-    total_isolated = _get_isolated(total_discovered, generation_time,
-                                   iso_lengths, iso_props)
+    D = get_bucket(trajectory, bucket="D", meta_groups=meta_groups,
+                   aggregate=aggregate, cumulative=cumulative,
+                   normalize=normalize)
 
-    return total_isolated
-
-
-def _get_arrival_discovered(trajectory: Trajectory,
-                            meta_groups: List[str] = None,
-                            aggregate: bool = False,
-                            cumulative: bool = False,
-                            normalize: bool = False):
-    """Return arrival discovered (spread across the arrival period)."""
-    sim = trajectory.sim
-    scenario = trajectory.scenario
-    population = scenario.population
-    strategy = trajectory.strategy
-
-    # Get total arrival discovered
-    arrival_discovered_sum = \
-        strategy.get_arrival_discovered(
-            scenario.init_recovered, scenario.init_infections,
-            scenario.pct_recovered_discovered_arrival)
-    if meta_groups is not None:
-        names = population.meta_group_names
-        idx = [i for i, mg in enumerate(meta_groups) if mg in names]
-        arrival_discovered_sum = arrival_discovered_sum[idx]
-
-    # Spread arrival discoverd over the arrival period
-    if meta_groups is None:
-        K = len(population.meta_group_list)
-    else:
-        K = len(meta_groups)
-    arrival_discovered = np.zeros((sim.max_T, K))
-    for i in range(scenario.arrival_period):
-        arrival_discovered[i] += \
-            arrival_discovered_sum / scenario.arrival_period
-
-    if aggregate:
-        x = np.sum(arrival_discovered, axis=1)
-    else:
-        x = arrival_discovered
-
-    if cumulative:
-        x = np.cumsum(x, axis=0)
-
-    if normalize:
-        total_pop = np.sum(sim.S + sim.I + sim.R, axis=1)[0]
-        x /= total_pop
-
-    return x
+    return _get_isolated(D, generation_time, iso_lengths, iso_props)
