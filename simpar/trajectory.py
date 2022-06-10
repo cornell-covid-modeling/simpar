@@ -144,14 +144,14 @@ class Trajectory:
         iso_props = scenario.isolation_fracs
 
         D = self.get_bucket(bucket="D", meta_groups=meta_groups,
-                    aggregate=aggregate, cumulative=cumulative,
-                    normalize=normalize)
+                            aggregate=aggregate, cumulative=cumulative,
+                            normalize=normalize)
 
         return _get_isolated(D, generation_time, iso_lengths, iso_props)
 
 
 def _get_isolated(discovered: np.ndarray, generation_time: float,
-                 iso_lengths: List[int], iso_props: List[int]):
+                  iso_lengths: List[int], iso_props: List[int]):
     """Return the isolated count (not including the arrival positives).
 
     As an intermediate step, this function calculates isolation_frac, which
