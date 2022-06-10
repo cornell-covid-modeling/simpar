@@ -132,7 +132,10 @@ def _get_isolated(discovered: np.ndarray, generation_time: float,
     isolated = np.zeros(discovered.shape)
     for t in range(len(discovered)):
         for i in range(max_isolation):
-            if t-i >= 0:
+            if t-i > 0:
+                tmp = isolation_frac[i] * (discovered[t-i] - discovered[t-i-1])
+                isolated[t] = isolated[t] + tmp
+            if t-i == 0:
                 isolated[t] = isolated[t] + isolation_frac[i] * discovered[t-i]
 
     return isolated
