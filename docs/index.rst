@@ -1,6 +1,5 @@
-.. image:: branding/simpar_color.png
-  :height: 125
-  :alt: simpar
+|brand_image|
+=============
 
 |
 
@@ -26,7 +25,9 @@ overview of the package structure and the complete documentation, see
 
 
 .. _SIR model: https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology
-
+.. |brand_image| image:: branding/simpar_color.png
+  :height: 100
+  :alt: simpar
 
 .. toctree::
    :maxdepth: 2
