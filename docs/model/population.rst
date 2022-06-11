@@ -18,7 +18,7 @@ Alternatively, this can be specified with a truncated `Pareto`_ distribution.
 Given a shape parameter :math:`\alpha` and truncation point :math:`ub`, the
 fraction of the meta-group population with :math:`i` contacts is
 :math:`f(i;\alpha,ub)` where :math:`f` is the probability density function of
-the Pareto distribution. Note these fractions are normalized to sum to 1.
+the Pareto distribution. Note these values are normalized to sum to 1.
 
 The interactions among individuals within the same meta-group is assumed to be
 well-mixed in that the amount of interaction group :math:`i` has with group
@@ -26,6 +26,9 @@ well-mixed in that the amount of interaction group :math:`i` has with group
 population of group :math:`j`. Hence, it is `not` assumed that more social
 people tend to interact with more social people and vice versa. Similarly,
 while the meta-group contact matrix encodes how much contact takes place
-between two groups, the interaction is assumed to be well-mixed.
+between two meta-groups, the interaction between them is assumed to be
+well-mixed with respect to the groups that comprise them. See
+:py:mod:`simpar.groups.MetaGroup` and :py:mod:`simpar.groups.Population` for
+more details.
 
 .. _Pareto: https://en.wikipedia.org/wiki/Pareto_distribution

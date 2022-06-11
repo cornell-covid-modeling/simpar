@@ -81,7 +81,7 @@ def days_infectious(days_between_tests: float, isolation_delay: float,
                     sensitivity: float, max_infectious_days: float):
     """Return the expected time someone is infectious and free.
 
-    Equivalently, Compute E[I]. Note that the number of surveillance tests N
+    Equivalently, Compute E[I]. The number of surveillance tests N
     that are required for a person to test positive is a geometric random
     variable with probability given by [sensitivity]. So the person tests
     positive on test n (where the first test is n=0) with probability

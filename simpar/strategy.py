@@ -24,7 +24,7 @@ class Test:
 
     It computes [true_sensitivity] as [test_sensitivity] * [compliance] to
     represent the true fraction of infections discovered in a single round of
-    testing. Note that this assumes compliance rates are equivalent across both
+    testing. This assumes compliance rates are equivalent across both
     the susceptible and infected populations.
     """
 
@@ -187,7 +187,7 @@ class TestingRegime:
         This value is equivalent to the "true sensitivity" of a test when
         surveillance testing is in place. Otherwise, it is the test sensitivity
         multiplied by the symptomatic rate as only those that are symptomatic
-        seek out a test. Note that this assumes all symptomatic people will
+        seek out a test. This assumes all symptomatic people will
         seek out a test. I.e. compliance among the symptomatic is 100%.
 
         Args:
@@ -207,7 +207,7 @@ class TestingRegime:
         """Return the discovery rate among recovered people.
 
         This value is equivalent to the "true sensitivity" of a test when
-        surveillance testing is in place. Note that this serves as a rough
+        surveillance testing is in place. This serves as a rough
         estimate which becomes more inaccurate with less frequent testing.
         If there is no surveillance testing, it is the no surveillance test
         rate multiplied by the test sensitivity.
