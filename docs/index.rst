@@ -1,5 +1,8 @@
-simpar
-======
+.. image:: branding/simpar_color.png
+  :height: 125
+  :alt: simpar
+
+|
 
 simpar (SIMulate PAndemic Response) simulates the spread of a disease through a
 heterogeneous population using an `SIR model`_. The :py:mod:`simpar.groups`

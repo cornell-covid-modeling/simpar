@@ -51,10 +51,10 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
-# html_logo = TODO: Make a logo
+html_logo = 'branding/simpar_color.png'
 html_theme_options = {
     'logo_only': True,
-    'style_nav_header_background': '#111111',
+    'style_nav_header_background': '#E3E3E3',
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

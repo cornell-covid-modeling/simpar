@@ -1,4 +1,4 @@
-# SIMulate PAndemic Response
+# <img alt="simpar" src="docs/branding/simpar_color.png" height="90">
 
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/simpar.svg)](https://pypi.python.org/pypi/simpar/)
 [![CircleCI](https://circleci.com/gh/cornell-covid-modeling/simpar/tree/master.svg?style=shield&circle-token=bab4306a454b23a7ba58c30c3a1d0891a5d6e5ac)](https://circleci.com/gh/cornell-covid-modeling/simpar/tree/master)
