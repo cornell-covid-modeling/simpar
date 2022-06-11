@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath('../'))
 project = 'simpar'
 copyright = '2022, Cornell Covid Modeling Team'
 author = 'Cornell Covid Modeling Team'
-release = '0.0.1'
+release = '0.1.0'
 
 
 # -- General configuration ---------------------------------------------------

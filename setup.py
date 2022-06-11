@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setup(
     name="simpar",
-    version="0.0.1",
+    version="0.1.0",
     author="Cornell Covid Modeling Team",
     author_email="hwr26@cornell.edu",
-    description="TODO",
+    description="A Python package for analyzing pandemic response measures",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/cornell-covid-modeling/simpar",
