@@ -6,7 +6,7 @@ contact. Furthermore, it defines a [Population] which is comprised of multiple
 [MetaGroup]s. Testing strategies can be set at granularity of [MetaGroup]s.
 """
 
-__author__ = "Sam Stan (samstan) and Xiangyu Zhang (xiangyu-zhang-95)"
+__author__ = "Sam Tan (samstan) and Xiangyu Zhang (xiangyu-zhang-95)"
 
 
 from typing import Dict
