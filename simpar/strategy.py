@@ -293,13 +293,13 @@ class Strategy:
         name = d["name"]
         period_lengths = np.array(d["period_lengths"])
         test_regimes = [testing_regimes[i] for i in d["testing_regimes"]]
-        transmission_multipliers = d["transmission_multipliers"]
+        transmission_multipliers = d.get("transmission_multipliers", None)
         if transmission_multipliers is not None:
             transmission_multipliers = np.array(transmission_multipliers)
-        arrival_regime = d["arrival_testing_regime"]
+        arrival_regime = d.get("arrival_testing_regime", None)
         if arrival_regime is not None:
             arrival_regime = arrival_testing_regimes[arrival_regime]
-        isolation_regime = d["isolation_regime"]
+        isolation_regime = d.get("isolation_regime", None)
         if isolation_regime is not None:
             isolation_regime = \
                 IsolationRegime.from_dictionary(isolation_regime)
@@ -377,7 +377,7 @@ def strategies_from_dictionary(d: Dict, tests: Dict):
     """
     arrival_regimes = \
         {k: ArrivalTestingRegime.from_dictionary(v, tests)
-         for k,v in d["arrival_testing_regimes"].items()}
+         for k,v in d.get("arrival_testing_regimes", {}).items()}
     testing_regimes = \
         {k: TestingRegime.from_dictionary(v, tests)
          for k,v in d["testing_regimes"].items()}
