@@ -1,0 +1,81 @@
+meta_groups:
+  - "g1"
+  - "g2"
+  - "g3"
+
+meta_group_names:
+  g1: "Group 1"
+  g2: "Group 2"
+  g3: "Group 3"
+
+population_counts:
+  g1: 100
+  g2: 50
+  g3: 50
+
+pop_pareto_shapes:
+  g1: 2
+  g2: 3
+  g3: 1
+
+pop_pareto_ubs:
+  g1: 9
+  g2: 11
+  g3: 8
+
+meta_group_contact_matrix: [[0.0, 0.0, 0.0],
+                            [0.3, 0.3, 0.3],
+                            [0.6, 0.6, 0.6]]
+
+max_T: 20
+generation_time: 4
+
+infections_per_contact_unit:
+  g1: 1
+  g2: 2
+  g3: 1.5
+
+init_infections:
+  g1: 4
+  g2: 11
+  g3: 3
+
+init_recovered:
+  g1: 23
+  g2: 20
+  g3: 15
+
+outside_rate:
+  g1: 0.5
+  g2: 0
+  g3: 1
+
+max_infectious_days: 6
+symptomatic_rate: 0.3
+
+no_surveillance_test_rate:
+  g1: 0
+  g2: 0.2
+  g3: 0.1
+
+hospitalization_rates:
+  g1: 0.001
+  g2: 0.002
+  g3: 0.01
+
+pct_recovered_discovered:
+  g1: 0.8
+  g2: 0.9
+  g3: 0.7
+
+tests:
+  pcr:
+    sensitivity: 0.8
+    test_delay: 1.5
+    compliance: 0.9
+  antigen:
+    sensitivity: 0.6
+    test_delay: 0
+    compliance: 0.5
+
+arrival_period: 3

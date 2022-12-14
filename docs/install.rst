@@ -27,6 +27,11 @@ preferred development setup. First, clone the repository.
 .. code-block:: bash
 
    git clone https://github.com/cornell-covid-modeling/simpar
+   cd simpar
+   git config --local include.path ../.gitconfig
+
+**Note:** The final line adds functionality for stripping Jupyter notebook
+output and metadata for version management.
 
 Next, create a Python virtual environment and install simpar with the
 :code:`-e` flag and the development dependencies.

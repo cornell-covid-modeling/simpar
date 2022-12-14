@@ -37,7 +37,8 @@ setup(
                 'mock>=3',
                 'coverage>=4.5',
                 'tox>=3',
-                "flake8>=3.9"]
+                "flake8>=3.9",
+                "nbconvert>=7.0"]
     },
     python_requires='>=3.5',
 )
