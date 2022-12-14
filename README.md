@@ -28,6 +28,20 @@ The quickest way to get started is with a pip install.
 pip install simpar
 ```
 
+## Development
+
+We welcome contributions from the community for this project! Clone the
+repository as follows. See [Development][4] for more details.
+
+```
+git clone https://github.com/cornell-covid-modeling/simpar
+cd simpar
+git config --local include.path ../.gitconfig
+```
+
+**Note:** The final line adds functionality for stripping Jupyter notebook
+output and metadata for version management.
+
 ## Usage
 
 ```python
@@ -40,18 +54,21 @@ from simpar.trajectory import Trajectory
 import matplotlib.pyplot as plt
 
 # load scenario and strategy
-with open("dev_scenario.yaml", "r") as f:
+with open("example_scenario.yaml", "r") as f:
     yaml_file = yaml.safe_load(f)
     scenario = Scenario.from_dictionary(yaml_file)
 
-with open("dev_strategy.yaml", "r") as f:
+with open("example_strategy.yaml", "r") as f:
     yaml_file = yaml.safe_load(f)
-    strategy = strategies_from_dictionary(yaml_file, scenario.tests)["dev"]
+    strategy = strategies_from_dictionary(yaml_file, scenario.tests)["ex"]
 
 # simulate and create trajectory
 sim = scenario.simulate_strategy(strategy)
 trajectory = Trajectory(scenario, strategy, sim)
 ```
+
+See the [example](example) directory for the example scenario and strategy YAML
+files as well as a [Jupyter][3] notebook with the above example code.
 
 ## License
 
@@ -60,3 +77,5 @@ Licensed under the [MIT License](https://choosealicense.com/licenses/mit/)
 
 [1]: <https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology> "SIR Model"
 [2]: <https://simpar.henryrobbins.com> "documentation"
+[3]: <https://jupyter.org> "Jupyter"
+[4]: <https://simpar.readthedocs.io/en/latest/install.html#development> "Development"
