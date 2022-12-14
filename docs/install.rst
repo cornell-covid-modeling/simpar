@@ -36,7 +36,7 @@ Next, create a Python virtual environment and install simpar with the
    cd simpar
    python3 -m venv venv
    source venv/bin/activate
-   pip install -e .[dev]
+   pip install -e ."[dev]"
 
 The included Makefile includes a few targets to help with development:
 :code:`test` runs the test suite, :code:`cov` gives a coverage report in the
