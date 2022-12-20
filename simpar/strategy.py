@@ -277,18 +277,21 @@ class Strategy:
 
     @staticmethod
     def from_dictionary(d: Dict, arrival_testing_regimes: Dict,
-                        testing_regimes: Dict):
+                        testing_regimes: Dict, isolation_regimes: Dict):
         """Initialize a [Strategy] instance.
 
-        The dictionary [d] should contain a key [testing_regimes] and may
-        contain a key [arrival_testing_regime]. These should be keys in
-        [arrival_testing_regimes] and [testing_regimes] respectively.
+        The dictionary [d] should contain a key [testing_regimes] and
+        [isolation_regime] and may contain a key [arrival_testing_regime].
+        These should be keys in [arrival_testing_regimes], [testing_regimes],
+        and [isolation_regimes], respectively.
 
         Args:
             d (Dict): Dictionary representing the strategy.
             arrival_testing_regimes (Dict): Dictionary of \
                 [ArrivalTestingRegimes] instances.
             testing_regimes (Dict): Dictionary of [TestingRegimes] instances.
+            isolation_regimes (Dict): Dictionary of \
+                [IsolationRegime] instances.
         """
         name = d["name"]
         period_lengths = np.array(d["period_lengths"])
@@ -301,8 +304,11 @@ class Strategy:
             arrival_regime = arrival_testing_regimes[arrival_regime]
         isolation_regime = d.get("isolation_regime", None)
         if isolation_regime is not None:
-            isolation_regime = \
-                IsolationRegime.from_dictionary(isolation_regime)
+            if type(isolation_regime) == str:
+                isolation_regime = isolation_regimes[isolation_regime]
+            else:
+                isolation_regime = \
+                    IsolationRegime.from_dictionary(isolation_regime)
         return Strategy(name, period_lengths, test_regimes,
                         transmission_multipliers, arrival_regime,
                         isolation_regime)
@@ -375,6 +381,9 @@ def strategies_from_dictionary(d: Dict, tests: Dict):
         d (Dict): Dictionary maintaining strategies.
         tests (Dict): Dictionary of test types used in the strategies.
     """
+    isolation_regimes = \
+        {k: IsolationRegime.from_dictionary(v)
+         for k,v in d.get("isolation_regimes", {}).items()}
     arrival_regimes = \
         {k: ArrivalTestingRegime.from_dictionary(v, tests)
          for k,v in d.get("arrival_testing_regimes", {}).items()}
@@ -382,6 +391,7 @@ def strategies_from_dictionary(d: Dict, tests: Dict):
         {k: TestingRegime.from_dictionary(v, tests)
          for k,v in d["testing_regimes"].items()}
     strategies = \
-        {k: Strategy.from_dictionary(v, arrival_regimes, testing_regimes)
+        {k: Strategy.from_dictionary(v, arrival_regimes, testing_regimes,
+                                     isolation_regimes)
          for k,v in d["strategies"].items()}
     return strategies
