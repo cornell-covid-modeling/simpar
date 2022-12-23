@@ -30,7 +30,7 @@ meta_group_contact_matrix: [[0.0, 0.0, 0.0],
 max_T: 20
 generation_time: 4
 
-infections_per_contact_unit:
+infections_per_day_per_contact_unit:
   g1: 1
   g2: 2
   g3: 1.5
