@@ -151,13 +151,14 @@ class Scenario:
 
             testing_regime = strategy.testing_regimes[i]
 
-            infections_per_contact_unit = \
-                self.infections_per_day_per_contact_unit * \
-                testing_regime.get_days_infectious(self.max_infectious_days)
+            infections_per_contact_unit = (
+                self.infections_per_day_per_contact_unit
+                * testing_regime.get_days_infectious(self.max_infectious_days)
+                * strategy.transmission_multipliers[i]
+            )
 
             infection_matrix = \
-                population.infection_matrix(infections_per_contact_unit) \
-                * strategy.transmission_multipliers[i]
+                population.infection_matrix(infections_per_contact_unit)
             infection_discovery_frac = \
                 population.infection_discovery_frac(
                     testing_regime.get_infection_discovery_frac(
