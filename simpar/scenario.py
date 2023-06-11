@@ -28,7 +28,7 @@ class Scenario:
 
     def __init__(self, population: Population, max_T: int,
                  generation_time: float,
-                 infections_per_contact_unit: np.ndarray,
+                 infections_per_day_per_contact_unit: np.ndarray,
                  init_infections: np.ndarray, init_recovered: np.ndarray,
                  outside_rate: np.ndarray,
                  max_infectious_days: float,
@@ -43,8 +43,8 @@ class Scenario:
             population (Population): The population.
             max_T (int): The length of the simulation.
             generation_time (float): Number of days per generation of sim.
-            infections_per_contact_unit (np.ndarray): Number of infections \
-                per contact unit across meta-groups.
+            infections_per_day_per_contact_unit (np.ndarray): Number of \
+                infections per day per contact unit across meta-groups.
             init_infections (np.ndarray): Number of initial infections \
                 across meta-groups.
             init_recovered (np.ndarray): Number of initial recovered \
@@ -67,7 +67,8 @@ class Scenario:
         self.population = population
         self.max_T = max_T
         self.generation_time = generation_time
-        self.infections_per_contact_unit = infections_per_contact_unit
+        self.infections_per_day_per_contact_unit = \
+            infections_per_day_per_contact_unit
         self.init_infections = init_infections
         self.init_recovered = init_recovered
         self.outside_rate = outside_rate
@@ -90,8 +91,8 @@ class Scenario:
         population = Population.from_truncated_paretos_dictionary(d)
 
         order = d["meta_groups"]
-        infect_per_contact_unit = \
-            _to_np_array(d["infections_per_contact_unit"], order)
+        infect_p_day_p_cu = \
+            _to_np_array(d["infections_per_day_per_contact_unit"], order)
         init_infections = \
             _to_np_array(d["init_infections"], order)
         init_recovered = \
@@ -108,7 +109,7 @@ class Scenario:
 
         return Scenario(population=population, max_T=max_T,
                         generation_time=generation_time,
-                        infections_per_contact_unit=infect_per_contact_unit,
+                        infections_per_day_per_contact_unit=infect_p_day_p_cu,
                         init_infections=init_infections,
                         init_recovered=init_recovered,
                         outside_rate=outside_rate,
@@ -149,9 +150,15 @@ class Scenario:
         for i, period_length in enumerate(strategy.period_lengths):
 
             testing_regime = strategy.testing_regimes[i]
-            infection_matrix = \
-                population.infection_matrix(self.infections_per_contact_unit) \
+
+            infections_per_contact_unit = (
+                self.infections_per_day_per_contact_unit
+                * testing_regime.get_days_infectious(self.max_infectious_days)
                 * strategy.transmission_multipliers[i]
+            )
+
+            infection_matrix = \
+                population.infection_matrix(infections_per_contact_unit)
             infection_discovery_frac = \
                 population.infection_discovery_frac(
                     testing_regime.get_infection_discovery_frac(
