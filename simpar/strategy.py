@@ -303,7 +303,7 @@ class Strategy:
             arrival_regime = arrival_testing_regimes[arrival_regime]
         isolation_regime = d.get("isolation_regime", None)
         if isolation_regime is not None:
-            if type(isolation_regime) == str:
+            if isolation_regime is str:
                 isolation_regime = isolation_regimes[isolation_regime]
             else:
                 isolation_regime = \

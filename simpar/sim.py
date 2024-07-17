@@ -212,7 +212,7 @@ class Sim:
             outside_rate (np.ndarray): infections per time period, weighed by \
                 population of each group in a meta-group.
         """
-        assert(n >= 1)
+        assert (n >= 1)
         if n > 1:
             for _ in range(n):
                 self.step(infection_rate=infection_rate,
@@ -241,7 +241,7 @@ class Sim:
 
         t = self._t
 
-        assert(t < self.max_T)  # enforce max generation
+        assert (t < self.max_T)  # enforce max generation
 
         # Fraction susceptible in each group
         # self._S[t] / (self._S[t] + self._I[t] + self._R[t])

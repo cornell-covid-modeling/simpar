@@ -62,8 +62,8 @@ class MetaGroup:
     def outside_rate(self, outside_rate: float):
         """Return the outside rate."""
         # Outside rate assumes well-mixed with external population
-        return outside_rate * (self.pop * self.contact_units /
-                               np.sum(self.pop * self.contact_units))
+        return outside_rate * (self.pop * self.contact_units
+                               / np.sum(self.pop * self.contact_units))
 
     def get_init_SIR_and_DH(self, init_infections: float,
                             init_recovered: float,

@@ -48,4 +48,4 @@ def test_sim8():
     s.step(T)
 
     inf_2 = sim.I
-    assert(np.isclose(inf_1, inf_2).all())
+    assert (np.isclose(inf_1, inf_2).all())
