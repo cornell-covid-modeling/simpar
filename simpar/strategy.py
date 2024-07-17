@@ -14,7 +14,6 @@ __author__ = "Henry Robbins (henryrobbins)"
 import numpy as np
 from .micro import days_infectious
 from typing import List, Dict
-np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
 
 
 class Test:
