@@ -33,7 +33,10 @@ setup(
         "json5>=0.9.5"
     ],
     extras_require={
-        "dev": ['pytest>=5',
+        "dev": ['sphinx>=7.0',
+                'sphinx_rtd_theme',
+                'sphinx_copybutton',
+                'pytest>=5',
                 'mock>=3',
                 'coverage>=4.5',
                 'tox>=3',
