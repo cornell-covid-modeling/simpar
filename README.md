@@ -1,7 +1,7 @@
 # <img alt="simpar" src="docs/branding/simpar_color.png" height="90">
 
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/simpar.svg)](https://pypi.python.org/pypi/simpar/)
-[![CircleCI](https://circleci.com/gh/cornell-covid-modeling/simpar/tree/master.svg?style=shield&circle-token=bab4306a454b23a7ba58c30c3a1d0891a5d6e5ac)](https://circleci.com/gh/cornell-covid-modeling/simpar/tree/master)
+[![CircleCI](https://circleci.com/gh/cornell-covid-modeling/simpar/tree/master.svg?style=shield)](https://circleci.com/gh/cornell-covid-modeling/simpar/tree/master)
 [![Documentation
 Status](https://readthedocs.org/projects/simpar/badge/?version=latest)](https://simpar.henryrobbins.com/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/cornell-covid-modeling/simpar/branch/master/graph/badge.svg?token=VKZ6JFQC0P)](https://codecov.io/gh/cornell-covid-modeling/simpar)
