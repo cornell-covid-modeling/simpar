@@ -47,8 +47,8 @@ class Sim:
 
         Internal infection spread is determined by the [infection_rate] matrix
         parameter which indicates the number new infections that an infected
-        person in one group creates in another. Additionally, the
-        [outside_rate] parameter specifies the outside rate of infection.
+        person in one group creates in another per generation. Additionally,
+        the [outside_rate] parameter specifies the outside rate of infection.
 
         To model infection discovery, the [infection_discovery_frac]
         parameter determines what fraction of infected are discovered in the
@@ -67,7 +67,7 @@ class Sim:
                 people in each group that are recovered.
             infection_rate (np.ndarray): Matrix where infection_rate[i,j] is \
                 the number of new infections that an infected person in \
-                group i creates in group j
+                group i creates in group j over a single generation.
             init_discovered (np.ndarray): Vector of the initial number of \
                 people in each group that are discovered.
             init_hidden (np.ndarray): Vector of the initial number of \
